@@ -15,39 +15,35 @@ namespace ClassManagement.Services
             this.dbContext = dbContext;
         }
 
-        public ServiceResult GetClasses(DayOfWeek? Day = null)
+        public ServiceResult GetAllClasses(DayOfWeek? Day = null)
         {
             HashSet<Class> classes = new();
-            if (Day is not null)
-            {
-                classes = dbContext.Classes.Where(s => true).ToHashSet();
-                return new() { success = true, Classes = classes };
-            }
-            else
-            {
-                var schedules = dbContext.ClassSchedules.Where(s => s.Day == Day.Value).ToArray();
-                HashSet<ClassSchedule> classSchedules = new();
-                Parallel.ForEach(schedules, schedule =>
-                {
-                    var Class = dbContext.Classes.Find(schedule.ClassRoom.Code);
-                    schedule.ClassRoom = Class;
-                    classSchedules.Add(schedule);
-                });
-                return new() { success = true, Schedules = classSchedules };
-            }
+            classes = dbContext.Classes.Where(s => true).ToHashSet();
+            return new() { success = true, Classes = classes };
         }
 
-        public ServiceResult GetStudents(Class ClassRoom = null)
+        public ServiceResult GetClassesFromDay(DayOfWeek Day)
         {
-            HashSet<Student> students = new();
-            if (ClassRoom is not null)
+            var schedules = dbContext.ClassSchedules.Where(s => s.Day == Day).ToArray();
+            HashSet<ClassSchedule> classSchedules = new();
+            Parallel.ForEach(schedules, schedule =>
             {
-                students = dbContext.Students.Where(s => s.Classes.Contains(ClassRoom)).ToHashSet();
-            }
-            else
-            {
-                students = dbContext.Students.Where(s => true).ToHashSet();
-            }
+                var Class = dbContext.Classes.Find(schedule.ClassRoom.Code);
+                schedule.ClassRoom = Class;
+                classSchedules.Add(schedule);
+            });
+            return new() { success = true, Schedules = classSchedules };
+        }
+
+        public ServiceResult GetAllStudents()
+        {
+            var students = dbContext.Students.Where(s => true).ToHashSet();
+            return new() { success = true, Students = students };
+        }
+
+        public ServiceResult GetStudentsFromClass(Class ClassRoom)
+        {
+            var students = dbContext.Students.Where(s => s.Classes.Contains(ClassRoom)).ToHashSet();
             return new() { success = true, Students = students };
         }
 
@@ -62,6 +58,18 @@ namespace ClassManagement.Services
             HashSet<ClassNote> notes = new();
             notes = dbContext.ClassNotes.Where(s => s.Day == Day).ToHashSet();
             return new() { success = true, Notes = notes };
+        }
+
+        public async Task<ServiceResult> CreateNewClass(Class NewClass)
+        {
+            var Class = dbContext.Classes.Find(NewClass.Code);
+            if (Class is not null)
+            {
+                return new() { success = false, err = "Class has already existed" };
+            }
+            dbContext.Classes.Add(NewClass);
+            await dbContext.SaveChangesAsync();
+            return new() { success = true };
         }
     }
 }
