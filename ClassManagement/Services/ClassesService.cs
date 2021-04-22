@@ -71,5 +71,58 @@ namespace ClassManagement.Services
             await dbContext.SaveChangesAsync();
             return new() { success = true };
         }
+
+        public async Task<ServiceResult> AddNewStudentToClass(Student student, string ClassCode)
+        {
+            var Class = dbContext.Classes.Find(ClassCode);
+            if (Class is null)
+            {
+                return new() { success = false, err = "Class does not exist" };
+            }
+            if (Class.Students.Contains(student))
+            {
+                return new() { success = false, err = "Student has already been in class" };
+            }
+            Class.Students.Add(student);
+            dbContext.Classes.Update(Class);
+            await dbContext.SaveChangesAsync();
+            return new() { success = true };
+        }
+
+        public async Task<ServiceResult> AddNewScheduleToClass(ClassSchedule schedule, string ClassCode)
+        {
+            var Class = dbContext.Classes.Find(ClassCode);
+            if (Class is null)
+            {
+                return new() { success = false, err = "Class does not exist" };
+            }
+            if (Class.Schedules.Contains(schedule))
+            {
+                return new() { success = false, err = "Class has already occurred on given schedule" };
+            }
+            Class.Schedules.Add(schedule);
+            dbContext.Classes.Update(Class);
+            await dbContext.SaveChangesAsync();
+            return new() { success = true };
+        }
+
+        public async Task<ServiceResult> AddNewNote(ClassNote note)
+        {
+            dbContext.ClassNotes.Add(note);
+            await dbContext.SaveChangesAsync();
+            return new() { success = true };
+        }
+
+        public async Task<ServiceResult> UpdateClass(Class Class)
+        {
+            var OldClass = dbContext.Classes.Where(s => s.Code == Class.Code).FirstOrDefault();
+            if (OldClass is null)
+            {
+                return new() { success = false, err = "Class does not exist" };
+            }
+            dbContext.Classes.Update(Class);
+            await dbContext.SaveChangesAsync();
+            return new() { success = true };
+        }
     }
 }
