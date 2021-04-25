@@ -1,5 +1,6 @@
 ﻿using ClassManagement.Data;
 using ClassManagement.Models;
+using Microsoft.Data.Sqlite;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -75,6 +76,7 @@ namespace ClassManagement.Services
         public async Task<ServiceResult> AddNewStudentToClass(Student student, string ClassCode)
         {
             var Class = dbContext.Classes.Find(ClassCode);
+            student = dbContext.Students.Find(student.Id);
             if (Class is null)
             {
                 return new() { success = false, err = "Class does not exist" };
@@ -83,8 +85,10 @@ namespace ClassManagement.Services
             {
                 return new() { success = false, err = "Student has already been in class" };
             }
+            student.Classes.Add(Class);
             Class.Students.Add(student);
             dbContext.Classes.Update(Class);
+            dbContext.Students.Update(student);
             await dbContext.SaveChangesAsync();
             return new() { success = true };
         }
@@ -115,14 +119,77 @@ namespace ClassManagement.Services
 
         public async Task<ServiceResult> UpdateClass(Class Class)
         {
-            var OldClass = dbContext.Classes.Where(s => s.Code == Class.Code).FirstOrDefault();
+            var OldClass = dbContext.Classes.Find(Class.Code);
             if (OldClass is null)
             {
                 return new() { success = false, err = "Class does not exist" };
             }
-            dbContext.Classes.Update(Class);
+            OldClass = Class;
+            dbContext.Classes.Update(OldClass);
             await dbContext.SaveChangesAsync();
             return new() { success = true };
         }
+
+        public async Task<ServiceResult> DeleteStudentFromClass(string studentId, string ClassCode) 
+        {
+            var Class = dbContext.Classes.Find(ClassCode);
+            var Student = dbContext.Students.Find(studentId);
+            if (Class is null)
+            {
+                return new() { success = false, err = "Invalid Class" };
+            }
+            if (Student is null)
+            {
+                return new() { success = false, err = "Invalid Student" };
+            }
+            Class.Students.Remove(Student);
+            Student.Classes.Remove(Class);
+            dbContext.Classes.Update(Class);
+            dbContext.Students.Update(Student);
+            await dbContext.SaveChangesAsync();
+            return new() { success = true };
+        }
+
+        public async Task<ServiceResult> DeleteClass(string ClassCode)
+        {
+            var Class = dbContext.Classes.Find(ClassCode);
+            if (Class is not null)
+            {
+                dbContext.Classes.Remove(Class);
+                using (var connection = new SqliteConnection("Data Source=app.db"))
+                {
+                    connection.Open();
+                    var command = connection.CreateCommand();
+                    command.CommandText = @"DELETE FROM ClassStudent WHERE ClassesCode = $id";
+                    command.Parameters.AddWithValue("$id", ClassCode);
+                    command.ExecuteNonQuery();
+                }
+                await dbContext.SaveChangesAsync();
+                return new() { success = true };
+            }
+            return new() { success = false, err = "The class doesn't exist" };
+        }
+
+        public async Task<ServiceResult> DeleteStudent(string StudentId)
+        {
+            var Student = dbContext.Students.Find(StudentId);
+            if (Student is not null)
+            {
+                dbContext.Students.Remove(Student);
+                using (var connection = new SqliteConnection("Data Source=app.db"))
+                {
+                    connection.Open();
+                    var command = connection.CreateCommand();
+                    command.CommandText = @"DELETE FROM ClassStudent WHERE StudentsCode = $id";
+                    command.Parameters.AddWithValue("$id", StudentId);
+                    command.ExecuteNonQuery();
+                }
+                await dbContext.SaveChangesAsync();
+                return new() { success = true };
+            }
+            return new() { success = false, err = "The student doesn't exist" };
+        }
+
+        
     }
 }
