@@ -190,6 +190,31 @@ namespace ClassManagement.Services
             return new() { success = false, err = "The student doesn't exist" };
         }
 
-        
+        public async Task<ServiceResult> DeleteNote(string NoteId)
+        {
+            var Note = dbContext.ClassNotes.Find(NoteId);
+            if (Note is not null)
+            {
+                dbContext.ClassNotes.Remove(Note);
+                await dbContext.SaveChangesAsync();
+                return new() { success = true };
+            }
+            return new() { success = false, err = "Note doesn't exist" };
+        }
+
+        public async Task<ServiceResult> DeleteSchedule(string ScheduleId)
+        {
+            var Schedule = dbContext.ClassSchedules.Find(ScheduleId);
+            if (Schedule is not null)
+            {
+                var Class = dbContext.Classes.Find(Schedule.ClassRoom.Code);
+                Class.Schedules.Remove(Schedule);
+                dbContext.ClassSchedules.Remove(Schedule);
+                dbContext.Classes.Update(Class);
+                await dbContext.SaveChangesAsync();
+                return new() { success = true };
+            }
+            return new() { success = false, err = "Schedule doesn't exist" };
+        }
     }
 }

@@ -15,6 +15,7 @@ namespace ClassManagement.Models
         public string Description { get; set; } = string.Empty;
         public HashSet<Student> Students { get; set; } = new();
         public HashSet<ClassSchedule> Schedules { get; set; } = new();
+        public int NumberOfStudent => Students.Count;
         public override bool Equals(object obj)
         {
             var other = (Class)obj;
