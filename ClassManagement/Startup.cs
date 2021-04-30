@@ -5,6 +5,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using MudBlazor.Services;
 
 namespace ClassManagement
 {
@@ -27,6 +28,7 @@ namespace ClassManagement
                 options.UseSqlite("Data Source = classmanagement.db");
             }, ServiceLifetime.Singleton);
             services.AddServerSideBlazor();
+            services.AddMudServices();
             services.AddSingleton<WeatherForecastService>();
         }
 
