@@ -67,9 +67,7 @@ namespace ClassManagement.Services
             {
                 return new() { success = false, err = "Class has already existed" };
             }
-            var task = dbContext.ClassSchedules.AddRangeAsync(NewClass.Schedules);
-            await dbContext.Classes.AddAsync(NewClass);
-            await task;
+            dbContext.Classes.Add(NewClass);
             await dbContext.SaveChangesAsync();
             return new() { success = true };
         }
@@ -157,6 +155,7 @@ namespace ClassManagement.Services
             if (Class is not null)
             {
                 dbContext.Classes.Remove(Class);
+                await dbContext.SaveChangesAsync();
                 using (var connection = new SqliteConnection("Data Source=app.db"))
                 {
                     connection.Open();
@@ -165,7 +164,6 @@ namespace ClassManagement.Services
                     command.Parameters.AddWithValue("$id", ClassCode);
                     command.ExecuteNonQuery();
                 }
-                await dbContext.SaveChangesAsync();
                 return new() { success = true };
             }
             return new() { success = false, err = "The class doesn't exist" };
@@ -177,6 +175,7 @@ namespace ClassManagement.Services
             if (Student is not null)
             {
                 dbContext.Students.Remove(Student);
+                await dbContext.SaveChangesAsync();
                 using (var connection = new SqliteConnection("Data Source=app.db"))
                 {
                     connection.Open();
@@ -185,7 +184,6 @@ namespace ClassManagement.Services
                     command.Parameters.AddWithValue("$id", StudentId);
                     command.ExecuteNonQuery();
                 }
-                await dbContext.SaveChangesAsync();
                 return new() { success = true };
             }
             return new() { success = false, err = "The student doesn't exist" };
