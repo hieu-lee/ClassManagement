@@ -1,0 +1,72 @@
+﻿@page "/Classes"
+@inject ISnackbar Snackbar
+
+<h2 style="text-align:center;">My Classes</h2>
+<div>
+    <div style="display: flex; justify-content: space-between;">
+        <div style="display: flex;">
+            <MudTooltip Text="Add New Class">
+                <img @onclick="AddNewClass" style="width: 30px; height: 30px; margin-left: 12px; margin-top: 10px; cursor: pointer;" src="addround.png" />
+            </MudTooltip>
+            <div>
+                <MudTextField Required="true" T="string" FullWidth="true" Placeholder="New Class Code" @bind-Value="@NewCode" Style="margin: 0 10px;"></MudTextField><br />
+                <MudTextField Required="true" T="string" FullWidth="true" Placeholder="New Class Name" @bind-Value="@NewName" Style="margin: 0 10px;"></MudTextField>
+            </div>
+        </div>
+    </div>
+</div>
+@if (MyClasses.Count != 0)
+{
+    <ul>
+        <Virtualize Items="MyClasses" Context="Class">
+            <li>
+                <div style="display: flex; justify-content: space-between">
+                    <div style="display: flex;">
+                        <div>
+                            <img class="class-pic" src="classroom.png" />
+                        </div>
+                        <div>
+                            <h4>Code: @Class.Code</h4>
+                            <strong>@Class.Name</strong>
+                        </div>
+                    </div>
+                    <div>
+                        <img @onclick="@(() => { Class.DeleteHeight = (Class.DeleteHeight == "0") ? "30px" : "0"; })" src="@Class.ImgSource" style="width: 30px; height: 30px; cursor: pointer;" />
+                    </div>
+                </div>
+                <div style="background-color: red; text-align: center; height: @Class.DeleteHeight; transition: height 0.5s; cursor: pointer;">
+                    <img style="width: 30px; height: 30px;" src="trash.png" />
+                </div>
+                <hr />
+            </li>
+        </Virtualize>
+    </ul>
+}
+else
+{
+    <h3>You don't have any class yet, add your first class to get start</h3>
+}
+
+
+
+@code {
+    private HashSet<Class> MyClasses { get; set; } = new();
+    private string NewCode;
+    private string NewName;
+
+    private void AddNewClass()
+    {
+        NewName = NewName.Trim();
+        NewName = NewName.First().ToString().ToUpper() + NewName.Substring(1);
+        NewCode = NewCode.Trim().ToUpper();
+        Class NewClass = new() { Code = NewCode, Name = NewName };
+        if (MyClasses.Contains(NewClass))
+        {
+            Snackbar.Add("The class code has already existed", Severity.Error);
+            return;
+        }
+        MyClasses.Add(NewClass);
+        NewCode = string.Empty;
+        NewName = string.Empty;
+    }
+}
