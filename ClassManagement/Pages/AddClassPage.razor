@@ -1,0 +1,50 @@
+﻿@page "/AddClass"
+@inject ClassesService classesService
+@inject ISnackbar Snackbar
+
+
+    <div style="max-width: 500px; margin: 5ch auto;">
+        <h3 style="text-align: center;">Fill the form to create new class</h3>
+        <EditForm Model="@NewClass" OnSubmit="SubmitForm">
+            <DataAnnotationsValidator />
+            <MudCard>
+                <MudCardContent>
+                    <MudTextField Label="Code" HelperText="Must be unique and have 6 characters"
+                                  @bind-Value="NewClass.Code" For="@(() => NewClass.Code)" />
+                    <MudTextField Label="Name" Class="mt-3"
+                                  @bind-Value="NewClass.Name" For="@(() => NewClass.Name)" />
+                    <MudTextField Label="Address" Class="mt-3"
+                                  @bind-Value="NewClass.Address" For="@(() => NewClass.Address)" />
+                    <MudTextField Label="Description" Class="mt-3"
+                                  @bind-Value="NewClass.Description" For="@(() => NewClass.Description)" Lines="5" />
+                </MudCardContent>
+                <MudCardActions>
+                    <MudButton ButtonType="ButtonType.Submit" Variant="Variant.Filled" Color="Color.Primary" Class="ml-auto">Add New Class</MudButton>
+                </MudCardActions>
+            </MudCard>
+        </EditForm>
+    </div>
+
+    @code {
+        private Class NewClass = new();
+
+        private async Task SubmitForm()
+        {
+            NewClass.Code = NewClass.Code.Trim().ToUpper();
+            NewClass.Name = NewClass.Name.Trim();
+            NewClass.Name = NewClass.Name.First().ToString().ToUpper() + NewClass.Name.Substring(1);
+            var res = await classesService.CreateNewClass(NewClass);
+            if (res.success)
+            {
+                NewClass = new();
+                StateHasChanged();
+                Snackbar.Add("Successfully create new class", Severity.Success);
+                return;
+            }
+            else
+            {
+                Snackbar.Add(res.err, Severity.Error);
+                return;
+            }
+        }
+    }

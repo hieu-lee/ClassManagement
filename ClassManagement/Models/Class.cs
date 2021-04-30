@@ -6,6 +6,8 @@ namespace ClassManagement.Models
 	public class Class
     {
         [Key]
+        [Required]
+        [StringLength(6, ErrorMessage = "Code leng", MinimumLength = 6)]
         public string Code { get; set; }
         [Required]
         public string Name { get; set; }

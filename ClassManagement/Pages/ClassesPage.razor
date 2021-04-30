@@ -1,20 +1,7 @@
 ﻿@page "/Classes"
-@inject ISnackbar Snackbar
+@inject ClassesService classesService 
 
 <h2 style="text-align:center;">My Classes</h2>
-<div>
-    <div style="display: flex; justify-content: space-between;">
-        <div style="display: flex;">
-            <MudTooltip Text="Add New Class">
-                <img @onclick="AddNewClass" style="width: 30px; height: 30px; margin-left: 12px; margin-top: 10px; cursor: pointer;" src="addround.png" />
-            </MudTooltip>
-            <div>
-                <MudTextField Required="true" T="string" FullWidth="true" Placeholder="New Class Code" @bind-Value="@NewCode" Style="margin: 0 10px;"></MudTextField><br />
-                <MudTextField Required="true" T="string" FullWidth="true" Placeholder="New Class Name" @bind-Value="@NewName" Style="margin: 0 10px;"></MudTextField>
-            </div>
-        </div>
-    </div>
-</div>
 @if (MyClasses.Count != 0)
 {
     <ul>
@@ -51,22 +38,9 @@ else
 
 @code {
     private HashSet<Class> MyClasses { get; set; } = new();
-    private string NewCode;
-    private string NewName;
 
-    private void AddNewClass()
+    protected override async Task OnInitializedAsync()
     {
-        NewName = NewName.Trim();
-        NewName = NewName.First().ToString().ToUpper() + NewName.Substring(1);
-        NewCode = NewCode.Trim().ToUpper();
-        Class NewClass = new() { Code = NewCode, Name = NewName };
-        if (MyClasses.Contains(NewClass))
-        {
-            Snackbar.Add("The class code has already existed", Severity.Error);
-            return;
-        }
-        MyClasses.Add(NewClass);
-        NewCode = string.Empty;
-        NewName = string.Empty;
+        MyClasses = classesService.GetAllClasses().Classes;
     }
 }

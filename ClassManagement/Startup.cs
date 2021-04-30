@@ -1,4 +1,5 @@
 using ClassManagement.Data;
+using ClassManagement.Services;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.EntityFrameworkCore;
@@ -41,6 +42,7 @@ namespace ClassManagement
                 config.SnackbarConfiguration.ShowTransitionDuration = 500;
                 config.SnackbarConfiguration.SnackbarVariant = Variant.Filled;
             });
+            services.AddScoped<ClassesService>();
             services.AddSingleton<WeatherForecastService>();
         }
 
