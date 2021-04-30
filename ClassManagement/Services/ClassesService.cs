@@ -37,27 +37,27 @@ namespace ClassManagement.Services
 
         public ServiceResult GetAllStudents()
         {
-            var students = dbContext.Students.Where(s => true).ToHashSet();
+
+            var students = new SortedSet<Student>(dbContext.Students.Where(s => true).ToArray());
             return new() { success = true, Students = students };
         }
 
         public ServiceResult GetStudentsFromClass(Class ClassRoom)
         {
-            var students = dbContext.Students.Where(s => s.Classes.Contains(ClassRoom)).ToHashSet();
+            var students = new SortedSet<Student>(dbContext.Students.Where(s => s.Classes.Contains(ClassRoom)).ToArray());
             return new() { success = true, Students = students };
         }
 
         public ServiceResult GetAllNotes()
         {
-            var notes = dbContext.ClassNotes.Where(s => true).ToHashSet();
+            var notes = new SortedSet<ClassNote>(dbContext.ClassNotes.Where(s => true).ToArray());
             return new() { success = true, Notes = notes };
         }
 
         public ServiceResult GetNotesFromDay(DateTime Day)
         {
-            HashSet<ClassNote> notes = new();
-            notes = dbContext.ClassNotes.Where(s => s.Day == Day).ToHashSet();
-            return new() { success = true, Notes = notes };
+            var notes = dbContext.ClassNotes.Where(s => s.Day == Day).ToHashSet();
+            return new() { success = true, DayNotes = notes };
         }
 
         public async Task<ServiceResult> CreateNewClass(Class NewClass)

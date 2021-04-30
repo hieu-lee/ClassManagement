@@ -6,9 +6,10 @@ namespace ClassManagement.Models
     {
         public bool success { get; set; }
         public string err { get; set; }
-        public HashSet<Class> Classes { get; set; }
-        public HashSet<Student> Students { get; set; }
-        public HashSet<ClassNote> Notes { get; set; }
+        public SortedSet<Class> Classes { get; set; }
+        public SortedSet<Student> Students { get; set; }
+        public SortedSet<ClassNote> Notes { get; set; }
+        public HashSet<ClassNote> DayNotes { get; set; }
         public HashSet<ClassSchedule> Schedules { get; set; }
     }
 }
