@@ -42,5 +42,6 @@ else
     protected override async Task OnInitializedAsync()
     {
         MyClasses = classesService.GetAllClasses();
+        MyClasses.Sort();
     }
 }

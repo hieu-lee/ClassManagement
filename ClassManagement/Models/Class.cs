@@ -1,9 +1,10 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 
 namespace ClassManagement.Models
 {
-	public class Class
+	public class Class : IComparable<Class>
     {
         [Key]
         [Required]
@@ -20,6 +21,12 @@ namespace ClassManagement.Models
         public HashSet<ClassSchedule> Schedules { get; set; } = new();
         public int NumberOfStudent => Students.Count;
         public string ImgSource => StyleConsts.ImgSourceLookUp[DeleteHeight];
+
+        public int CompareTo(Class other)
+        {
+            return Name.CompareTo(other.Name);
+        }
+
         public override bool Equals(object obj)
         {
             var other = (Class)obj;

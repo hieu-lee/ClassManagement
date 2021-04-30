@@ -3,7 +3,7 @@ using System.ComponentModel.DataAnnotations;
 
 namespace ClassManagement.Models
 {
-	public class ClassNote
+	public class ClassNote : IComparable<ClassNote>
     {
         [Key]
         public string Id { get; init; } = Guid.NewGuid().ToString();
@@ -12,6 +12,12 @@ namespace ClassManagement.Models
         [Required]
         public Class Classroom { get; init; }
         public string Content { get; set; }
+
+        public int CompareTo(ClassNote other)
+        {
+            return -Day.CompareTo(other.Day);
+        }
+
         public override bool Equals(object obj)
         {
             var other = (ClassNote)obj;
