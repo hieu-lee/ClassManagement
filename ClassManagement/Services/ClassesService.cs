@@ -67,7 +67,9 @@ namespace ClassManagement.Services
             {
                 return new() { success = false, err = "Class has already existed" };
             }
-            dbContext.Classes.Add(NewClass);
+            var task = dbContext.ClassSchedules.AddRangeAsync(NewClass.Schedules);
+            await dbContext.Classes.AddAsync(NewClass);
+            await task;
             await dbContext.SaveChangesAsync();
             return new() { success = true };
         }
