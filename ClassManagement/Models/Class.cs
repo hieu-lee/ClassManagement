@@ -17,12 +17,7 @@ namespace ClassManagement.Models
         public HashSet<Student> Students { get; set; } = new();
         public HashSet<ClassSchedule> Schedules { get; set; } = new();
         public int NumberOfStudent => Students.Count;
-        private Dictionary<string, string> ImgSourceLookUp = new()
-        {
-            ["0"] = "down_arrow.png",
-            ["30px"] = "up_arrow.png"
-        };
-        public string ImgSource => ImgSourceLookUp[DeleteHeight];
+        public string ImgSource => StyleConsts.ImgSourceLookUp[DeleteHeight];
         public override bool Equals(object obj)
         {
             var other = (Class)obj;
