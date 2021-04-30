@@ -13,6 +13,9 @@ namespace ClassManagement.Models
         [Required]
         public string Name { get; set; }
         public string Description { get; set; } = string.Empty;
+#nullable enable
+        public string? Address { get; set; }
+#nullable disable
         public HashSet<Student> Students { get; set; } = new();
         public HashSet<ClassSchedule> Schedules { get; set; } = new();
         public int NumberOfStudent => Students.Count;
