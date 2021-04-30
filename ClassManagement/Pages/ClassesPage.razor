@@ -37,10 +37,10 @@ else
 
 
 @code {
-    private HashSet<Class> MyClasses { get; set; } = new();
+    private List<Class> MyClasses;
 
     protected override async Task OnInitializedAsync()
     {
-        MyClasses = classesService.GetAllClasses().Classes;
+        MyClasses = classesService.GetAllClasses();
     }
 }

@@ -16,11 +16,10 @@ namespace ClassManagement.Services
             this.dbContext = dbContext;
         }
 
-        public ServiceResult GetAllClasses(DayOfWeek? Day = null)
+        public List<Class> GetAllClasses()
         {
-            HashSet<Class> classes = new();
-            classes = dbContext.Classes.Where(s => true).ToHashSet();
-            return new() { success = true, Classes = classes };
+            var classes = dbContext.Classes.Where(s => true).ToList();
+            return classes;
         }
 
         public ServiceResult GetClassesFromDay(DayOfWeek Day)
