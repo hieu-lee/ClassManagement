@@ -1,12 +1,9 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace ClassManagement.Models
 {
-    public class ClassSchedule
+	public class ClassSchedule
     {
         [Key]
         public string Id { get; init; } = Guid.NewGuid().ToString();

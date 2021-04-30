@@ -1,11 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+﻿using System.Collections.Generic;
 
 namespace ClassManagement.Models
 {
-    public class ServiceResult
+	public class ServiceResult
     {
         public bool success { get; set; }
         public string err { get; set; }
