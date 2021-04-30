@@ -1,17 +1,84 @@
 ﻿@inherits LayoutComponentBase
 
-<div class="page">
-    <div class="sidebar">
-        <NavMenu />
-    </div>
+<MudThemeProvider Theme="_currentTheme" />
+<MudDialogProvider FullWidth="true" MaxWidth="MaxWidth.ExtraSmall" />
+<MudSnackbarProvider />
 
-    <div class="main">
-        <div class="top-row px-4">
-            <a href="https://docs.microsoft.com/aspnet/" target="_blank">About</a>
-        </div>
+<MudLayout RightToLeft="@_rightToLeft">
+	<MudAppBar Elevation="25">
+		<MudIconButton Icon="@Icons.Material.Filled.Menu" Color="Color.Inherit" Edge="Edge.Start" OnClick="@((e) => DrawerToggle())" />
+		<MudHidden Breakpoint="Breakpoint.SmAndUp" Invert="true">
+			<MudText Typo="Typo.h5" Class="mudblazor-appbar-brand-text">Mudblazor</MudText>
+		</MudHidden>
+		<MudAppBarSpacer />
 
-        <div class="content px-4">
-            @Body
-        </div>
-    </div>
-</div>
+		<MudAppBarSpacer />
+		<MudHidden Breakpoint="Breakpoint.MdAndUp" Invert="true">
+			<MudTooltip Text="Hieu Lee">
+				<a target="_blank" href="https://github.com/hieu-lee"><img src="github.png" /></a>
+			</MudTooltip>
+		</MudHidden>
+		<MudHidden Breakpoint="Breakpoint.SmAndDown" Invert="true">
+			<MudTooltip Text="Hieu Lee">
+				<a target="_blank" href="https://github.com/hieu-lee"><img src="github.png" /></a>
+			</MudTooltip>
+		</MudHidden>
+	</MudAppBar>
+
+	<MudDrawer @bind-Open=_drawerOpen Elevation="25" Class="mudblazor-appbar-band">
+		<MudDrawerHeader Class="mudblazor-brand" LinkToIndex="true">
+
+			<svg viewBox="0 0 1653 1049" xmlns="http://www.w3.org/2000/svg" class="mudblazor-logo">
+				<path fill="#7467EF" d="M0.15,572.58V0.16L495.9,286.37v190.81L165.4,286.37v381.62L0.15,572.58z" />
+				<path fill="#594AE2" d="M495.9,286.37L991.65,0.16v572.43l-330.5,190.81l-165.25-95.4l330.5-190.81V286.37L495.9,477.18V286.37z" />
+				<path fill="#7467EF" d="M495.9,667.99V858.8l330.5,190.81V858.8L495.9,667.99z" />
+				<path fill="#594AE2" d="M826.4,1049.6l495.75-286.21V0.37l-165.25,95.4v572.21L826.4,858.8V1049.6z" />
+				<path fill="#7467ef" d="M1495,467.85l-165.25,95.41,157.47,91.52,165.25-95.38Z" />
+				<path fill="#7467EF" d="M1322.15,763.39l-165.25,95.4l330.5,190.81V858.8L1322.15,763.39z" />
+				<path fill="#7467EF" d="M1322.13,0.38l-165.25,95.4l330.29,190.83l165.25-95.38L1322.13,0.38z" />
+				<path fill="#594AE2" d="M1652.43,191.21l-165.25,95.41v762.99l165.25-95.4L1652.43,191.21z" />
+			</svg>
+
+		</MudDrawerHeader>
+		<NavMenu />
+	</MudDrawer>
+	<MudMainContent Class="mudblazor-main-content">
+		<MudContainer MaxWidth="MaxWidth.Large">
+			@Body
+		</MudContainer>
+
+		<MudScrollToTop TopOffset="400">
+			<MudFab Icon="@Icons.Material.Filled.KeyboardArrowUp" Color="Color.Primary" />
+		</MudScrollToTop>
+	</MudMainContent>
+
+</MudLayout>
+
+@code
+{
+	private bool _drawerOpen = false;
+	private bool _rightToLeft = false;
+	private string searchValue = string.Empty;
+
+	private void DrawerToggle()
+	{
+		_drawerOpen = !_drawerOpen;
+	}
+
+	protected override void OnInitialized()
+	{
+		_currentTheme = _defaultTheme;
+
+	}
+
+	private MudTheme _currentTheme = new MudTheme();
+	private readonly MudTheme _defaultTheme =
+		new MudTheme()
+		{
+			Palette = new Palette()
+			{
+				Black = "#272c34"
+			}
+		};
+
+}
