@@ -31,7 +31,15 @@ else
                                     <img @onclick="@(() => { Class.DeleteHeight = (Class.DeleteHeight == "0") ? "30px" : "0"; })" src="@Class.ImgSource" style="width: 30px; height: 30px; cursor: pointer;" />
                                 </div>
                             </div>
-                            <div @onclick="@(async () => { await DeleteClass(Class); })" style="background-color: red; text-align: center; height: @Class.DeleteHeight; transition: height 0.5s; cursor: pointer;">
+                            <ul>
+                                @foreach (var schedule in Class.Schedules)
+                                {
+                                    <li class="schedule-item" @onclick="@(async () => { await DeleteScheduleAsync(Class, schedule); })">
+                                        <span>@schedule.Day.ToString() from @schedule.StartTime.ToString() to @schedule.EndTime.ToString()</span>
+                                    </li>
+                                }
+                            </ul>
+                            <div @onclick="@(async () => { await DeleteClassAsync(Class); })" style="background-color: red; text-align: center; height: @Class.DeleteHeight; transition: height 0.5s; cursor: pointer;">
                                 <img style="width: 30px; height: 30px;" src="trash.png" />
                             </div>
                             <hr />
@@ -59,7 +67,15 @@ else
                                         <img @onclick="@(() => { Class.DeleteHeight = (Class.DeleteHeight == "0") ? "30px" : "0"; })" src="@Class.ImgSource" style="width: 30px; height: 30px; cursor: pointer;" />
                                     </div>
                                 </div>
-                                <div @onclick="@(async () => { await DeleteTodayClass(Class); })" style="background-color: red; text-align: center; height: @Class.DeleteHeight; transition: height 0.5s; cursor: pointer;">
+                                <ul>
+                                    @foreach (var schedule in Class.Schedules)
+                                    {
+                                        <li class="schedule-item" @onclick="@(async () => { await DeleteScheduleAsync(Class, schedule); })">
+                                            <span>@schedule.Day.ToString() from @schedule.StartTime.ToString() to @schedule.EndTime.ToString()</span>
+                                        </li>
+                                    }
+                                </ul>
+                                <div @onclick="@(async () => { await DeleteTodayClassAsync(Class); })" style="background-color: red; text-align: center; height: @Class.DeleteHeight; transition: height 0.5s; cursor: pointer;">
                                     <img style="width: 30px; height: 30px;" src="trash.png" />
                                 </div>
                                 <hr />
@@ -68,9 +84,9 @@ else
                     </ul>
                 }
                 else
-                    {
-                        <h3 style="text-align: center; margin-top: 3ch;">You are free today, enjoy your day!</h3>
-                    }
+                {
+                    <h3 style="text-align: center; margin-top: 3ch;">You are free today, enjoy your day!</h3>
+                }
             </MudTabPanel>
         </MudTabs>
 
@@ -92,7 +108,7 @@ else
 
     protected override async Task OnInitializedAsync()
     {
-        var task = Task.Factory.StartNew( async () =>
+        var task = Task.Factory.StartNew(async () =>
         {
             MyClasses = classesService.GetAllClasses();
             loading = false;
@@ -102,7 +118,7 @@ else
         await task;
     }
 
-    private async Task DeleteClass(Class Class)
+    private async Task DeleteClassAsync(Class Class)
     {
         var res = await classesService.DeleteClass(Class.Code);
         if (res.success)
@@ -110,6 +126,10 @@ else
             MyClasses.Remove(Class);
             StateHasChanged();
             Snackbar.Add("Successfully deleted class", Severity.Success);
+            if (TodayClasses.Contains(Class))
+            {
+                TodayClasses.Remove(Class);
+            }
             return;
         }
         else
@@ -119,7 +139,7 @@ else
         }
     }
 
-    private async Task DeleteTodayClass(Class Class)
+    private async Task DeleteTodayClassAsync(Class Class)
     {
         var res = await classesService.DeleteClass(Class.Code);
         if (res.success)
@@ -135,5 +155,32 @@ else
             Snackbar.Add(res.err, Severity.Error);
             return;
         }
+    }
+
+    private async Task DeleteScheduleAsync(Class Class, ClassSchedule schedule)
+    {
+
+        var res = await classesService.DeleteSchedule(schedule.Id);
+        if (res.success)
+        {
+            Snackbar.Add("Successfully deleted schedule", Severity.Success);
+            Class.Schedules.Remove(schedule);
+            StateHasChanged();
+            if (TodayClasses.Contains(Class))
+            {
+                TodayClasses.Remove(Class);
+                foreach (var s in Class.Schedules)
+                {
+                    if (s.Day == Today)
+                    {
+                        TodayClasses.Add(Class);
+                        return;
+                    }
+                }
+                return;
+            }
+            return;
+        }
+        Snackbar.Add(res.err, Severity.Error);
     }
 }

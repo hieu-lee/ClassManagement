@@ -1,0 +1,24 @@
+﻿@page "/Class/{Code}"
+@inject ClassesService classesService
+
+@if (loading)
+{
+    <h1>Loading...</h1>
+}
+else
+{
+    <h2>@MyClass.Schedules.Count.ToString()</h2>
+}
+
+@code {
+    [Parameter]
+    public string Code { get; set; }
+    private Class MyClass;
+    private bool loading = true;
+
+    protected override async Task OnInitializedAsync()
+    {
+        MyClass = await classesService.GetClass(Code);
+        loading = false;
+    }
+}

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace ClassManagement.Models
 {
@@ -9,9 +10,11 @@ namespace ClassManagement.Models
         public string Id { get; init; } = Guid.NewGuid().ToString();
         [Required]
         public DateTime Day { get; init; }
+        public string Content { get; set; }
+        [ForeignKey("Classroom")]
+        public string ClassroomCode { get; set; }
         [Required]
         public Class Classroom { get; init; }
-        public string Content { get; set; }
 
         public int CompareTo(ClassNote other)
         {

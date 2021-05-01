@@ -1,5 +1,6 @@
 ﻿using ClassManagement.Data;
 using ClassManagement.Models;
+using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -9,7 +10,7 @@ namespace ClassManagement.Services
 {
     public class ClassesService
     {
-        private AppDbContext dbContext;
+        private readonly AppDbContext dbContext;
 
         public ClassesService(AppDbContext dbContext)
         {
@@ -18,8 +19,13 @@ namespace ClassManagement.Services
 
         public SortedSet<Class> GetAllClasses()
         {
-            var classes = new SortedSet<Class>(dbContext.Classes.ToArray());
-            return classes;
+            return new(dbContext.Classes.Include(s => s.Schedules).ToArray());
+        }
+
+        public async Task<Class> GetClass(string Code)
+        {
+            var res = await dbContext.Classes.Where(s => s.Code == Code).Include(s => s.Schedules).FirstOrDefaultAsync();
+            return res;
         }
 
         public ServiceResult GetClassesFromDay(DayOfWeek Day)
@@ -28,14 +34,14 @@ namespace ClassManagement.Services
             var dayClasses = dbContext.ClassSchedules.Where(s => s.Day == Day).ToArray();
             for (int i = 0; i < dayClasses.Length; i++)
             {
-                classes.Add(dayClasses[i].ClassRoom);
+                classes.Add(dayClasses[i].Classroom);
             }
             return new() { success = true, Classes = classes };
         }
 
         public ServiceResult GetAllStudents()
         {
-            var students = new SortedSet<Student>(dbContext.Students.ToArray());
+            var students = new SortedSet<Student>(dbContext.Students.Include(s => s.Classes).ToArray());
             return new() { success = true, Students = students };
         }
 
@@ -191,7 +197,7 @@ namespace ClassManagement.Services
             var Schedule = dbContext.ClassSchedules.Find(ScheduleId);
             if (Schedule is not null)
             {
-                var Class = dbContext.Classes.Find(Schedule.ClassRoom.Code);
+                var Class = dbContext.Classes.Find(Schedule.ClassroomCode);
                 Class.Schedules.Remove(Schedule);
                 dbContext.ClassSchedules.Remove(Schedule);
                 dbContext.Classes.Update(Class);

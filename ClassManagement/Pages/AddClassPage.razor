@@ -57,7 +57,7 @@
 
         protected override void OnInitialized()
         {
-            NewSchedule = new() { ClassRoom = DummyClass };
+            NewSchedule = new() { Classroom = DummyClass };
         }
 
         private void AddNewSchedule()
@@ -79,7 +79,7 @@
             else
             {
                 DummyClass.Schedules.Add(NewSchedule);
-                NewSchedule = new() { ClassRoom = DummyClass };
+                NewSchedule = new() { Classroom = DummyClass };
                 StateHasChanged();
                 Snackbar.Add("Successfully add new schedule to class", Severity.Success);
             }
@@ -102,19 +102,20 @@
                 Snackbar.Add("Your class must have at least one schedule", Severity.Error);
                 return;
             }
-            Parallel.ForEach(DummyClass.Schedules, schedule =>
-            {
-                schedule.ClassRoom = NewClass;
-            });
-            NewClass.Schedules = DummyClass.Schedules;
             NewClass.Code = NewClass.Code.Trim().ToUpper();
             NewClass.Name = NewClass.Name.Trim();
             NewClass.Name = NewClass.Name.First().ToString().ToUpper() + NewClass.Name.Substring(1);
+            Parallel.ForEach(DummyClass.Schedules, schedule =>
+            {
+                schedule.Classroom = NewClass;
+                schedule.ClassroomCode = NewClass.Code;
+                NewClass.Schedules.Add(schedule);
+            });
             var res = await classesService.CreateNewClass(NewClass);
             if (res.success)
             {
                 NewClass = new();
-                DummyClass.Schedules = new(); 
+                DummyClass.Schedules.Clear();
                 StateHasChanged();
                 Snackbar.Add("Successfully create new class", Severity.Success);
                 return;
