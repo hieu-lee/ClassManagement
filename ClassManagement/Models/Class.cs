@@ -8,7 +8,7 @@ namespace ClassManagement.Models
     {
         [Key]
         [Required]
-        [StringLength(6, ErrorMessage = "Code leng", MinimumLength = 6)]
+        [StringLength(10, ErrorMessage = "Code leng", MinimumLength = 6)]
         public string Code { get; set; }
         [Required]
         public string Name { get; set; }
@@ -19,12 +19,16 @@ namespace ClassManagement.Models
 #nullable disable
         public HashSet<Student> Students { get; set; } = new();
         public HashSet<ClassSchedule> Schedules { get; set; } = new();
+        public HashSet<ClassNote> Notes { get; set; } = new();
         public int NumberOfStudent => Students.Count;
         public string ImgSource => StyleConsts.ImgSourceLookUp[DeleteHeight];
 
         public int CompareTo(Class other)
         {
-            return Name.CompareTo(other.Name);
+            var r = Name.CompareTo(other.Name);
+            int res;
+            res = (r != 0)?r:Code.CompareTo(other.Code);
+            return res;
         }
 
         public override bool Equals(object obj)

@@ -9,7 +9,7 @@
             <DataAnnotationsValidator />
             <MudCard>
                 <MudCardContent>
-                    <MudTextField Label="Code" HelperText="Must be unique and have 6 characters"
+                    <MudTextField Label="Code" HelperText="Must be unique, have at least 6 characters and less than 11 characters"
                                   @bind-Value="NewClass.Code" For="@(() => NewClass.Code)" />
                     <MudTextField Label="Name" Class="mt-3"
                                   @bind-Value="NewClass.Name" For="@(() => NewClass.Name)" />
@@ -62,6 +62,10 @@
 
         private void AddNewSchedule()
         {
+            if (DummyClass.Schedules.Contains(NewSchedule))
+            {
+                return;
+            }
             if (NewSchedule.EndTime is null || NewSchedule.StartTime is null)
             {
                 Snackbar.Add("You need to fill in the time to add new schedule", Severity.Error);
@@ -88,6 +92,16 @@
                 Snackbar.Add("You have to fill in all required informations", Severity.Error);
                 return;
             }
+            if (NewClass.Code.Length > 10 || NewClass.Code.Length < 6)
+            {
+                Snackbar.Add("Your class code is invalid", Severity.Error);
+                return;
+            }
+            if (DummyClass.Schedules.Count == 0)
+            {
+                Snackbar.Add("Your class must have at least one schedule", Severity.Error);
+                return;
+            }
             Parallel.ForEach(DummyClass.Schedules, schedule =>
             {
                 schedule.ClassRoom = NewClass;
@@ -100,6 +114,7 @@
             if (res.success)
             {
                 NewClass = new();
+                DummyClass.Schedules = new(); 
                 StateHasChanged();
                 Snackbar.Add("Successfully create new class", Severity.Success);
                 return;

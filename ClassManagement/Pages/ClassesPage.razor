@@ -1,47 +1,139 @@
 ﻿@page "/Classes"
-@inject ClassesService classesService 
+@inject ClassesService classesService
+@inject ISnackbar Snackbar
 
 <h2 style="text-align:center;">My Classes</h2>
-@if (MyClasses.Count != 0)
+@if (loading)
 {
-    <ul>
-        <Virtualize Items="MyClasses" Context="Class">
-            <li>
-                <div style="display: flex; justify-content: space-between">
-                    <div style="display: flex;">
-                        <div>
-                            <img class="class-pic" src="classroom.png" />
-                        </div>
-                        <div>
-                            <h4>Code: @Class.Code</h4>
-                            <strong>@Class.Name</strong>
-                        </div>
-                    </div>
-                    <div>
-                        <img @onclick="@(() => { Class.DeleteHeight = (Class.DeleteHeight == "0") ? "30px" : "0"; })" src="@Class.ImgSource" style="width: 30px; height: 30px; cursor: pointer;" />
-                    </div>
-                </div>
-                <div style="background-color: red; text-align: center; height: @Class.DeleteHeight; transition: height 0.5s; cursor: pointer;">
-                    <img style="width: 30px; height: 30px;" src="trash.png" />
-                </div>
-                <hr />
-            </li>
-        </Virtualize>
-    </ul>
+    <MudProgressLinear Color="Color.Primary" Indeterminate="true" Class="my-7" />
+    <h3 style="text-align: center;">Getting all your classes</h3>
 }
 else
 {
-    <h3>You don't have any class yet, add your first class to get start</h3>
+    @if (MyClasses.Count != 0)
+    {
+        <MudTabs Elevation="4" Rounded="true" Centered="true" Color="@Color.Primary">
+            <MudTabPanel Text="All Classes">
+                <ul style="margin-top: 3ch;">
+                    <Virtualize Items="MyClasses" Context="Class">
+                        <li>
+                            <div style="display: flex; justify-content: space-between">
+                                <div style="display: flex;">
+                                    <div>
+                                        <img class="class-pic" src="classroom.png" />
+                                    </div>
+                                    <div>
+                                        <h4>Code: @Class.Code</h4>
+                                        <strong>@Class.Name</strong>
+                                    </div>
+                                </div>
+                                <div>
+                                    <img @onclick="@(() => { Class.DeleteHeight = (Class.DeleteHeight == "0") ? "30px" : "0"; })" src="@Class.ImgSource" style="width: 30px; height: 30px; cursor: pointer;" />
+                                </div>
+                            </div>
+                            <div @onclick="@(async () => { await DeleteClass(Class); })" style="background-color: red; text-align: center; height: @Class.DeleteHeight; transition: height 0.5s; cursor: pointer;">
+                                <img style="width: 30px; height: 30px;" src="trash.png" />
+                            </div>
+                            <hr />
+                        </li>
+                    </Virtualize>
+                </ul>
+            </MudTabPanel>
+            <MudTabPanel Text="Today Classes">
+                @if (TodayClasses.Count != 0)
+                {
+                    <ul style="margin-top: 3ch;">
+                        <Virtualize Items="TodayClasses" Context="Class">
+                            <li>
+                                <div style="display: flex; justify-content: space-between">
+                                    <div style="display: flex;">
+                                        <div>
+                                            <img class="class-pic" src="classroom.png" />
+                                        </div>
+                                        <div>
+                                            <h4>Code: @Class.Code</h4>
+                                            <strong>@Class.Name</strong>
+                                        </div>
+                                    </div>
+                                    <div>
+                                        <img @onclick="@(() => { Class.DeleteHeight = (Class.DeleteHeight == "0") ? "30px" : "0"; })" src="@Class.ImgSource" style="width: 30px; height: 30px; cursor: pointer;" />
+                                    </div>
+                                </div>
+                                <div @onclick="@(async () => { await DeleteTodayClass(Class); })" style="background-color: red; text-align: center; height: @Class.DeleteHeight; transition: height 0.5s; cursor: pointer;">
+                                    <img style="width: 30px; height: 30px;" src="trash.png" />
+                                </div>
+                                <hr />
+                            </li>
+                        </Virtualize>
+                    </ul>
+                }
+                else
+                    {
+                        <h3 style="text-align: center; margin-top: 3ch;">You are free today, enjoy your day!</h3>
+                    }
+            </MudTabPanel>
+        </MudTabs>
+
+    }
+    else
+    {
+        <h3 style="text-align: center;">You don't have any class yet, add your first class to get start</h3>
+    }
 }
+
 
 
 
 @code {
-    private List<Class> MyClasses;
+    private SortedSet<Class> MyClasses = new();
+    private SortedSet<Class> TodayClasses = new();
+    private bool loading = true;
+    private DayOfWeek Today = DateTime.Now.ToLocalTime().DayOfWeek;
 
     protected override async Task OnInitializedAsync()
     {
-        MyClasses = classesService.GetAllClasses();
-        MyClasses.Sort();
+        var task = Task.Factory.StartNew( async () =>
+        {
+            MyClasses = classesService.GetAllClasses();
+            loading = false;
+            await InvokeAsync(StateHasChanged);
+            TodayClasses = classesService.GetClassesFromDay(Today).Classes;
+        });
+        await task;
+    }
+
+    private async Task DeleteClass(Class Class)
+    {
+        var res = await classesService.DeleteClass(Class.Code);
+        if (res.success)
+        {
+            MyClasses.Remove(Class);
+            StateHasChanged();
+            Snackbar.Add("Successfully deleted class", Severity.Success);
+            return;
+        }
+        else
+        {
+            Snackbar.Add(res.err, Severity.Error);
+            return;
+        }
+    }
+
+    private async Task DeleteTodayClass(Class Class)
+    {
+        var res = await classesService.DeleteClass(Class.Code);
+        if (res.success)
+        {
+            TodayClasses.Remove(Class);
+            StateHasChanged();
+            MyClasses.Remove(Class);
+            Snackbar.Add("Successfully deleted class", Severity.Success);
+            return;
+        }
+        else
+        {
+            Snackbar.Add(res.err, Severity.Error);
+            return;
+        }
     }
 }

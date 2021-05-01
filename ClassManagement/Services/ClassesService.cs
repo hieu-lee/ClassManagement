@@ -1,6 +1,5 @@
 ﻿using ClassManagement.Data;
 using ClassManagement.Models;
-using Microsoft.Data.Sqlite;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -11,34 +10,32 @@ namespace ClassManagement.Services
     public class ClassesService
     {
         private AppDbContext dbContext;
+
         public ClassesService(AppDbContext dbContext)
         {
             this.dbContext = dbContext;
         }
 
-        public List<Class> GetAllClasses()
+        public SortedSet<Class> GetAllClasses()
         {
-            var classes = dbContext.Classes.Where(s => true).ToList();
+            var classes = new SortedSet<Class>(dbContext.Classes.ToArray());
             return classes;
         }
 
         public ServiceResult GetClassesFromDay(DayOfWeek Day)
         {
-            var schedules = dbContext.ClassSchedules.Where(s => s.Day == Day).ToArray();
-            HashSet<ClassSchedule> classSchedules = new();
-            Parallel.ForEach(schedules, schedule =>
+            var classes = new SortedSet<Class>();
+            var dayClasses = dbContext.ClassSchedules.Where(s => s.Day == Day).ToArray();
+            for (int i = 0; i < dayClasses.Length; i++)
             {
-                var Class = dbContext.Classes.Find(schedule.ClassRoom.Code);
-                schedule.ClassRoom = Class;
-                classSchedules.Add(schedule);
-            });
-            return new() { success = true, Schedules = classSchedules };
+                classes.Add(dayClasses[i].ClassRoom);
+            }
+            return new() { success = true, Classes = classes };
         }
 
         public ServiceResult GetAllStudents()
         {
-
-            var students = new SortedSet<Student>(dbContext.Students.Where(s => true).ToArray());
+            var students = new SortedSet<Student>(dbContext.Students.ToArray());
             return new() { success = true, Students = students };
         }
 
@@ -50,7 +47,7 @@ namespace ClassManagement.Services
 
         public ServiceResult GetAllNotes()
         {
-            var notes = new SortedSet<ClassNote>(dbContext.ClassNotes.Where(s => true).ToArray());
+            var notes = new SortedSet<ClassNote>(dbContext.ClassNotes.ToArray());
             return new() { success = true, Notes = notes };
         }
 
@@ -154,16 +151,12 @@ namespace ClassManagement.Services
             var Class = dbContext.Classes.Find(ClassCode);
             if (Class is not null)
             {
+                var task = Task.Factory.StartNew(() => { dbContext.ClassNotes.RemoveRange(Class.Notes); });
+                var task1 = Task.Factory.StartNew(() => { dbContext.ClassSchedules.RemoveRange(Class.Schedules); });
+                await task;
+                await task1;
                 dbContext.Classes.Remove(Class);
                 await dbContext.SaveChangesAsync();
-                using (var connection = new SqliteConnection("Data Source=app.db"))
-                {
-                    connection.Open();
-                    var command = connection.CreateCommand();
-                    command.CommandText = @"DELETE FROM ClassStudent WHERE ClassesCode = $id";
-                    command.Parameters.AddWithValue("$id", ClassCode);
-                    command.ExecuteNonQuery();
-                }
                 return new() { success = true };
             }
             return new() { success = false, err = "The class doesn't exist" };
@@ -176,14 +169,6 @@ namespace ClassManagement.Services
             {
                 dbContext.Students.Remove(Student);
                 await dbContext.SaveChangesAsync();
-                using (var connection = new SqliteConnection("Data Source=app.db"))
-                {
-                    connection.Open();
-                    var command = connection.CreateCommand();
-                    command.CommandText = @"DELETE FROM ClassStudent WHERE StudentsCode = $id";
-                    command.Parameters.AddWithValue("$id", StudentId);
-                    command.ExecuteNonQuery();
-                }
                 return new() { success = true };
             }
             return new() { success = false, err = "The student doesn't exist" };
