@@ -1,4 +1,5 @@
 ﻿@page "/AddClass"
+@using System.Text.RegularExpressions;
 @inject ClassesService classesService
 @inject ISnackbar Snackbar
 
@@ -9,9 +10,9 @@
             <DataAnnotationsValidator />
             <MudCard>
                 <MudCardContent>
-                    <MudTextField Label="Code" HelperText="Must be unique, have at least 6 characters and less than 11 characters"
+                    <MudTextField Label="Code" Required="true" HelperText="Must be unique, have at least 6 characters and less than 11 characters"
                                   @bind-Value="NewClass.Code" For="@(() => NewClass.Code)" />
-                    <MudTextField Label="Name" Class="mt-3"
+                    <MudTextField Label="Name" Required="true" Class="mt-3"
                                   @bind-Value="NewClass.Name" For="@(() => NewClass.Name)" />
                     <MudTextField Label="Address" Class="mt-3"
                                   @bind-Value="NewClass.Address" For="@(() => NewClass.Address)" />
@@ -54,6 +55,7 @@
         private Class NewClass = new();
         private Class DummyClass = new() { Code = "BAKA02", Name = "Baka" };
         private ClassSchedule NewSchedule;
+        Regex rgx = new Regex("[^A-Za-z0-9]");
 
         protected override void OnInitialized()
         {
@@ -87,6 +89,11 @@
 
         private async Task SubmitForm()
         {
+            if (rgx.IsMatch(NewClass.Code))
+            {
+                Snackbar.Add("Special characters and whitespaces is not allowed in the code", Severity.Error);
+                return;
+            }
             if (string.IsNullOrWhiteSpace(NewClass.Code) || string.IsNullOrWhiteSpace(NewClass.Name))
             {
                 Snackbar.Add("You have to fill in all required informations", Severity.Error);
