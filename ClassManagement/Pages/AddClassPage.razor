@@ -55,11 +55,11 @@
         private Class NewClass = new();
         private Class DummyClass = new() { Code = "BAKA02", Name = "Baka" };
         private ClassSchedule NewSchedule;
-        Regex rgx = new Regex("[^A-Za-z0-9]");
+        private Regex rgx = new("[^A-Za-z0-9]");
 
         protected override void OnInitialized()
         {
-            NewSchedule = new() { Classroom = DummyClass };
+            NewSchedule = new() { Classroom = DummyClass, ClassroomCode = DummyClass.Code };
         }
 
         private void AddNewSchedule()
@@ -81,7 +81,7 @@
             else
             {
                 DummyClass.Schedules.Add(NewSchedule);
-                NewSchedule = new() { Classroom = DummyClass };
+                NewSchedule = new() { Classroom = DummyClass, ClassroomCode = DummyClass.Code };
                 StateHasChanged();
                 Snackbar.Add("Successfully add new schedule to class", Severity.Success);
             }
