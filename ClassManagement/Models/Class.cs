@@ -19,7 +19,7 @@ namespace ClassManagement.Models
 #nullable disable
         public HashSet<Student> Students { get; set; } = new();
 
-
+        public HashSet<Grade> Grades { get; set; } = new();
         public HashSet<ClassSchedule> Schedules { get; set; } = new();
         public HashSet<ClassNote> Notes { get; set; } = new();
         public int NumberOfStudent => Students.Count;

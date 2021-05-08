@@ -12,6 +12,7 @@ namespace ClassManagement.Models
         public string Name { get; init; }
         public HashSet<Class> Classes { get; set; } = new();
         public DateTime DateOfBirth { get; init; }
+        public HashSet<Grade> Grades { get; set; } = new();
 
         public int CompareTo(Student other)
         {

@@ -3,22 +3,25 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace ClassManagement.Models
 {
     public class Grade : IComparable<Grade>
     {
         [Key]
-        [Required]
-        [StringLength(10, ErrorMessage = "Code leng", MinimumLength = 6)]
-        public string Id { get; set; }
+        public string Id { get; set; } = Guid.NewGuid().ToString();
 
         [Required]
         public double GradeinNum { get; set; }
 
-        public HashSet<Student> Students { get; set; } = new();
+        [ForeignKey("Student")]
+        public string StudentId { get; set; }
+        public Student Student { get; set; }
 
-        public HashSet<Class> Classes { get; set; } = new();
+        [ForeignKey("Classroom")]
+        public string ClassroomCode { get; set; }
+        public Class Classroom { get; set; }
 
         public int CompareTo (Grade other)
         {
@@ -33,11 +36,5 @@ namespace ClassManagement.Models
         {
             return Id.GetHashCode();
         }
-
-        [Required]
-        public string StudentName { get; set; }
-
-        public HashSet<Grade> Grades { get; set; } = new();
-
     }
 }

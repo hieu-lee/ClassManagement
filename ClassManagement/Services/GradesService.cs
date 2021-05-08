@@ -16,9 +16,9 @@ namespace ClassManagement.Services
             this.dbContext = dbContext;
         }
 
-        public async Task<Grade> GetGrade(int num)
+        public async Task<Grade> GetGradeAsync(string id)
         {
-            var res = await dbContext.Grades.Where(s => s.GradeinNum == num).Include(s => s.StudentName).FirstOrDefaultAsync();
+            var res = await dbContext.Grades.Where(s => s.Id == id).Include(s => s.Student).FirstOrDefaultAsync();
             return res;
         }
 
@@ -29,7 +29,7 @@ namespace ClassManagement.Services
 
         public ServiceResult GetGradesFromStudent(Student std)
         {
-            var grades = new SortedSet<Grade>(dbContext.Grades.Where(s => s.Students.Contains(std)).ToArray());
+            var grades = new SortedSet<Grade>(dbContext.Grades.Where(s => s.StudentId == std.Id).ToArray());
             return new() { success = true, Grades = grades };
         }
 
