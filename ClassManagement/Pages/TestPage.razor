@@ -1,0 +1,16 @@
+﻿@page "/test/{name}/{age:int}"
+@inject NavigationManager navigationManager
+
+<h3>TestPage</h3>
+
+@code {
+    [Parameter]
+    public string name { get; set; }
+    [Parameter]
+    public int age { get; set; }
+
+    protected override async Task OnInitializedAsync()
+    {
+        // code
+    }
+}
