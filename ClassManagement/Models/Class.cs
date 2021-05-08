@@ -18,6 +18,8 @@ namespace ClassManagement.Models
         public string? Address { get; set; }
 #nullable disable
         public HashSet<Student> Students { get; set; } = new();
+
+
         public HashSet<ClassSchedule> Schedules { get; set; } = new();
         public HashSet<ClassNote> Notes { get; set; } = new();
         public int NumberOfStudent => Students.Count;
