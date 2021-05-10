@@ -1,11 +1,11 @@
 ﻿@page "/grade/{id}"
+@page "/grade" 
 @inject NavigationManager navigationManager
 @inject GradesService gradesServive
 
 <h3>TestPage</h3>
 <h1>@myGrade.GradeinNum</h1>
 <h3>@myGrade.Student.Name</h3>
-<h4>@myGrade.ClassroomCode</h4>
 
 @code {
     [Parameter]

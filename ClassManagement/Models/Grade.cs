@@ -20,7 +20,7 @@ namespace ClassManagement.Models
         public Student Student { get; set; }
 
         [ForeignKey("Classroom")]
-        public string ClassroomCode { get; set; }
+        public string ClassCode { get; set; }
         public Class Classroom { get; set; }
 
         public int CompareTo (Grade other)
