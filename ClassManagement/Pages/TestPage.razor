@@ -1,20 +1,34 @@
 ﻿@page "/grade/{id}"
-@page "/grade" 
+@page "/grade"
 @inject NavigationManager navigationManager
 @inject GradesService gradesServive
-
+@inject TestService TestService
 <h3>TestPage</h3>
-<h1>@myGrade.GradeinNum</h1>
-<h3>@myGrade.Student.Name</h3>
+
+
+<!--<h1>@myGrade.GradeinNum</h1>
+<h3>@myGrade.Student.Name</h3>-->
+
+<div class="alert alert-success">
+    @AlertText
+    Toggle button <input type ="checkbox" @bind ="testbool"/>
+</div>
 
 @code {
     [Parameter]
     public string id { get; set; }
 
+    [Parameter]
+    public bool testbool { get; set; }
+
+    [Parameter]
+    public string AlertText { get; set; }
+
     private Grade myGrade;
 
     protected override async Task OnInitializedAsync()
     {
+        id = "123456";
         myGrade = await gradesServive.GetGradeAsync(id);
     }
 }

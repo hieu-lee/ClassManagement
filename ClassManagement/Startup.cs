@@ -42,9 +42,11 @@ namespace ClassManagement
                 config.SnackbarConfiguration.ShowTransitionDuration = 500;
                 config.SnackbarConfiguration.SnackbarVariant = Variant.Filled;
             });
-            services.AddScoped<GradesService>();
+            
             services.AddScoped<ClassesService>();
             services.AddSingleton<WeatherForecastService>();
+            services.AddTransient<GradesService>();
+            services.AddScoped<TestService>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
