@@ -23,7 +23,7 @@ namespace ClassManagement.Services
 
         public SortedSet<Grade> GetAllGrades()
         {
-            return new(dbContext.Grades.Include(s => s.Id).ToArray());
+            return new(dbContext.Grades.ToArray());
         }
 
         public ServiceResult GetGradesFromStudent(Student std)
@@ -32,12 +32,30 @@ namespace ClassManagement.Services
             return new() { success = true, Grades = grades };
         }
 
-        public async Task<ServiceResult> CreateNewGrade(Grade NewGrade)
+        public async Task<ServiceResult> CreateNewGradeAsync(Grade NewGrade)
         {
+            Student student;
+            Class classroom;
             var Grade = dbContext.Grades.Find(NewGrade.Id);
-            if (Grade is not null)
+            if (Grade != null)
             {
                 return new() { success = false, err = "Grade already existed" };
+            }
+            if (NewGrade.Student.Id != null)
+            {
+                student = dbContext.Students.Find(NewGrade.Student.Id);
+                if (student is not null)
+                {
+                    NewGrade.Student = student;
+                }
+            }
+            if (NewGrade.Classroom.Code != null)
+            {
+                classroom = dbContext.Classes.Find(NewGrade.Classroom.Code);
+                if (classroom is not null)
+                {
+                    NewGrade.Classroom = classroom;
+                }
             }
             dbContext.Grades.Add(NewGrade);
             await dbContext.SaveChangesAsync();

@@ -13,7 +13,7 @@ namespace ClassManagement.Models
         public string Id { get; set; } = Guid.NewGuid().ToString();
 
         [Required]
-        public double GradeinNum { get; set; } = 10;
+        public double GradeinNum { get; init; } = 10;
 
         [ForeignKey("Student")]
         public string StudentId { get; set; } = string.Empty;

@@ -5,13 +5,15 @@
 @inject TestService TestService
 <h3>TestPage</h3>
 
-
-<h1>@myGrade.GradeinNum</h1>
-
-<div class="alert alert-success">
-    @AlertText
-    Toggle button <input type ="checkbox" @bind ="testbool"/>
-</div>
+<MudTextField @bind-Value="NewGradeInNum" Label="Standard" Variant="Variant.Text" Margin="Margin.Dense"></MudTextField>
+<br/>
+<MudButton Variant="Variant.Filled" Color="Color.Primary" @onclick="AddNewClass">Add New Class</MudButton>
+<ul>
+    @foreach (var grade in myGrades)
+            {
+                <li>@grade.Id, @grade.GradeinNum</li>
+            }
+</ul>
 
 @code {
     [Parameter]
@@ -23,12 +25,26 @@
     [Parameter]
     public string AlertText { get; set; }
 
-    private Grade myGrade;
+    private SortedSet<Grade> myGrades;
+
+    private double NewGradeInNum;
+
+    private Student defaultStudent = new() { Name = "Hieu" };
+
+    private Class defaultClass = new() { Code = "CSE101", Name = "CS" };
+
+    private Grade myGrade = new();
+
+    private async Task AddNewClass()
+    {
+        myGrade = new() { Student=defaultStudent, Classroom=defaultClass, GradeinNum = NewGradeInNum };
+        myGrades.Add(myGrade);
+        await gradesServive.CreateNewGradeAsync(myGrade);
+        NewGradeInNum = 0;
+    }
 
     protected override async Task OnInitializedAsync()
     {
-        var newid = "123456";
-        myGrade = await gradesServive.GetGradeAsync(newid);
-        
+        myGrades = gradesServive.GetAllGrades();
     }
 }
