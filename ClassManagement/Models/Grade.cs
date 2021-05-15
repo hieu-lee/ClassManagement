@@ -13,11 +13,11 @@ namespace ClassManagement.Models
         public string Id { get; set; } = Guid.NewGuid().ToString();
 
         [Required]
-        public double GradeinNum { get; set; }
+        public double GradeinNum { get; set; } = 10;
 
         [ForeignKey("Student")]
-        public string StudentId { get; set; }
-        public Student Student { get; set; }
+        public string StudentId { get; set; } = string.Empty;
+        public Student Student { get; set; } = new();
 
         [ForeignKey("Classroom")]
         public string ClassCode { get; set; }

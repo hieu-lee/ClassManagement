@@ -6,8 +6,7 @@
 <h3>TestPage</h3>
 
 
-<!--<h1>@myGrade.GradeinNum</h1>
-<h3>@myGrade.Student.Name</h3>-->
+<h1>@myGrade.GradeinNum</h1>
 
 <div class="alert alert-success">
     @AlertText
@@ -28,7 +27,8 @@
 
     protected override async Task OnInitializedAsync()
     {
-        id = "123456";
-        myGrade = await gradesServive.GetGradeAsync(id);
+        var newid = "123456";
+        myGrade = await gradesServive.GetGradeAsync(newid);
+        
     }
 }
