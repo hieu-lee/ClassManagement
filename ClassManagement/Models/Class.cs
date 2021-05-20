@@ -8,7 +8,7 @@ namespace ClassManagement.Models
     {
         [Key]
         [Required]
-        [StringLength(10, ErrorMessage = "Code leng", MinimumLength = 6)]
+        [StringLength(10, ErrorMessage = "Code length must be between 6 and 10 characters", MinimumLength = 6)]
         public string Code { get; set; }
         [Required]
         public string Name { get; set; }

@@ -40,7 +40,7 @@ else
                                 }
                             </ul>
                             <div @onclick="@(async () => { await DeleteClassAsync(Class); })" style="background-color: red; text-align: center; height: @Class.DeleteHeight; transition: height 0.5s; cursor: pointer;">
-                                <img style="width: 30px; height: 30px;" src="trash.png" />
+                                <img style="width: 30px; height: @Class.DeleteHeight; transition: height 0.5s" src="trash.png" />
                             </div>
                             <hr />
                         </li>
