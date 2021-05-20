@@ -106,6 +106,7 @@ namespace ClassManagement.Migrations
                 {
                     Id = table.Column<string>(type: "TEXT", nullable: false),
                     GradeinNum = table.Column<double>(type: "REAL", nullable: false),
+                    StdName = table.Column<string>(type: "TEXT", nullable: false),
                     StudentId = table.Column<string>(type: "TEXT", nullable: true),
                     ClassCode = table.Column<string>(type: "TEXT", nullable: true)
                 },

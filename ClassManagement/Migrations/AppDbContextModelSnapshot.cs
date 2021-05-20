@@ -97,6 +97,10 @@ namespace ClassManagement.Migrations
                     b.Property<double>("GradeinNum")
                         .HasColumnType("REAL");
 
+                    b.Property<string>("StdName")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
                     b.Property<string>("StudentId")
                         .HasColumnType("TEXT");
 

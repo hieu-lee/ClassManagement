@@ -15,9 +15,9 @@ namespace ClassManagement.Services
             this.dbContext = dbContext;
         }
 
-        public async Task<Grade> GetGradeAsync(string id)
+        public async Task<Grade> GetGradeAsync(Student student)
         {
-            var res = await dbContext.Grades.Where(s => s.Id == id).Include(s => s.Student).FirstOrDefaultAsync();
+            var res = await dbContext.Grades.Where(s => s.StudentId == student.Id).FirstOrDefaultAsync();
             return res;
         }
 

@@ -5,17 +5,44 @@
 @inject TestService TestService
 <h3>TestPage</h3>
 
-<MudTextField @bind-Value="NewGradeInNum" Label="Standard" Variant="Variant.Text" Margin="Margin.Dense"></MudTextField>
-<br/>
-<MudButton Variant="Variant.Filled" Color="Color.Primary" @onclick="AddNewClass">Add New Class</MudButton>
+<span> Current grades stored: </span>
+<br />
+
+<MudTextField @bind-Value="NewStudentName" Label="Student Name" Variant="Variant.Text" Margin="Margin.Dense"></MudTextField>
+<br />
+
+<MudTextField @bind-Value="ClassCode" Label="Class Name" Variant="Variant.Text" Margin="Margin.Dense"></MudTextField>
+<br />
+
+<MudTextField @bind-Value="NewGradeInNum" Label="Student Score" Variant="Variant.Text" Margin="Margin.Dense"></MudTextField>
+<br />
+
+<MudButton Variant="Variant.Filled" Color="Color.Primary" @onclick="AddNewScore">Add New Score</MudButton>
+<br />
+
 <ul>
     @foreach (var grade in myGrades)
-            {
-                <li>@grade.Id, @grade.GradeinNum</li>
-            }
+    {
+    <li>@grade.StdName, @grade.GradeinNum, @grade.ClassCode, id = @grade.Id</li>
+    }
 </ul>
 
+<br/>
+<br/>
+<MudButton Link="https://hieu-lee.github.io/portfolio"
+           Target="_blank"
+           Variant="Variant.Text"
+           EndIcon="@Icons.Custom.Brands.GitHub"
+           Color="Color.Primary"
+           Style="text-transform:none"
+           Disabled=@disabled>
+    HieuLe's Portfolio
+</MudButton>
+
 @code {
+
+    bool disabled = false;
+
     [Parameter]
     public string id { get; set; }
 
@@ -29,22 +56,43 @@
 
     private double NewGradeInNum;
 
-    private Student defaultStudent = new() { Name = "Hieu" };
+    private string NewStudentName;
 
-    private Class defaultClass = new() { Code = "CSE101", Name = "CS" };
+    private string ClassCode;
+
+
+    private Student defaultStudent;
+
+    private Class defaultClass;
 
     private Grade myGrade = new();
 
-    private async Task AddNewClass()
+    private async Task AddNewScore()
     {
-        myGrade = new() { Student=defaultStudent, Classroom=defaultClass, GradeinNum = NewGradeInNum };
+        defaultStudent = new Student { Name = NewStudentName };
+        if (defaultStudent.Name == string.Empty) defaultStudent.Name = "HieuLe";
+        // maybe alerts
+
+        defaultClass = new Class { Code = ClassCode, Name = "CS" };
+        if (defaultClass.Code == string.Empty) defaultClass.Code = "CSE101";
+
+
+        myGrade = new() { Student = defaultStudent, Classroom = defaultClass, GradeinNum = NewGradeInNum,
+        StdName = defaultStudent.Name};
         myGrades.Add(myGrade);
         await gradesServive.CreateNewGradeAsync(myGrade);
+
         NewGradeInNum = 0;
+        NewStudentName = string.Empty;
+        ClassCode = string.Empty;
     }
 
-    protected override async Task OnInitializedAsync()
+    protected override void OnInitialized()
     {
         myGrades = gradesServive.GetAllGrades();
     }
+
+
+
+
 }

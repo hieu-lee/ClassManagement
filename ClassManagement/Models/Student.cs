@@ -9,7 +9,7 @@ namespace ClassManagement.Models
         [Key]
         public string Id { get; init; } = Guid.NewGuid().ToString();
         [Required]
-        public string Name { get; init; }
+        public string Name { get; set; }
         public HashSet<Class> Classes { get; set; } = new();
         public DateTime DateOfBirth { get; init; }
         public HashSet<Grade> Grades { get; set; } = new();

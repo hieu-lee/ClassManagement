@@ -9,7 +9,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace ClassManagement.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20210515023136_.")]
+    [Migration("20210520112144_.")]
     partial class _
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -98,6 +98,10 @@ namespace ClassManagement.Migrations
 
                     b.Property<double>("GradeinNum")
                         .HasColumnType("REAL");
+
+                    b.Property<string>("StdName")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
 
                     b.Property<string>("StudentId")
                         .HasColumnType("TEXT");
