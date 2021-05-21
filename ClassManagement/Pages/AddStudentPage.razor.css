@@ -5,9 +5,9 @@
     color: #ffffff;
     margin-bottom: 5px;
     transition: background-color 0.5s;
+    cursor: pointer;
 }
 
-    .calss-code:hover {
-        cursor: pointer;
+    .class-code:hover {
         background-color: #D81417;
     }

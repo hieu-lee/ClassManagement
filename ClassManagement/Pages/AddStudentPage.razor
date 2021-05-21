@@ -1,7 +1,6 @@
 ﻿@page "/AddStudent"
 @inject ClassesService classesService
 @inject ISnackbar Snackbar
-@using ClassManagement.Components;
 
 
 <div style="max-width: 500px; margin: 5ch auto; padding-bottom: 5ch;">
@@ -29,7 +28,7 @@
                     }
                 </ul>
                 <div>
-                    <h5 style="margin-top: 20px; text-align: center;">Add schedule</h5>
+                    <h5 style="margin-top: 20px; text-align: center;">Add Class</h5>
                     <MudSelect Label="Class" Required="true" @bind-Value="@NewCode" T="string">
                         @foreach (var Code in ClassCodes)
                         {
@@ -76,6 +75,10 @@
         if (NewCode is null)
         {
             Snackbar.Add("You have to fill in the class code", Severity.Error);
+            return;
+        }
+        if (NewStudentCodes.Contains(NewCode))
+        {
             return;
         }
         NewStudentCodes.Add(NewCode);
