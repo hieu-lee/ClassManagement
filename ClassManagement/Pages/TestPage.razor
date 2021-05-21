@@ -91,7 +91,7 @@
 
     private async Task AddNewScore()
     {
-        if (NewStudentName == string.Empty) NewStudentName = "HieuLe"; // default value
+        if (string.IsNullOrEmpty(NewStudentName)) NewStudentName = "HieuLe"; // default value
         defaultStudent = gradesService.GetStudentFromName(NewStudentName);
         // maybe alerts
 
