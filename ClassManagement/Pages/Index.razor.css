@@ -20,12 +20,29 @@
 .feature {
     padding: 3ch;
     cursor: pointer;
-    margin: 0 3ch;
-    max-width: 270px;
+    margin: 2ch;
     display: flex;
     border: 1px solid #c8c8c8;
     border-radius: 5px;
     transition: border 0.3s;
+}
+
+@media (max-width: 1100px) {
+    .features {
+        display: block;
+    }
+}
+
+@media (min-width: 1101px) {
+    .feature {
+        max-width: 270px;
+    }
+}
+
+@media (min-width: 1400px) {
+    .feature {
+        max-width: 330px;
+    }
 }
 
     .feature:hover {
