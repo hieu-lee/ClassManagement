@@ -1,8 +1,8 @@
 ﻿@page "/grade/{id}"
 @page "/grade"
 @inject NavigationManager navigationManager
-@inject GradesService gradesServive
-@inject TestService TestService
+@inject GradesService gradesService
+@inject ClassesService classesService
 <h3>TestPage</h3>
 
 <span> Current grades stored: </span>
@@ -20,15 +20,17 @@
 <MudButton Variant="Variant.Filled" Color="Color.Primary" @onclick="AddNewScore">Add New Score</MudButton>
 <br />
 
+
+
 <ul>
     @foreach (var grade in myGrades)
     {
-    <li>@grade.StdName, @grade.GradeinNum, @grade.ClassCode, id = @grade.Id</li>
+        <li>@grade.StdName, @grade.GradeinNum, @grade.ClassCode, id = @grade.Id</li>
     }
 </ul>
 
-<br/>
-<br/>
+<br />
+<br />
 <MudButton Link="https://hieu-lee.github.io/portfolio"
            Target="_blank"
            Variant="Variant.Text"
@@ -38,6 +40,24 @@
            Disabled=@disabled>
     HieuLe's Portfolio
 </MudButton>
+
+<br />
+<br />
+<MudTextField @bind-Value="StudentToDisplay" Label="Student to Display scores" Variant="Variant.Text" Margin="Margin.Dense"></MudTextField>
+<br />
+
+<MudButton Variant="Variant.Filled" Color="Color.Primary" @onclick="DisplayScore">Display Student Score</MudButton>
+<br />
+
+<ul>
+    @if (studentGrades!= null && studentGrades.Any())
+    @foreach (var grade in studentGrades)
+    {
+        <li>@grade.StdName, @grade.GradeinNum, @grade.ClassCode, id = @grade.Id</li>
+    }
+</ul>
+
+
 
 @code {
 
@@ -53,6 +73,7 @@
     public string AlertText { get; set; }
 
     private SortedSet<Grade> myGrades;
+    private SortedSet<Grade> studentGrades;
 
     private double NewGradeInNum;
 
@@ -60,6 +81,7 @@
 
     private string ClassCode;
 
+    private string StudentToDisplay;
 
     private Student defaultStudent;
 
@@ -69,30 +91,44 @@
 
     private async Task AddNewScore()
     {
-        defaultStudent = new Student { Name = NewStudentName };
-        if (defaultStudent.Name == string.Empty) defaultStudent.Name = "HieuLe";
+        if (NewStudentName == string.Empty) NewStudentName = "HieuLe"; // default value
+        defaultStudent = gradesService.GetStudentFromName(NewStudentName);
         // maybe alerts
 
+        //Havent' fixed classes yet...
         defaultClass = new Class { Code = ClassCode, Name = "CS" };
         if (defaultClass.Code == string.Empty) defaultClass.Code = "CSE101";
 
 
-        myGrade = new() { Student = defaultStudent, Classroom = defaultClass, GradeinNum = NewGradeInNum,
-        StdName = defaultStudent.Name};
+        myGrade = new()
+        {
+            Student = defaultStudent,
+            Classroom = defaultClass,
+            GradeinNum = NewGradeInNum,
+            StdName = defaultStudent.Name
+        };
         myGrades.Add(myGrade);
-        await gradesServive.CreateNewGradeAsync(myGrade);
+        await gradesService.CreateNewGradeAsync(myGrade);
 
         NewGradeInNum = 0;
         NewStudentName = string.Empty;
         ClassCode = string.Empty;
     }
 
-    protected override void OnInitialized()
+    //display score of student X
+    private void DisplayScore()
     {
-        myGrades = gradesServive.GetAllGrades();
+        // search for student with said name
+        Student std1 = gradesService.GetStudentFromName(StudentToDisplay);
+
+        ServiceResult svrs = gradesService.GetGradesFromStudent(std1);
+        studentGrades = svrs.Grades;
     }
 
-
+    protected override void OnInitialized()
+    {
+        myGrades = gradesService.GetAllGrades();
+    }
 
 
 }

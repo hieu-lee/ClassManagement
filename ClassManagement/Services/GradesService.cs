@@ -26,6 +26,17 @@ namespace ClassManagement.Services
             return new(dbContext.Grades.ToArray());
         }
 
+        public Student GetStudentFromName (string studentName)
+        {
+            var students = dbContext.Students.Where (s => s.Name == studentName).ToArray();
+            if (students.Length==0)
+            {
+                Student newStudent = new() { Name = studentName };
+                return newStudent;
+            }
+            return students[0];
+        }
+        
         public ServiceResult GetGradesFromStudent(Student std)
         {
             var grades = new SortedSet<Grade>(dbContext.Grades.Where(s => s.StudentId == std.Id).ToArray());
