@@ -21,7 +21,7 @@
                     <ul style="margin-top: 10px;">
                         @foreach (var schedule in DummyClass.Schedules)
                         {
-                            <li class="schedule-item" style="transition: all 0.5s;" @onclick="@(() => { DummyClass.Schedules.Remove(schedule); })">
+                            <li class="schedule-item" @onclick="@(() => { DummyClass.Schedules.Remove(schedule); })">
                                 <span>@schedule.Day.ToString() from @schedule.StartTime.ToString() to @schedule.EndTime.ToString()</span>
                             </li>
                         }

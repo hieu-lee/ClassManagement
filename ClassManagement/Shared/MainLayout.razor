@@ -9,7 +9,7 @@
 	<MudAppBar Elevation="25">
 		<MudIconButton Icon="@Icons.Material.Filled.Menu" Color="Color.Inherit" Edge="Edge.Start" OnClick="@((e) => DrawerToggle())" />
 		<MudHidden Breakpoint="Breakpoint.SmAndUp" Invert="true">
-			<MudText Typo="Typo.h5" Style="cursor: pointer; margin-left: 2ch;" @onclick="@(() => { navigationManager.NavigateTo("/"); })" Class="mudblazor-appbar-brand-text">My Classes</MudText>
+			<MudText Typo="Typo.h5" Style="cursor: pointer; margin-left: 2ch;" @onclick="@(() => { navigationManager.NavigateTo("/"); })" Class="mudblazor-appbar-brand-text">MEDU</MudText>
 		</MudHidden>
 		<MudAppBarSpacer />
 
@@ -46,10 +46,9 @@
 		<NavMenu/>
 	</MudDrawer>
 	<MudMainContent Class="mudblazor-main-content">
-		<MudContainer MaxWidth="MaxWidth.Large">
-			@Body
-		</MudContainer>
-
+        <div style="width: 100%;">
+            @Body
+        </div>
 		<MudScrollToTop TopOffset="400">
 			<MudFab Icon="@Icons.Material.Filled.KeyboardArrowUp" Color="Color.Primary" />
 		</MudScrollToTop>
