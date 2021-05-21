@@ -1,0 +1,85 @@
+﻿@page "/AddStudent"
+@inject ClassesService classesService
+@inject ISnackbar Snackbar
+@using ClassManagement.Components;
+
+
+<div style="max-width: 500px; margin: 5ch auto; padding-bottom: 5ch;">
+    <h3 style="text-align: center;">Create new student record</h3>
+    <EditForm Model="@NewStudent" OnValidSubmit="SubmitForm">
+        <DataAnnotationsValidator />
+        <MudCard Style="border-top: 10px solid #594AE2">
+            <MudCardContent>
+                <MudTextField Label="Name" Required="true" HelperText="Must be unique, have at least 6 characters and less than 11 characters"
+                              @bind-Value="NewStudent.Name" For="@(() => NewStudent.Name)" />
+                <MudDatePicker Label="Date of Birth" Required="true" @bind-Date="NewStudent.DateOfBirth" For="@(() => NewStudent.DateOfBirth)"/>
+                <MudSelect Label="Gender" Required="true" @bind-Value="NewStudent.Gender" For="@(() => NewStudent.Gender)" T="string">
+                    <MudSelectItem Value="@("Male")"/>
+                    <MudSelectItem Value="@("Female")"/>
+                    <MudSelectItem Value="@("Other")"/>
+                </MudSelect>
+                <MudTextField Label="Description" Class="mt-3"
+                              @bind-Value="NewStudent.Description" For="@(() => NewStudent.Description)" Lines="5" />
+                <ul style="margin-top: 10px;">
+                    @foreach (var Code in NewStudentCodes)
+                    {
+                        <li class="class-code" @onclick="@(() => { NewStudentCodes.Remove(Code); })">
+                            <span>@Code</span>
+                        </li>
+                    }
+                </ul>
+                <div>
+                    <h5 style="margin-top: 20px; text-align: center;">Add schedule</h5>
+                    <MudSelect MultiSelection="true" Label="Class" Required="true" @bind-Value="@NewCode" For="@(() => NewCode)" T="string">
+                        @foreach (var Code in ClassCodes)
+                        {
+                            <MudSelectItem Value="@Code">@Code</MudSelectItem>
+                        } 
+                    </MudSelect>
+                    <MudCardActions>
+                        <MudButton @onclick="AddNewClassCode" Variant="Variant.Outlined" Color="Color.Primary" Style="margin: 0 auto;">Add Class</MudButton>
+                    </MudCardActions>
+                </div>
+            </MudCardContent>
+            <MudCardActions>
+                <MudButton ButtonType="ButtonType.Submit" Variant="Variant.Filled" Color="Color.Primary" Style="margin: 0 auto;">Add Student Record</MudButton>
+            </MudCardActions>
+        </MudCard>
+    </EditForm>
+</div>
+
+@code {
+    private HashSet<string> NewStudentCodes = new();
+    private string NewCode;
+    private Student NewStudent = new();
+    private List<string> ClassCodes;
+    private List<MudSelectItem<string>> smts = new();
+
+    protected override async Task OnInitializedAsync()
+    {
+        ClassCodes = await classesService.GetAllClassCodes();
+    }
+
+    private async Task SubmitForm()
+    {
+        var task = classesService.CreateNewStudent(NewStudent, NewStudentCodes);
+        NewStudent = new();
+        NewStudentCodes = new();
+        await task;
+        NewStudentCodes.Add(NewCode);
+        Snackbar.Add("Successfully added new student record", Severity.Success);
+        return;
+    }
+
+    private void AddNewClassCode()
+    {
+        if (NewCode is null)
+        {
+            Snackbar.Add("You have to fill in the class code", Severity.Error);
+            return;
+        }
+        NewStudentCodes.Add(NewCode);
+        Snackbar.Add("Successfully added new class", Severity.Success);
+        return;
+    }
+}

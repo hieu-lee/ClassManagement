@@ -11,18 +11,20 @@ namespace ClassManagement.Models
         [Required]
         public string Name { get; set; }
 #nullable enable
-        public string? ClassesCodes { get; set; }
+        public string? ClassesCodesToString { get; set; }
         public string? Description { get; set; }
 #nullable disable
-        public string Gender { get; init; }
+        [Required]
+        public string Gender { get; set; }
         public HashSet<Class> Classes { get; set; } = new();
-        public DateTime DateOfBirth { get; init; }
+        [Required]
+        public DateTime? DateOfBirth { get; set; }
         public HashSet<Grade> Grades { get; set; } = new();
         public string GetAllClassesCode()
         {
-            if (ClassesCodes is not null)
+            if (ClassesCodesToString is not null)
             {
-                return ClassesCodes;
+                return ClassesCodesToString;
             }
             var res = "";
             var n = Classes.Count;
@@ -31,7 +33,7 @@ namespace ClassManagement.Models
             {
                 res += (i == n-1)?$"{cls.Code}": $"{cls.Code}, ";
             }
-            ClassesCodes = res;
+            ClassesCodesToString = res;
             return res;
         }
 

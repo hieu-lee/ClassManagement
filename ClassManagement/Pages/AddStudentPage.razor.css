@@ -1,0 +1,13 @@
+﻿.class-code {
+    border-radius: 5px;
+    background-color: #584AE1;
+    padding: 8px;
+    color: #ffffff;
+    margin-bottom: 5px;
+    transition: background-color 0.5s;
+}
+
+    .calss-code:hover {
+        cursor: pointer;
+        background-color: #D81417;
+    }

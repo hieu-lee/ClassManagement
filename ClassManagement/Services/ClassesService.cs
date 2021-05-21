@@ -22,6 +22,13 @@ namespace ClassManagement.Services
             return new(dbContext.Classes.Include(s => s.Schedules).ToArray());
         }
 
+        public async Task<List<string>> GetAllClassCodes()
+        {
+            var res = await dbContext.Classes.Select(s => s.Code).ToListAsync();
+            res.Sort();
+            return res;
+        }
+
         public async Task<Class> GetClass(string Code)
         {
             var res = await dbContext.Classes.Where(s => s.Code == Code).Include(s => s.Schedules).Include(s => s.Students).FirstOrDefaultAsync();
@@ -71,6 +78,15 @@ namespace ClassManagement.Services
                 return new() { success = false, err = "Class has already existed" };
             }
             dbContext.Classes.Add(NewClass);
+            await dbContext.SaveChangesAsync();
+            return new() { success = true };
+        }
+
+        public async Task<ServiceResult> CreateNewStudent(Student student, HashSet<string> codes)
+        {
+            var classes = dbContext.Classes.Where(s => codes.Contains(s.Code)).ToHashSet();
+            student.Classes = classes;
+            dbContext.Students.Add(student);
             await dbContext.SaveChangesAsync();
             return new() { success = true };
         }

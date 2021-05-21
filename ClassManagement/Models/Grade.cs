@@ -29,7 +29,9 @@ namespace ClassManagement.Models
 
         public int CompareTo (Grade other)
         {
-            return GradeinNum.CompareTo(other.GradeinNum);
+            var c = GradeinNum.CompareTo(other.GradeinNum);
+            var res = (c == 0)?Id.CompareTo(other.Id):c;
+            return res;
         }
         public override bool Equals(object obj)
         {
