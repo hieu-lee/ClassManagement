@@ -9,7 +9,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace ClassManagement.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20210520154633_.")]
+    [Migration("20210521033904_.")]
     partial class _
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -124,6 +124,9 @@ namespace ClassManagement.Migrations
                         .HasColumnType("TEXT");
 
                     b.Property<DateTime>("DateOfBirth")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("Description")
                         .HasColumnType("TEXT");
 
                     b.Property<string>("Gender")

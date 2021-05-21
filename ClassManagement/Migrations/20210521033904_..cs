@@ -29,6 +29,7 @@ namespace ClassManagement.Migrations
                     Id = table.Column<string>(type: "TEXT", nullable: false),
                     Name = table.Column<string>(type: "TEXT", nullable: false),
                     ClassesCodes = table.Column<string>(type: "TEXT", nullable: true),
+                    Description = table.Column<string>(type: "TEXT", nullable: true),
                     Gender = table.Column<string>(type: "TEXT", nullable: true),
                     DateOfBirth = table.Column<DateTime>(type: "TEXT", nullable: false)
                 },

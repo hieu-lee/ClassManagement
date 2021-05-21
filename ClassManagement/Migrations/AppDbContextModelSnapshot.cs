@@ -124,6 +124,9 @@ namespace ClassManagement.Migrations
                     b.Property<DateTime>("DateOfBirth")
                         .HasColumnType("TEXT");
 
+                    b.Property<string>("Description")
+                        .HasColumnType("TEXT");
+
                     b.Property<string>("Gender")
                         .HasColumnType("TEXT");
 

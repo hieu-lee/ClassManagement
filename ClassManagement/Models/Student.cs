@@ -12,6 +12,7 @@ namespace ClassManagement.Models
         public string Name { get; set; }
 #nullable enable
         public string? ClassesCodes { get; set; }
+        public string? Description { get; set; }
 #nullable disable
         public string Gender { get; init; }
         public HashSet<Class> Classes { get; set; } = new();
