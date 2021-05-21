@@ -1,4 +1,5 @@
 ﻿@inherits LayoutComponentBase
+@inject NavigationManager navigationManager 
 
 <MudThemeProvider Theme="_currentTheme" />
 <MudDialogProvider FullWidth="true" MaxWidth="MaxWidth.ExtraSmall" />
@@ -8,14 +9,16 @@
 	<MudAppBar Elevation="25">
 		<MudIconButton Icon="@Icons.Material.Filled.Menu" Color="Color.Inherit" Edge="Edge.Start" OnClick="@((e) => DrawerToggle())" />
 		<MudHidden Breakpoint="Breakpoint.SmAndUp" Invert="true">
-			<MudText Typo="Typo.h5" Class="mudblazor-appbar-brand-text">Mudblazor</MudText>
+			<MudText Typo="Typo.h5" Style="cursor: pointer; margin-left: 2ch;" @onclick="@(() => { navigationManager.NavigateTo("/"); })" Class="mudblazor-appbar-brand-text">MEDU</MudText>
 		</MudHidden>
 		<MudAppBarSpacer />
 
 		<MudAppBarSpacer />
 		<MudHidden Breakpoint="Breakpoint.MdAndUp" Invert="true">
 			<MudTooltip Text="Hieu Lee">
-				<a target="_blank" href="https://github.com/hieu-lee"><img src="github.png" /></a>
+                <MudIconButton>
+                    <a target="_blank" href="https://github.com/hieu-lee"><img src="github.png" /></a>
+                </MudIconButton>
 			</MudTooltip>
 		</MudHidden>
 		<MudHidden Breakpoint="Breakpoint.SmAndDown" Invert="true">
@@ -43,10 +46,9 @@
 		<NavMenu/>
 	</MudDrawer>
 	<MudMainContent Class="mudblazor-main-content">
-		<MudContainer MaxWidth="MaxWidth.Large">
-			@Body
-		</MudContainer>
-
+        <div style="width: 100%;">
+            @Body
+        </div>
 		<MudScrollToTop TopOffset="400">
 			<MudFab Icon="@Icons.Material.Filled.KeyboardArrowUp" Color="Color.Primary" />
 		</MudScrollToTop>

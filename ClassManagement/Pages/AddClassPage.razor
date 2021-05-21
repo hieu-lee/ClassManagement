@@ -6,9 +6,9 @@
 
     <div style="max-width: 500px; margin: 5ch auto; padding-bottom: 5ch;">
         <h3 style="text-align: center;">Fill in the form to create new class</h3>
-        <EditForm Model="@NewClass" OnSubmit="SubmitForm">
+        <EditForm Model="@NewClass" OnValidSubmit="SubmitForm">
             <DataAnnotationsValidator />
-            <MudCard>
+            <MudCard Style="border-top: 10px solid #594AE2">
                 <MudCardContent>
                     <MudTextField Label="Code" Required="true" HelperText="Must be unique, have at least 6 characters and less than 11 characters"
                                   @bind-Value="NewClass.Code" For="@(() => NewClass.Code)" />
@@ -26,7 +26,7 @@
                             </li>
                         }
                     </ul>
-                    <EditForm Model="@NewSchedule" Context="FormInForm" OnSubmit="AddNewSchedule">
+                    <EditForm Model="@NewSchedule" Context="FormInForm" OnValidSubmit="AddNewSchedule">
                         <h5 style="margin-top: 20px; text-align: center;">Add schedule</h5>
                         <MudSelect Label="Day of week" Required="true" @bind-Value="NewSchedule.Day" For="@(() => NewSchedule.Day)" T="DayOfWeek">
                             <MudSelectItem Value="@DayOfWeek.Monday" />
@@ -92,16 +92,6 @@
             if (rgx.IsMatch(NewClass.Code))
             {
                 Snackbar.Add("Special characters and whitespaces is not allowed in the code", Severity.Error);
-                return;
-            }
-            if (string.IsNullOrWhiteSpace(NewClass.Code) || string.IsNullOrWhiteSpace(NewClass.Name))
-            {
-                Snackbar.Add("You have to fill in all required informations", Severity.Error);
-                return;
-            }
-            if (NewClass.Code.Length > 10 || NewClass.Code.Length < 6)
-            {
-                Snackbar.Add("Your class code is invalid", Severity.Error);
                 return;
             }
             if (DummyClass.Schedules.Count == 0)

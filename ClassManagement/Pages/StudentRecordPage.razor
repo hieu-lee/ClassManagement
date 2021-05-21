@@ -1,0 +1,35 @@
+﻿@page "/students"
+@inject ClassesService classesService
+
+<h3>Student Records</h3>
+@if (loading)
+{
+    <MudProgressLinear Color="Color.Primary" Indeterminate="true" Class="my-7" />
+    <h3 style="text-align: center;">Getting student records</h3>
+}
+else
+{
+    <ul style="margin-top: 3ch;">
+        <Virtualize Items="MyStudents" Context="student">
+            <li>
+                <MudIconButton Icon="@Icons.Material.Filled.People" Style="width: 30px; height: 30px;"/>
+            </li>
+        </Virtualize>
+    </ul>
+}
+
+@code {
+    private SortedSet<Student> MyStudents;
+    private bool loading = true;
+
+    protected override async Task OnInitializedAsync()
+    {
+        var task = Task.Factory.StartNew(() =>
+        {
+            MyStudents = classesService.GetAllStudents().Students;
+            loading = false;
+        });
+        await task;
+    }
+
+}

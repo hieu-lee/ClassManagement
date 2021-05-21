@@ -24,7 +24,7 @@ namespace ClassManagement.Services
 
         public async Task<Class> GetClass(string Code)
         {
-            var res = await dbContext.Classes.Where(s => s.Code == Code).Include(s => s.Schedules).FirstOrDefaultAsync();
+            var res = await dbContext.Classes.Where(s => s.Code == Code).Include(s => s.Schedules).Include(s => s.Students).FirstOrDefaultAsync();
             return res;
         }
 

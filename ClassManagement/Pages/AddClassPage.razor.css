@@ -4,6 +4,7 @@
     padding: 8px;
     color: #ffffff;
     margin-bottom: 5px;
+    transition: background-color 0.5s;
 }
 
     .schedule-item:hover {

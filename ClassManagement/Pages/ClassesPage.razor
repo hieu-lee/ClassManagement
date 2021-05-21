@@ -1,64 +1,32 @@
 ﻿@page "/Classes"
 @inject ClassesService classesService
 @inject ISnackbar Snackbar
+@inject NavigationManager navigationManager
 
-<h2 style="text-align:center;">My Classes</h2>
-@if (loading)
-{
-    <MudProgressLinear Color="Color.Primary" Indeterminate="true" Class="my-7" />
-    <h3 style="text-align: center;">Getting all your classes</h3>
-}
-else
-{
-    @if (MyClasses.Count != 0)
+<MudContainer MaxWidth="MaxWidth.Large">
+    <h2 style="text-align:center;">My Classes</h2>
+    @if (loading)
     {
-        <MudTabs Elevation="4" Rounded="true" Centered="true" Color="@Color.Primary">
-            <MudTabPanel Text="All Classes">
-                <ul style="margin-top: 3ch;">
-                    <Virtualize Items="MyClasses" Context="Class">
-                        <li>
-                            <div style="display: flex; justify-content: space-between">
-                                <div style="display: flex;">
-                                    <div>
-                                        <img class="class-pic" src="classroom.png" />
-                                    </div>
-                                    <div>
-                                        <h4>Code: @Class.Code</h4>
-                                        <strong>@Class.Name</strong>
-                                    </div>
-                                </div>
-                                <div>
-                                    <img @onclick="@(() => { Class.DeleteHeight = (Class.DeleteHeight == "0") ? "30px" : "0"; })" src="@Class.ImgSource" style="width: 30px; height: 30px; cursor: pointer;" />
-                                </div>
-                            </div>
-                            <ul>
-                                @foreach (var schedule in Class.Schedules)
-                                {
-                                    <li class="schedule-item" @onclick="@(async () => { await DeleteScheduleAsync(Class, schedule); })">
-                                        <span>@schedule.Day.ToString() from @schedule.StartTime.ToString() to @schedule.EndTime.ToString()</span>
-                                    </li>
-                                }
-                            </ul>
-                            <div @onclick="@(async () => { await DeleteClassAsync(Class); })" style="background-color: red; text-align: center; height: @Class.DeleteHeight; transition: height 0.5s; cursor: pointer;">
-                                <img style="width: 30px; height: 30px;" src="trash.png" />
-                            </div>
-                            <hr />
-                        </li>
-                    </Virtualize>
-                </ul>
-            </MudTabPanel>
-            <MudTabPanel Text="Today Classes">
-                @if (TodayClasses.Count != 0)
-                {
+        <MudProgressLinear Color="Color.Primary" Indeterminate="true" Class="my-7" />
+        <h3 style="text-align: center;">Getting all your classes</h3>
+    }
+    else
+    {
+        @if (MyClasses.Count != 0)
+        {
+            <MudTabs Elevation="4" Rounded="true" Centered="true" Color="@Color.Primary">
+                <MudTabPanel Text="All Classes">
                     <ul style="margin-top: 3ch;">
-                        <Virtualize Items="TodayClasses" Context="Class">
+                        <Virtualize Items="MyClasses" Context="Class">
                             <li>
                                 <div style="display: flex; justify-content: space-between">
                                     <div style="display: flex;">
                                         <div>
-                                            <img class="class-pic" src="classroom.png" />
+                                            <MudIconButton OnClick="@(() => { navigationManager.NavigateTo($"/Class/{Class.Code}"); })">
+                                                <img class="class-pic" src="classroom.png" />
+                                            </MudIconButton>
                                         </div>
-                                        <div>
+                                        <div style="margin-top: 2ch;">
                                             <h4>Code: @Class.Code</h4>
                                             <strong>@Class.Name</strong>
                                         </div>
@@ -75,30 +43,64 @@ else
                                         </li>
                                     }
                                 </ul>
-                                <div @onclick="@(async () => { await DeleteTodayClassAsync(Class); })" style="background-color: red; text-align: center; height: @Class.DeleteHeight; transition: height 0.5s; cursor: pointer;">
-                                    <img style="width: 30px; height: 30px;" src="trash.png" />
+                                <div @onclick="@(async () => { await DeleteClassAsync(Class); })" style="background-color: red; border-radius: 5px; text-align: center; height: @Class.DeleteHeight; transition: height 0.5s; cursor: pointer;">
+                                    <img style="width: 30px; height: @Class.DeleteHeight; transition: height 0.5s" src="trash.png" />
                                 </div>
                                 <hr />
                             </li>
                         </Virtualize>
                     </ul>
-                }
-                else
-                {
-                    <h3 style="text-align: center; margin-top: 3ch;">You are free today, enjoy your day!</h3>
-                }
-            </MudTabPanel>
-        </MudTabs>
+                </MudTabPanel>
+                <MudTabPanel Text="Today Classes">
+                    @if (TodayClasses.Count != 0)
+                    {
+                        <ul style="margin-top: 3ch;">
+                            <Virtualize Items="TodayClasses" Context="Class">
+                                <li>
+                                    <div style="display: flex; justify-content: space-between">
+                                        <div style="display: flex;">
+                                            <div>
+                                                <img class="class-pic" src="classroom.png" />
+                                            </div>
+                                            <div>
+                                                <h4>Code: @Class.Code</h4>
+                                                <strong>@Class.Name</strong>
+                                            </div>
+                                        </div>
+                                        <div>
+                                            <img @onclick="@(() => { Class.DeleteHeight = (Class.DeleteHeight == "0") ? "30px" : "0"; })" src="@Class.ImgSource" style="width: 30px; height: 30px; cursor: pointer;" />
+                                        </div>
+                                    </div>
+                                    <ul>
+                                        @foreach (var schedule in Class.Schedules)
+                                        {
+                                            <li class="schedule-item" @onclick="@(async () => { await DeleteScheduleAsync(Class, schedule); })">
+                                                <span>@schedule.Day.ToString() from @schedule.StartTime.ToString() to @schedule.EndTime.ToString()</span>
+                                            </li>
+                                        }
+                                    </ul>
+                                    <div @onclick="@(async () => { await DeleteTodayClassAsync(Class); })" style="background-color: red; text-align: center; height: @Class.DeleteHeight; transition: height 0.5s; cursor: pointer;">
+                                        <img style="width: 30px; height: 30px;" src="trash.png" />
+                                    </div>
+                                    <hr />
+                                </li>
+                            </Virtualize>
+                        </ul>
+                    }
+                    else
+                    {
+                        <h3 style="text-align: center; margin-top: 3ch;">You are free today, enjoy your day!</h3>
+                    }
+                </MudTabPanel>
+            </MudTabs>
 
+        }
+        else
+        {
+            <h3 style="text-align: center;">You don't have any class yet, add your first class to get start</h3>
+        }
     }
-    else
-    {
-        <h3 style="text-align: center;">You don't have any class yet, add your first class to get start</h3>
-    }
-}
-
-
-
+</MudContainer>
 
 @code {
     private SortedSet<Class> MyClasses = new();

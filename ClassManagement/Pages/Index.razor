@@ -1,9 +1,45 @@
 ﻿@page "/"
 
-<h1>Hello, world!</h1>
+<div class="info">
+    <div class="info-text">
+        <MudText Typo="Typo.h1">MEDU</MudText>
+        <MudText Typo="Typo.h5">Free website for personal education system management</MudText>
+        <div class="buttons-holder">
+            <MudButton Variant="Variant.Filled" Color="Color.Primary" Style="padding: 2.5ch;"><MudText Typo="Typo.body1">Get Started</MudText></MudButton>
+            <a href="https://github.com/hieu-lee/ClassManagement" target="_blank" style="text-decoration: none;">
+                <MudButton Variant="Variant.Filled" Style="background-color: #454545; margin-left: 3ch; color: #ffffff; padding: 2.5ch; width: 142px;"><MudText Typo="Typo.body1">Github</MudText></MudButton>
+            </a>
+        </div>
+    </div>
+</div>
+<div class="features">
+    <div class="feature" id="classes">
+        <MudIcon Style="width: 35px; height: 35px; margin-right: 5px;" Icon="@Icons.Outlined.Class" Color="Color.Primary" />
+        <div class="abstract">
+            <MudText Typo="Typo.h4" Color="Color.Primary">Classes</MudText>
+            <MudText Typo="Typo.body1">Manage your classes with many features such as create/remove classes, change class' schedule, adding descriptions and more</MudText>
+        </div>
+    </div>
+    <div class="feature" id="students">
+        <MudIcon Style="width: 35px; height: 35px; margin-right: 5px;" Icon="@Icons.Outlined.People" Color="Color.Primary"/>
+        <div class="abstract">
+            <MudText Typo="Typo.h4" Color="Color.Primary">Students</MudText>
+            <MudText Typo="Typo.body1">Manage your students with many features such as create/remove students, calculating student's average grade, adding description and more</MudText>
+        </div>
+    </div>
+    <div class="feature" id="grades">
+        <MudIcon Style="width: 35px; height: 35px; margin-right: 5px;" Icon="@Icons.Outlined.Grade" Color="Color.Primary"/>
+        <div class="abstract">
+            <MudText Typo="Typo.h4" Color="Color.Primary">Tests & Grades</MudText>
+            <MudText Typo="Typo.body1">Manage your tests & grades with many features such as create/remove tests/grades, calculating average grade, filtering grades by classes/students/tests and more</MudText>
+        </div>
+    </div>
+    <div class="feature" id="schedules">
+        <MudIcon Style="width: 35px; height: 35px; margin-right: 5px;" Icon="@Icons.Outlined.Schedule" Color="Color.Primary" />
+        <div class="abstract">
+            <MudText Typo="Typo.h4" Color="Color.Primary">Schedules</MudText>
+            <MudText Typo="Typo.body1">Manage your teaching schedules with a complete notification system and schedule filtering by classes</MudText>
+        </div>
+    </div>
+</div>
 
-Welcome to your new app.
-
-<TestPage AlertText="Welcome"/>
-
-<SurveyPrompt Title="How is Blazor working for you?" />
