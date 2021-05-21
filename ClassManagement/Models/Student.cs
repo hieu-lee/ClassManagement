@@ -19,6 +19,7 @@ namespace ClassManagement.Models
         public HashSet<Class> Classes { get; set; } = new();
         [Required]
         public DateTime? DateOfBirth { get; set; }
+        public int Age => DateTime.Now.Year - DateOfBirth.Value.Year;
         public HashSet<Grade> Grades { get; set; } = new();
         public string GetAllClassesCode()
         {
