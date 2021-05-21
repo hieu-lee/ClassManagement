@@ -47,13 +47,14 @@
 <br />
 
 <MudButton Variant="Variant.Filled" Color="Color.Primary" @onclick="DisplayScore">Display Student Score</MudButton>
-<br />
+<br /> 
 
 <ul>
     @if (studentGrades!= null && studentGrades.Any())
     @foreach (var grade in studentGrades)
     {
         <li>@grade.StdName, @grade.GradeinNum, @grade.ClassCode, id = @grade.Id</li>
+        <MudTextField @bind-Value ="@grade.GradeinNum"> </MudTextField>
     }
 </ul>
 
@@ -95,9 +96,9 @@
         defaultStudent = gradesService.GetStudentFromName(NewStudentName);
         // maybe alerts
 
-        //Havent' fixed classes yet...
-        defaultClass = new Class { Code = ClassCode, Name = "CS" };
-        if (defaultClass.Code == string.Empty) defaultClass.Code = "CSE101";
+        
+        if (string.IsNullOrEmpty(ClassCode)) ClassCode = "CSE101"; // default value
+        defaultClass = gradesService.GetClassFromCode(ClassCode);
 
 
         myGrade = new()

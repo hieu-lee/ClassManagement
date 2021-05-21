@@ -36,11 +36,51 @@ namespace ClassManagement.Services
             }
             return students[0];
         }
+
+        public Class GetClassFromCode (string classCode)
+        {
+            var classes = dbContext.Classes.Where(s => s.Code == classCode).ToArray();
+            if (classes.Length == 0)
+            {
+                Class newClass = new() { Code = classCode, Name = "CS" };
+                return newClass;
+            }
+            return classes[0];
+        }
         
         public ServiceResult GetGradesFromStudent(Student std)
         {
             var grades = new SortedSet<Grade>(dbContext.Grades.Where(s => s.StudentId == std.Id).ToArray());
             return new() { success = true, Grades = grades };
+        }
+
+        public ServiceResult GetGradesFromStudentAndClass(string studentName, string classCode)
+        {
+            if (string.IsNullOrEmpty(studentName) && string.IsNullOrEmpty(classCode))
+            {
+                var grades = new SortedSet<Grade>(dbContext.Grades.ToArray());
+                return new() { success = true, Grades = grades };
+            }
+
+            else if (string.IsNullOrEmpty(studentName))
+            {
+                Class class1 = GetClassFromCode(classCode);
+                var grades = new SortedSet<Grade>(dbContext.Grades.Where(s => s.ClassCode == class1.Code).ToArray());
+                return new() { success = true, Grades = grades };
+            }
+            else if (string.IsNullOrEmpty(classCode))
+            {
+                Student student1 = GetStudentFromName(studentName);
+                var grades = new SortedSet<Grade>(dbContext.Grades.Where(s => s.StudentId == student1.Id).ToArray());
+                return new() { success = true, Grades = grades };
+            }
+            else
+            {
+                Class class1 = GetClassFromCode(classCode);
+                Student student1 = GetStudentFromName(studentName);
+                var grades = new SortedSet<Grade>(dbContext.Grades.Where(s => s.StudentId == student1.Id && s.ClassCode == class1.Code).ToArray());
+                return new() { success = true, Grades = grades };
+            }
         }
 
         public async Task<ServiceResult> CreateNewGradeAsync(Grade NewGrade)

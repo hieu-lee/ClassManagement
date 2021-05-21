@@ -13,7 +13,7 @@ namespace ClassManagement.Models
         public string Id { get; set; } = Guid.NewGuid().ToString();
 
         [Required]
-        public double GradeinNum { get; init; } 
+        public double GradeinNum { get; set; } 
 
         [Required]
         public string StdName { get; set; }

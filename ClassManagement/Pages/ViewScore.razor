@@ -1,0 +1,40 @@
+﻿@page "/ViewScore"
+@using System.Text.RegularExpressions;
+@inject ClassesService classesService
+@inject ISnackbar Snackbar
+@inject GradesService gradesService
+
+<br />
+<MudTextField @bind-Value="ClassCode" Label="Name of Class" Placeholder="(if left empty, will display for all classes)" 
+              Variant="Variant.Text" Margin="Margin.Dense"></MudTextField>
+
+<MudTextField @bind-Value="StudentName" Label="Name of Student" Placeholder="(if left empty, will display for all students)"
+              Variant="Variant.Text" Margin="Margin.Dense"></MudTextField>
+<br />
+
+<MudButton Variant="Variant.Filled" @onclick ="DisplayScores">Display Scores for Selected</MudButton>
+
+<br/>
+<br/>
+
+<ul>
+    @if (grades != null && grades.Any())
+        @foreach (var grade in grades)
+        {
+            <li>@grade.StdName, @grade.GradeinNum, @grade.ClassCode, id = @grade.Id</li>
+            <MudTextField @bind-Value="@grade.GradeinNum"> </MudTextField>
+        }
+</ul>
+
+@code {
+    private string ClassCode;
+    private string StudentName;
+
+    private SortedSet<Grade> grades;
+
+    private void DisplayScores()
+    {
+        ServiceResult svrs = gradesService.GetGradesFromStudentAndClass(StudentName, ClassCode);
+        grades = svrs.Grades;
+    }
+}
