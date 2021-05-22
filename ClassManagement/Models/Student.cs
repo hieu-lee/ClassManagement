@@ -40,7 +40,7 @@ namespace ClassManagement.Models
 
         public int CompareTo(Student other)
         {
-            return Name.CompareTo(other);
+            return Name.CompareTo(other.Name);
         }
 
         public override bool Equals(object obj)
