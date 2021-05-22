@@ -1,5 +1,6 @@
 ﻿@page "/Students"
 @inject ClassesService classesService
+@inject ISnackbar Snackbar 
 
 <MudContainer MaxWidth="MaxWidth.Large">
     <MudText Style="text-align: center;" Typo="Typo.h3">Student Records</MudText>
@@ -17,18 +18,8 @@
         </div>
         <ul style="margin-top: 3ch;">
             <Virtualize Items="StudentsToDisplay" Context="student">
-                <li style="display: flex;">
-                    <MudAvatar Style="background-color: #f0f0f0; width: 5ch; height: 5ch;">
-                        <MudIconButton>
-                            <MudIcon Icon="@Icons.Material.Filled.People" Style="width: 3ch; height: 3ch; color: #594AE2" />
-                        </MudIconButton>
-                    </MudAvatar>
-                    <div class="student-info" style="margin-left: 5ch">
-                        <MudText Typo="Typo.h6">@student.Name</MudText>
-                        <MudText Typo="Typo.body2">Age: @student.Age</MudText>
-                        <MudText Typo="Typo.body2">Gender: @student.Gender</MudText>
-                        <MudText Typo="Typo.body2">Class(es): @student.GetAllClassesCode()</MudText>
-                    </div>
+                <li>
+                    <StudentItem student="student" OnDeleteClick="async () => { await DeleteStudentAsync(student); }"/>
                 </li>
                 <hr/>
             </Virtualize>
@@ -53,6 +44,23 @@
         });
         await task;
         StudentsToDisplay = MyStudents;
+    }
+
+    private async Task DeleteStudentAsync(Student student)
+    {
+        StudentsToDisplay.Remove(student);
+        MyStudents.Remove(student);
+        var res = await classesService.DeleteStudent(student.Id);
+        if (res.success)
+        {
+            Snackbar.Add("Successfully deleted student", Severity.Success);
+            return;
+        }
+        else
+        {
+            Snackbar.Add(res.err, Severity.Error);
+            return;
+        }
     }
 
     private void DisplayStudents()

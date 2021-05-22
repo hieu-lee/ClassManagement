@@ -32,7 +32,9 @@
                                         </div>
                                     </div>
                                     <div>
-                                        <img @onclick="@(() => { Class.DeleteHeight = (Class.DeleteHeight == "0") ? "30px" : "0"; })" src="@Class.ImgSource" style="width: 30px; height: 30px; cursor: pointer;" />
+                                        <MudIconButton @onclick="@(() => { Class.DeleteHeight = (Class.DeleteHeight == "0") ? "30px" : "0"; })">
+                                            <MudIcon Icon="@Class.ImgSource" Style="width: 3ch; height: 3ch; color: #594AE2" />
+                                        </MudIconButton>
                                     </div>
                                 </div>
                                 <ul>
@@ -43,8 +45,8 @@
                                         </li>
                                     }
                                 </ul>
-                                <div @onclick="@(async () => { await DeleteClassAsync(Class); })" style="background-color: red; border-radius: 5px; text-align: center; height: @Class.DeleteHeight; transition: height 0.5s; cursor: pointer;">
-                                    <MudIcon Icon="@Icons.Material.Filled.Delete" Style="@($"color: #ffffff; width: 30px; transition: height 0.5s; height: {Class.DeleteHeight};")"/>
+                                <div @onclick="@(async () => { await DeleteTodayClassAsync(Class); })" style="background-color: red; border-radius: 5px; text-align: center; height: @Class.DeleteHeight; transition: height 0.5s; cursor: pointer;">
+                                    <MudIcon Icon="@Icons.Material.Filled.Delete" Style="@($"color: #ffffff; width: 30px; transition: height 0.5s; height: {Class.DeleteHeight};")" />
                                 </div>
                                 <hr />
                             </li>
@@ -68,7 +70,9 @@
                                             </div>
                                         </div>
                                         <div>
-                                            <img @onclick="@(() => { Class.DeleteHeight = (Class.DeleteHeight == "0") ? "30px" : "0"; })" src="@Class.ImgSource" style="width: 30px; height: 30px; cursor: pointer;" />
+                                            <MudIconButton @onclick="@(() => { Class.DeleteHeight = (Class.DeleteHeight == "0") ? "30px" : "0"; })">
+                                                <MudIcon Icon="@Class.ImgSource" Style="width: 3ch; height: 3ch; color: #594AE2" />
+                                            </MudIconButton>
                                         </div>
                                     </div>
                                     <ul>
@@ -79,8 +83,8 @@
                                             </li>
                                         }
                                     </ul>
-                                    <div @onclick="@(async () => { await DeleteTodayClassAsync(Class); })" style="background-color: red; text-align: center; height: @Class.DeleteHeight; transition: height 0.5s; cursor: pointer;">
-                                        <img style="width: 30px; height: 30px;" src="trash.png" />
+                                    <div @onclick="@(async () => { await DeleteTodayClassAsync(Class); })" style="background-color: red; border-radius: 5px; text-align: center; height: @Class.DeleteHeight; transition: height 0.5s; cursor: pointer;">
+                                        <MudIcon Icon="@Icons.Material.Filled.Delete" Style="@($"color: #ffffff; width: 30px; transition: height 0.5s; height: {Class.DeleteHeight};")" />
                                     </div>
                                     <hr />
                                 </li>
