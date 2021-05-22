@@ -115,5 +115,27 @@ namespace ClassManagement.Services
             return new() { success = true };
         }
 
+        public async Task<List<string>> GetAllStudentNames()
+        {
+            var res = await dbContext.Students.Select(s => s.Name).ToListAsync();
+            res.Sort();
+            return res;
+        }
+
+        public async Task<ServiceResult> CreateNewGradeAsyncBetter(double gradeNum, Class GClass, Student GStudent)
+        {
+            Grade myGrade;
+            myGrade = new()
+            {
+                Student = GStudent,
+                Classroom = GClass,
+                GradeinNum = gradeNum,
+                StdName = GStudent.Name
+            };
+            await CreateNewGradeAsync(myGrade);
+            return new() { success = true };
+
+        }
+
     }
 }
