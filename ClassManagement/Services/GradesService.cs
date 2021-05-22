@@ -1,9 +1,11 @@
 ﻿using ClassManagement.Data;
 using ClassManagement.Models;
 using Microsoft.EntityFrameworkCore;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+
 
 namespace ClassManagement.Services
 {
@@ -31,7 +33,7 @@ namespace ClassManagement.Services
             var students = dbContext.Students.Where (s => s.Name == studentName).ToArray();
             if (students.Length==0)
             {
-                Student newStudent = new() { Name = studentName };
+                Student newStudent = new() { Name = studentName, Gender = "Male", DateOfBirth = DateTime.Now.Date};
                 return newStudent;
             }
             return students[0];

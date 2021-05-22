@@ -1,5 +1,4 @@
 ﻿@page "/ViewScore"
-@using System.Text.RegularExpressions;
 @inject ClassesService classesService
 @inject ISnackbar Snackbar
 @inject GradesService gradesService
@@ -11,44 +10,46 @@
 
         <MudTextField @bind-Value="StudentName" Label="Name of Student" Placeholder="(if left empty, will display for all students)"
                       Variant="Variant.Text" Style="max-width:400px;"></MudTextField>
-        <MudIconButton @onclick="DisplayScores" Icon="@Icons.Material.Filled.Search" />
+        <MudIconButton @onclick="DisplayScores" Icon="@Icons.Material.Filled.Search" Style="color: #594AE2" />
     </div>
     <br />
     <div style="display:flex; justify-content:center;">
-        <MudButton Variant="Variant.Filled" @onclick="DisplayScores">Display Scores for Selected</MudButton>
+        <MudButton Variant="Variant.Filled" Color="Color.Primary" @onclick="DisplayScores">Display Scores for Selected</MudButton>
     </div>
     <br />
     <br />
 
-    <ul>
-        @if (grades != null && grades.Any())
-            @foreach (var grade in grades)
-            {
-                <li>@grade.StdName, @grade.GradeinNum, @grade.ClassCode, id = @grade.Id</li>
-                <MudTextField @bind-Value="@grade.GradeinNum"> </MudTextField>
-            }
-    </ul>
+    @*<ul>
+            @if (grades != null && grades.Any())
+                @foreach (var grade in grades)
+                {
+                    <li>@grade.StdName, @grade.GradeinNum, @grade.ClassCode, id = @grade.Id</li>
+                    <MudTextField @bind-Value="@grade.GradeinNum"> </MudTextField>
+                }
+        </ul>*@
+
+    <MudTable Items="@grades" Hover="true">
+        <HeaderContent>
+            <MudTh>Student Name</MudTh>
+            <MudTh>Grade in number</MudTh>
+            <MudTh>Class Code</MudTh>
+            <MudTh>Grade Id</MudTh>
+        </HeaderContent>
+        <RowTemplate>
+            <MudTd DataLabel="Student Name">@context.StdName</MudTd>
+            <MudTd DataLabel="Grade in number">@context.GradeinNum</MudTd>
+            <MudTd DataLabel="Class Code">@context.ClassCode</MudTd>
+            <MudTd DataLabel="Grade Id">@context.Id</MudTd>
+        </RowTemplate>
+
+        <PagerContent>
+            <MudTablePager PageSizeOptions="new int[]{50, 100}" />
+        </PagerContent>
+    </MudTable>
+
 </MudContainer>
 
 
-<MudTable Items="@grades" Hover="true" >
-    <HeaderContent>
-        <MudTh>Student Name</MudTh>
-        <MudTh>Grade in number</MudTh>
-        <MudTh>Class Code</MudTh>
-        <MudTh>Grade Id</MudTh>
-    </HeaderContent>
-    <RowTemplate>
-        <MudTd DataLabel="Student Name">@context.StdName</MudTd>
-        <MudTd DataLabel="Grade in number">@context.GradeinNum</MudTd>
-        <MudTd DataLabel="Class Code">@context.ClassCode</MudTd>
-        <MudTd DataLabel="Grade Id">@context.Id</MudTd>
-    </RowTemplate>
-
-    <PagerContent>
-        <MudTablePager PageSizeOptions="new int[]{50, 100}" />
-    </PagerContent>
-</MudTable>
 
 @code {
     private string ClassCode;
