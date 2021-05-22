@@ -9,8 +9,13 @@
 }
 else
 {
+    <div class="search" style="display: flex;">
+        <MudTextField @bind-Value="@SearchName" Placeholder="Type student's name here" Label="Name"/>
+        <MudTextField @bind-Value="@SearchClass" Placeholder="Type student's class here" Label="Class"/>
+        <MudIconButton @onclick="DisplayStudents" Icon="@Icons.Material.Filled.Search" />
+    </div>
     <ul style="margin-top: 3ch;">
-        <Virtualize Items="MyStudents" Context="student">
+        <Virtualize Items="StudentsToDisplay" Context="student">
             <li>
                 <MudIconButton Icon="@Icons.Material.Filled.People" Style="width: 30px; height: 30px;"/>
             </li>
@@ -20,7 +25,10 @@ else
 
 @code {
     private SortedSet<Student> MyStudents;
+    private SortedSet<Student> StudentsToDisplay;
     private bool loading = true;
+    private string SearchName;
+    private string SearchClass;
 
     protected override async Task OnInitializedAsync()
     {
@@ -30,6 +38,52 @@ else
             loading = false;
         });
         await task;
+        StudentsToDisplay = MyStudents;
+    }
+
+    private void DisplayStudents()
+    {
+        SearchName = SearchName.Trim().ToUpper();
+        SearchClass = SearchClass.Trim().ToUpper();
+        if (string.IsNullOrWhiteSpace(SearchName) && string.IsNullOrWhiteSpace(SearchClass))
+        {
+            StudentsToDisplay = MyStudents;
+            return;
+        }
+        StudentsToDisplay = new();
+        if (!string.IsNullOrWhiteSpace(SearchClass) && !string.IsNullOrWhiteSpace(SearchName))
+        {
+            foreach (var student in MyStudents)
+            {
+                if (student.Name.ToUpper() == SearchName && student.Classes.Contains(new() { Code = SearchClass }))
+                {
+                    StudentsToDisplay.Add(student);
+                }
+            }
+            return;
+        }
+        if (!string.IsNullOrWhiteSpace(SearchClass))
+        {
+            foreach (var student in MyStudents)
+            {
+                if (student.Classes.Contains(new() { Code = SearchClass }))
+                {
+                    StudentsToDisplay.Add(student);
+                }
+            }
+            return;
+        }
+        if (!string.IsNullOrWhiteSpace(SearchName))
+        {
+            foreach (var student in MyStudents)
+            {
+                if (student.Name.ToUpper() == SearchName)
+                {
+                    StudentsToDisplay.Add(student);
+                }
+            }
+            return;
+        }
     }
 
 }
