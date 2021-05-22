@@ -10,14 +10,20 @@
 else
 {
     <div class="search" style="display: flex;">
-        <MudTextField @bind-Value="@SearchName" Placeholder="Type student's name here" Label="Name"/>
-        <MudTextField @bind-Value="@SearchClass" Placeholder="Type student's class here" Label="Class"/>
-        <MudIconButton @onclick="DisplayStudents" Icon="@Icons.Material.Filled.Search" />
+        <MudTextField Style="max-width: 400px;" @bind-Value="@SearchName" Placeholder="Type student's name here" Label="Name"/>
+        <MudTextField Style="max-width: 400px;" @bind-Value="@SearchClass" Placeholder="Type student's class here" Label="Class"/>
+        <MudIconButton @onclick="DisplayStudents" Style="color: #594AE2" Icon="@Icons.Material.Filled.Search" />
     </div>
     <ul style="margin-top: 3ch;">
         <Virtualize Items="StudentsToDisplay" Context="student">
-            <li>
+            <li style="display: flex;">
                 <MudIconButton Icon="@Icons.Material.Filled.People" Style="width: 30px; height: 30px;"/>
+                <div class="student-info">
+                    <MudText Typo="Typo.h6">@student.Name</MudText>
+                    <MudText Typo="Typo.body2">Age: @student.Age</MudText>
+                    <MudText Typo="Typo.body2">Gender: @student.Gender</MudText>
+                    <MudText Typo="Typo.body2">Class(es): @student.GetAllClassesCode()</MudText>
+                </div>
             </li>
         </Virtualize>
     </ul>

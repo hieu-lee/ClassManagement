@@ -46,7 +46,6 @@ namespace ClassManagement
             services.AddScoped<ClassesService>();
             services.AddSingleton<WeatherForecastService>();
             services.AddScoped<GradesService>();
-            services.AddScoped<TestService>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
