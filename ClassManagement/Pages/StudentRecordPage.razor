@@ -1,33 +1,41 @@
-﻿@page "/students"
+﻿@page "/Students"
 @inject ClassesService classesService
 
-<h3>Student Records</h3>
-@if (loading)
-{
-    <MudProgressLinear Color="Color.Primary" Indeterminate="true" Class="my-7" />
-    <h3 style="text-align: center;">Getting student records</h3>
-}
-else
-{
-    <div class="search" style="display: flex;">
-        <MudTextField Style="max-width: 400px;" @bind-Value="@SearchName" Placeholder="Type student's name here" Label="Name"/>
-        <MudTextField Style="max-width: 400px;" @bind-Value="@SearchClass" Placeholder="Type student's class here" Label="Class"/>
-        <MudIconButton @onclick="DisplayStudents" Style="color: #594AE2" Icon="@Icons.Material.Filled.Search" />
-    </div>
-    <ul style="margin-top: 3ch;">
-        <Virtualize Items="StudentsToDisplay" Context="student">
-            <li style="display: flex;">
-                <MudIconButton Icon="@Icons.Material.Filled.People" Style="width: 30px; height: 30px;"/>
-                <div class="student-info">
-                    <MudText Typo="Typo.h6">@student.Name</MudText>
-                    <MudText Typo="Typo.body2">Age: @student.Age</MudText>
-                    <MudText Typo="Typo.body2">Gender: @student.Gender</MudText>
-                    <MudText Typo="Typo.body2">Class(es): @student.GetAllClassesCode()</MudText>
-                </div>
-            </li>
-        </Virtualize>
-    </ul>
-}
+<MudContainer MaxWidth="MaxWidth.Large">
+    <MudText Style="text-align: center;" Typo="Typo.h3">Student Records</MudText>
+    @if (loading)
+    {
+        <MudProgressLinear Color="Color.Primary" Indeterminate="true" Class="my-7" />
+        <h3 style="text-align: center;">Getting student records</h3>
+    }
+    else
+    {
+        <div class="search" style="display: flex;">
+            <MudTextField Style="max-width: 400px;" @bind-Value="@SearchName" Placeholder="Type student's name here" Label="Name" />
+            <MudTextField Style="max-width: 400px;" @bind-Value="@SearchClass" Placeholder="Type student's class here" Label="Class" />
+            <MudIconButton @onclick="DisplayStudents" Style="color: #594AE2" Icon="@Icons.Material.Filled.Search" />
+        </div>
+        <ul style="margin-top: 3ch;">
+            <Virtualize Items="StudentsToDisplay" Context="student">
+                <li style="display: flex;">
+                    <MudAvatar Style="background-color: #f0f0f0; width: 5ch; height: 5ch;">
+                        <MudIconButton>
+                            <MudIcon Icon="@Icons.Material.Filled.People" Style="width: 3ch; height: 3ch; color: #594AE2" />
+                        </MudIconButton>
+                    </MudAvatar>
+                    <div class="student-info" style="margin-left: 5ch">
+                        <MudText Typo="Typo.h6">@student.Name</MudText>
+                        <MudText Typo="Typo.body2">Age: @student.Age</MudText>
+                        <MudText Typo="Typo.body2">Gender: @student.Gender</MudText>
+                        <MudText Typo="Typo.body2">Class(es): @student.GetAllClassesCode()</MudText>
+                    </div>
+                </li>
+                <hr/>
+            </Virtualize>
+        </ul>
+    }
+</MudContainer>
+
 
 @code {
     private SortedSet<Student> MyStudents;
@@ -49,8 +57,6 @@ else
 
     private void DisplayStudents()
     {
-        SearchName = SearchName.Trim().ToUpper();
-        SearchClass = SearchClass.Trim().ToUpper();
         if (string.IsNullOrWhiteSpace(SearchName) && string.IsNullOrWhiteSpace(SearchClass))
         {
             StudentsToDisplay = MyStudents;
@@ -59,6 +65,8 @@ else
         StudentsToDisplay = new();
         if (!string.IsNullOrWhiteSpace(SearchClass) && !string.IsNullOrWhiteSpace(SearchName))
         {
+            SearchName = SearchName.Trim().ToUpper();
+            SearchClass = SearchClass.Trim().ToUpper();
             foreach (var student in MyStudents)
             {
                 if (student.Name.ToUpper() == SearchName && student.Classes.Contains(new() { Code = SearchClass }))
@@ -70,6 +78,7 @@ else
         }
         if (!string.IsNullOrWhiteSpace(SearchClass))
         {
+            SearchClass = SearchClass.Trim().ToUpper();
             foreach (var student in MyStudents)
             {
                 if (student.Classes.Contains(new() { Code = SearchClass }))
@@ -81,6 +90,7 @@ else
         }
         if (!string.IsNullOrWhiteSpace(SearchName))
         {
+            SearchName = SearchName.Trim().ToUpper();
             foreach (var student in MyStudents)
             {
                 if (student.Name.ToUpper() == SearchName)

@@ -44,7 +44,7 @@
                                     }
                                 </ul>
                                 <div @onclick="@(async () => { await DeleteClassAsync(Class); })" style="background-color: red; border-radius: 5px; text-align: center; height: @Class.DeleteHeight; transition: height 0.5s; cursor: pointer;">
-                                    <img style="width: 30px; height: @Class.DeleteHeight; transition: height 0.5s" src="trash.png" />
+                                    <MudIcon Icon="@Icons.Material.Filled.Delete" Style="@($"color: #ffffff; width: 30px; transition: height 0.5s; height: {Class.DeleteHeight};")"/>
                                 </div>
                                 <hr />
                             </li>

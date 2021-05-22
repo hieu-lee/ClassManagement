@@ -61,6 +61,16 @@
 
     private async Task SubmitForm()
     {
+        var names = NewStudent.Name.Trim().ToLower().Split(' ');
+        var name = "";
+        for (int i = 0; i < names.Length; i++)
+        {
+            names[i] = names[i].Trim();
+            var temp = names[i][0].ToString().ToUpper() + names[i].Substring(1);
+            name += temp + " ";
+        }
+        name = name.TrimEnd();
+        NewStudent.Name = name;
         var task = classesService.CreateNewStudent(NewStudent, NewStudentCodes);
         NewStudent = new();
         NewStudentCodes = new();
