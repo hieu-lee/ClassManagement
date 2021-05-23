@@ -26,9 +26,15 @@
                                                 <img class="class-pic" src="classroom.png" />
                                             </MudIconButton>
                                         </div>
-                                        <div style="margin-top: 2ch;">
-                                            <h4>Code: @Class.Code</h4>
-                                            <strong>@Class.Name</strong>
+                                        <div style="margin-top: 2ch; width: 38.7ch;">
+                                            <MudText Typo="Typo.h6">Code: @Class.Code</MudText>
+                                            <MudText Typo="Typo.subtitle2">@Class.Name</MudText>
+                                            <MudText Typo="Typo.body2">Number of students: @Class.NumberOfStudent</MudText>
+                                        </div>
+                                        <div style="margin-left: 24.5ch;">
+                                            <MudText Typo="Typo.h6">Description</MudText>
+                                            <MudText Style="max-height: 70px; overflow-y:scroll;" Typo="Typo.body2">@Class.Description</MudText>
+                                            <MudText Typo="Typo.body2">Address: @((string.IsNullOrWhiteSpace(Class.Address))?"?":Class.Address)</MudText>
                                         </div>
                                     </div>
                                     <div>
@@ -62,11 +68,19 @@
                                     <div style="display: flex; justify-content: space-between">
                                         <div style="display: flex;">
                                             <div>
-                                                <img class="class-pic" src="classroom.png" />
+                                                <MudIconButton OnClick="@(() => { navigationManager.NavigateTo($"/Class/{Class.Code}"); })">
+                                                    <img class="class-pic" src="classroom.png" />
+                                                </MudIconButton>
                                             </div>
-                                            <div>
-                                                <h4>Code: @Class.Code</h4>
-                                                <strong>@Class.Name</strong>
+                                            <div style="margin-top: 2ch; width: 38.7ch;">
+                                                <MudText Typo="Typo.h6">Code: @Class.Code</MudText>
+                                                <MudText Typo="Typo.subtitle2">@Class.Name</MudText>
+                                                <MudText Typo="Typo.body2">Number of students: @Class.NumberOfStudent</MudText>
+                                            </div>
+                                            <div style="margin-left: 24.5ch;">
+                                                <MudText Typo="Typo.h6">Description</MudText>
+                                                <MudText Style="max-height: 70px; overflow-y:scroll;" Typo="Typo.body2">@Class.Description</MudText>
+                                                <MudText Typo="Typo.body2">Address: @((string.IsNullOrWhiteSpace(Class.Address))?"?":Class.Address)</MudText>
                                             </div>
                                         </div>
                                         <div>
