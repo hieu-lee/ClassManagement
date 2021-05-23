@@ -33,6 +33,7 @@ namespace ClassManagement.Models
             foreach (var cls in Classes)
             {
                 res += (i == n-1)?$"{cls.Code}": $"{cls.Code}, ";
+                i++;
             }
             ClassesCodesToString = res;
             return res;

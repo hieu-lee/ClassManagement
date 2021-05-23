@@ -11,11 +11,18 @@
     }
     else
     {
-        <div class="search" style="display: flex;">
-            <MudTextField Style="max-width: 400px;" @bind-Value="@SearchName" Placeholder="Type student's name here" Label="Name" />
-            <MudTextField Style="max-width: 400px;" @bind-Value="@SearchClass" Placeholder="Type student's class here" Label="Class" />
-            <MudIconButton @onclick="DisplayStudents" Style="color: #594AE2" Icon="@Icons.Material.Filled.Search" />
+        <div class="search" style="display: flex; justify-content: space-between;">
+            <div>
+                <MudTextField Style="max-width: 40ch;" @bind-Value="@SearchName" Placeholder="Student's name" Label="Name" />
+                <MudTextField Style="max-width: 40ch;" @bind-Value="@SearchClass" Placeholder="Class's code" Label="Class" />
+            </div>
+            <div style="display: flex; align-items: center;">
+                <MudIconButton @onclick="DisplayStudents">
+                    <MudIcon Style="width: 2.5ch; height: 2.5ch; color: #594AE2" Icon="@Icons.Material.Filled.Search" />
+                </MudIconButton> 
+            </div>
         </div>
+        <hr/>
         <ul style="margin-top: 3ch;">
             <Virtualize Items="StudentsToDisplay" Context="student">
                 <li>

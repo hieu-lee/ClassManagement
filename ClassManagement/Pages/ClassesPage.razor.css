@@ -12,3 +12,14 @@
         cursor: pointer;
         background-color: #D81417;
     }
+
+.description {
+    width: 40ch;
+    margin-top: 2ch;
+}
+
+@media (max-width: 950px) {
+    .description {
+        width: 30ch;
+    }
+}
