@@ -13,7 +13,10 @@ namespace ClassManagement.Models
         public string Id { get; set; } = Guid.NewGuid().ToString();
 
         [Required]
-        public double GradeinNum { get; set; } 
+        public double GradeinNum { get; set; }
+
+        [Required]
+        public double RelativeValue { get; set; } = 1;
 
         [Required]
         public string StdName { get; set; }
@@ -25,6 +28,8 @@ namespace ClassManagement.Models
 
         [ForeignKey("Classroom")]
         public string ClassCode { get; set; }
+
+        public string Description { get; set; }
         public Class Classroom { get; set; }
 
         public int CompareTo (Grade other)
