@@ -7,7 +7,7 @@
 
 
 <div style="max-width: 500px; margin: 5ch auto; padding-bottom: 5ch;">
-    <h3 style="text-align: center;">Create new student record</h3>
+    <h3 style="text-align: center;">Create new grade</h3>
     <EditForm Model="@NewGrade" OnValidSubmit="SubmitForm">
         <DataAnnotationsValidator />
         <MudCard Style="border-top: 10px solid #594AE2">
@@ -19,11 +19,7 @@
 
                 <MudTextField Label="Description" Class="mt-3"
                               @bind-Value="NewGrade.Description" For="@(() => NewGrade.Description)" Lines="5" />
-                <div style="margin-top: 10px;">
-                    <span class="class-code">
-                        @ClassCode
-                    </span>
-                </div>
+                
                 <div>
                     <h5 style="margin-top: 20px; text-align: center;">Select Class</h5>
                     <MudSelect Label="Class" Required="true" @bind-Value="@ClassCode" T="string">
@@ -49,7 +45,9 @@
                 <MudButton @onclick="AddNewGrade" Variant="Variant.Outlined" Color="Color.Primary" Style="margin: 0 auto;">Add Grade</MudButton>
             </MudCardActions>
             <MudCardActions>
-                <MudButton ButtonType="ButtonType.Submit" Variant="Variant.Filled" Color="Color.Primary" Style="margin: 0 auto;">Add Student Record</MudButton>
+                <MudButton ButtonType="ButtonType.Submit" Variant="Variant.Filled" Color="Color.Primary" Style="margin: 0 auto;">
+                    Why is submit button not working ;-;
+                </MudButton>
             </MudCardActions>
         </MudCard>
     </EditForm>
@@ -61,6 +59,7 @@
     private Grade NewGrade = new();
     private List<string> ClassCodes, StudentNames;
     private List<MudSelectItem<string>> smts = new();
+    public SortedSet<Student> students;
 
     protected override async Task OnInitializedAsync()
     {
@@ -68,30 +67,40 @@
         StudentNames = await gradesService.GetAllStudentNames();
     }
 
-    private void AddNewGrade()
+    private async Task AddNewGrade()
     {
+        //Snackbar.Add("Successfully added nothing part 2", Severity.Success);
+        if (string.IsNullOrEmpty(ClassCode))
+        {
+            Snackbar.Add("You have to fill in the class code", Severity.Error);
+            return;
+        }
+        if (string.IsNullOrEmpty(StudentName))
+        {
+            Snackbar.Add("You have to fill in the student name", Severity.Error);
+            return;
+        }
 
+        Class gradeClass = gradesService.GetClassFromCode(ClassCode);
+        Student gradeStudent = gradesService.GetStudentFromName(StudentName);
+
+        //ServiceResult svrs = classesService.GetStudentsFromClass(gradeClass);
+        //students = svrs.Students;
+        //if (students.Contains(gradeStudent) == false)
+        //{
+        //    Snackbar.Add("Student does not belong in class", Severity.Error);
+        //    return;
+        //}
+
+        await gradesService.CreateNewGradeAsyncBetter(NewGrade.GradeinNum, gradeClass, gradeStudent);
+        Snackbar.Add("Successfully added new grade", Severity.Success);
         return;
     }
 
     private async Task SubmitForm()
     {
-        if (ClassCode is null)
-        {
-            Snackbar.Add("You have to fill in the class code", Severity.Error);
-            return;
-        }
-        if (StudentName is null)
-        {
-            Snackbar.Add("You have to fill in the student name", Severity.Error);
-            return;
-        }
-        Class gradeClass = gradesService.GetClassFromCode(ClassCode);
-        Student gradeStudent = gradesService.GetStudentFromName(StudentName);
+        Snackbar.Add("Successfully added nothing part 2", Severity.Success);
         
-        await gradesService.CreateNewGradeAsyncBetter(NewGrade.GradeinNum, gradeClass, gradeStudent);
-        Snackbar.Add("Successfully added new grade", Severity.Success);
-        return;
     }
 
 }
