@@ -32,12 +32,14 @@
         <HeaderContent>
             <MudTh>Student Name</MudTh>
             <MudTh>Grade in number</MudTh>
+            <MudTh>Relevance</MudTh>
             <MudTh>Class Code</MudTh>
             <MudTh>Grade Id</MudTh>
         </HeaderContent>
         <RowTemplate>
             <MudTd DataLabel="Student Name">@context.StdName</MudTd>
             <MudTd DataLabel="Grade in number">@context.GradeinNum</MudTd>
+            <MudTd DataLabel="Relevance">@context.RelativeValue</MudTd>
             <MudTd DataLabel="Class Code">@context.ClassCode</MudTd>
             <MudTd DataLabel="Grade Id">@context.Id</MudTd>
         </RowTemplate>
@@ -54,6 +56,8 @@
 @code {
     private string ClassCode;
     private string StudentName;
+    private List<string> StudentNames;
+    private List<string> ClassCodes;
 
     private SortedSet<Grade> grades;
 
@@ -63,9 +67,12 @@
         grades = svrs.Grades;
     }
 
-    protected override void OnInitialized()
+    protected override async Task OnInitializedAsync()
     {
         ServiceResult svrs = gradesService.GetGradesFromStudentAndClass(StudentName, ClassCode);
         grades = svrs.Grades;
+        StudentNames = await gradesService.GetAllStudentNames();
+        ClassCodes = await classesService.GetAllClassCodes();
+        
     }
 }
