@@ -44,7 +44,6 @@ namespace ClassManagement
             });
             
             services.AddScoped<ClassesService>();
-            services.AddSingleton<WeatherForecastService>();
             services.AddScoped<GradesService>();
         }
 

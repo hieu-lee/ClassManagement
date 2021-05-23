@@ -4,20 +4,31 @@
 @inject NavigationManager navigationManager
 
 <MudContainer MaxWidth="MaxWidth.Large">
-    <h2 style="text-align:center;">My Classes</h2>
+    <MudText Typo="Typo.h3" Style="text-align:center;">My Classes</MudText>
     @if (loading)
     {
         <MudProgressLinear Color="Color.Primary" Indeterminate="true" Class="my-7" />
-        <h3 style="text-align: center;">Getting all your classes</h3>
+        <MudText Typo="Typo.h3" Style="text-align: center;">Getting all your classes</MudText>
     }
     else
     {
         @if (MyClasses.Count != 0)
         {
+            <div class="search" style="display: flex; justify-content: space-between;">
+                <div>
+                    <MudTextField Style="max-width: 45ch;" @bind-Value="@SearchClass" Placeholder="Class's code" Label="Class" />
+                </div>
+                <div style="display: flex; align-items: center;">
+                    <MudIconButton @onclick="DisplayClasses">
+                        <MudIcon Style="width: 2.5ch; height: 2.5ch; color: #594AE2" Icon="@Icons.Material.Filled.Search" />
+                    </MudIconButton>
+                </div>
+            </div>
+            <hr />
             <MudTabs Elevation="4" Rounded="true" Centered="true">
                 <MudTabPanel Text="All Classes">
                     <ul style="margin-top: 3ch;">
-                        <Virtualize Items="MyClasses" Context="Class">
+                        <Virtualize Items="ClassesToDisplay" Context="Class">
                             <li>
                                 <div style="display: flex; justify-content: space-between">
                                     <div style="display: flex;">
@@ -29,7 +40,6 @@
                                         <div style="margin-top: 2ch; width: 25ch;">
                                             <MudText Typo="Typo.h6">Code: @Class.Code</MudText>
                                             <MudText Typo="Typo.subtitle2">Name: @Class.Name</MudText>
-                                            <MudText Typo="Typo.body2">Number of students: @Class.NumberOfStudent</MudText>
                                         </div>
                                     </div>
                                     <div style="display:flex;">
@@ -65,7 +75,7 @@
                     @if (TodayClasses.Count != 0)
                     {
                         <ul style="margin-top: 3ch;">
-                            <Virtualize Items="TodayClasses" Context="Class">
+                            <Virtualize Items="TodayClassesToDisplay" Context="Class">
                                 <li>
                                     <div style="display: flex; justify-content: space-between">
                                         <div style="display: flex;">
@@ -77,10 +87,9 @@
                                             <div style="margin-top: 2ch; width: 25ch;">
                                                 <MudText Typo="Typo.h6">Code: @Class.Code</MudText>
                                                 <MudText Typo="Typo.subtitle2">Name: @Class.Name</MudText>
-                                                <MudText Typo="Typo.body2">Number of students: @Class.NumberOfStudent</MudText>
                                             </div>
                                         </div>
-                                        <div style="display:flex; margin-top: 2ch;">
+                                        <div style="display:flex;">
                                             <div class="description">
                                                 <MudText Typo="Typo.h6">Description</MudText>
                                                 <MudText Style="max-height: 6ch; overflow-y:scroll;" Typo="Typo.body2">@Class.Description</MudText>
@@ -127,6 +136,9 @@
 @code {
     private SortedSet<Class> MyClasses = new();
     private SortedSet<Class> TodayClasses = new();
+    private SortedSet<Class> ClassesToDisplay = new();
+    private SortedSet<Class> TodayClassesToDisplay = new();
+    private string SearchClass;
     private bool loading = true;
     private DayOfWeek Today = DateTime.Now.ToLocalTime().DayOfWeek;
 
@@ -134,24 +146,60 @@
     {
         var task = Task.Factory.StartNew(async () =>
         {
-            MyClasses = classesService.GetAllClasses();
+            ClassesToDisplay = classesService.GetAllClasses();
+            MyClasses = ClassesToDisplay;
             loading = false;
             await InvokeAsync(StateHasChanged);
-            TodayClasses = classesService.GetClassesFromDay(Today).Classes;
+            TodayClassesToDisplay = classesService.GetClassesFromDay(Today).Classes;
+            TodayClasses = TodayClassesToDisplay;
         });
         await task;
     }
 
+    private void DisplayClasses()
+    {
+        if (string.IsNullOrWhiteSpace(SearchClass))
+        {
+            ClassesToDisplay = MyClasses;
+            TodayClassesToDisplay = TodayClasses;
+        }
+        else
+        {
+            SearchClass = SearchClass.Trim().ToUpper();
+            ClassesToDisplay = new();
+            TodayClassesToDisplay = new();
+            foreach (var cls in MyClasses)
+            {
+                if (cls.Code == SearchClass)
+                {
+                    ClassesToDisplay.Add(cls);
+                }
+            }
+            foreach (var cls in TodayClasses)
+            {
+                if (cls.Code == SearchClass)
+                {
+                    TodayClassesToDisplay.Add(cls);
+                }
+            }
+        }
+    }
+
     private async Task DeleteClassAsync(Class Class)
     {
+        ClassesToDisplay.Remove(Class);
+        StateHasChanged();
+        MyClasses.Remove(Class);
         var res = await classesService.DeleteClass(Class.Code);
         if (res.success)
         {
-            MyClasses.Remove(Class);
-            StateHasChanged();
             Snackbar.Add("Successfully deleted class", Severity.Success);
             if (TodayClasses.Contains(Class))
             {
+                if (TodayClassesToDisplay.Contains(Class))
+                {
+                    TodayClassesToDisplay.Remove(Class);
+                }
                 TodayClasses.Remove(Class);
             }
             return;
@@ -163,14 +211,17 @@
         }
     }
 
+
     private async Task DeleteTodayClassAsync(Class Class)
     {
+        TodayClassesToDisplay.Remove(Class);
+        StateHasChanged();
+        ClassesToDisplay.Remove(Class);
+        TodayClasses.Remove(Class);
+        MyClasses.Remove(Class);
         var res = await classesService.DeleteClass(Class.Code);
         if (res.success)
         {
-            TodayClasses.Remove(Class);
-            StateHasChanged();
-            MyClasses.Remove(Class);
             Snackbar.Add("Successfully deleted class", Severity.Success);
             return;
         }
