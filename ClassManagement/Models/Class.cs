@@ -10,7 +10,9 @@ namespace ClassManagement.Models
         [Required]
         [StringLength(10, ErrorMessage = "Code length must be between 6 and 10 characters", MinimumLength = 6)]
         public string Code { get; set; }
-        public int HashCode { get; init; }
+#nullable enable
+        public int? HashCode { get; set; }
+#nullable disable
         [Required]
         public string Name { get; set; }
         public string DeleteHeight { get; set; } = "0";
@@ -25,11 +27,6 @@ namespace ClassManagement.Models
         public HashSet<ClassNote> Notes { get; set; } = new();
         public int NumberOfStudent => Students.Count;
         public string ImgSource => StyleConsts.ImgSourceLookUp[DeleteHeight];
-
-        public Class()
-        {
-            HashCode = Code.GetHashCode();
-        }
 
         public int CompareTo(Class other)
         {
@@ -47,7 +44,11 @@ namespace ClassManagement.Models
 
         public override int GetHashCode()
         {
-            return HashCode;
+            if (HashCode is null)
+            {
+                HashCode = Code.GetHashCode();
+            }
+            return HashCode.Value;
         }
     }
 }
