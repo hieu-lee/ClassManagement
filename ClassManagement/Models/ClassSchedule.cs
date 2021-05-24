@@ -8,19 +8,15 @@ namespace ClassManagement.Models
     {
         [Key]
         public string Id { get; init; } = Guid.NewGuid().ToString();
-        public int HashCode { get; init; }
+#nullable enable
+        public int? HashCode { get; set; }
+#nullable disable
         public DayOfWeek Day { get; set; }
         public TimeSpan? StartTime { get; set; }
         public TimeSpan? EndTime { get; set; }
         [ForeignKey("Classroom")]
         public string ClassroomCode { get; set; }
         public Class Classroom { get; set; }
-
-        public ClassSchedule()
-        {
-            var tuple = new Tuple<string, DayOfWeek, TimeSpan, TimeSpan>(ClassroomCode, Day, StartTime.Value, EndTime.Value);
-            HashCode = tuple.GetHashCode();
-        }
 
         public override bool Equals(object obj)
         {
@@ -30,7 +26,12 @@ namespace ClassManagement.Models
 
         public override int GetHashCode()
         {
-            return HashCode;
+            if (HashCode is null)
+            {
+                var tuple = new Tuple<string, DayOfWeek, TimeSpan, TimeSpan>(ClassroomCode, Day, StartTime.Value, EndTime.Value);
+                HashCode = tuple.GetHashCode();
+            }
+            return HashCode.Value;
         }
     }
 }
