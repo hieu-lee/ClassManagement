@@ -10,8 +10,8 @@ namespace ClassManagement.Models
     public class Grade : IComparable<Grade>
     {
         [Key]
-        public string Id { get; set; } = Guid.NewGuid().ToString();
-
+        public string Id { get; init; } = Guid.NewGuid().ToString();
+        public int HashCode { get; init; }
         [Required]
         public double GradeinNum { get; set; }
 
@@ -32,6 +32,11 @@ namespace ClassManagement.Models
         public string Description { get; set; }
         public Class Classroom { get; set; }
 
+        public Grade()
+        {
+            HashCode = Id.GetHashCode();
+        }
+
         public int CompareTo (Grade other)
         {
             var c = GradeinNum.CompareTo(other.GradeinNum);
@@ -45,7 +50,7 @@ namespace ClassManagement.Models
         }
         public override int GetHashCode()
         {
-            return Id.GetHashCode();
+            return HashCode;
         }
     }
 }

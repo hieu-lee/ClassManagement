@@ -8,13 +8,20 @@ namespace ClassManagement.Models
     {
         [Key]
         public string Id { get; init; } = Guid.NewGuid().ToString();
-        
+        public int HashCode { get; init; }
         public DayOfWeek Day { get; set; }
         public TimeSpan? StartTime { get; set; }
         public TimeSpan? EndTime { get; set; }
         [ForeignKey("Classroom")]
         public string ClassroomCode { get; set; }
         public Class Classroom { get; set; }
+
+        public ClassSchedule()
+        {
+            var tuple = new Tuple<string, DayOfWeek, TimeSpan, TimeSpan>(ClassroomCode, Day, StartTime.Value, EndTime.Value);
+            HashCode = tuple.GetHashCode();
+        }
+
         public override bool Equals(object obj)
         {
             var other = (ClassSchedule)obj;
@@ -23,8 +30,7 @@ namespace ClassManagement.Models
 
         public override int GetHashCode()
         {
-            var tuple = new Tuple<string, DayOfWeek, TimeSpan, TimeSpan>(ClassroomCode, Day, StartTime.Value, EndTime.Value);
-            return tuple.GetHashCode();
+            return HashCode;
         }
     }
 }
