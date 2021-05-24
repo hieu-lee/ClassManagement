@@ -1,4 +1,11 @@
-﻿.info {
+﻿.holder {
+    max-width: 1280px;
+    margin: 0 auto;
+    justify-content: space-between;
+    display: flex;
+}
+
+.info {
     text-align: center;
     background: #F0F0F0;
     color: #594AE2;
@@ -27,13 +34,37 @@
     transition: border 0.3s;
 }
 
-.pc-version {
-    justify-content: space-around;
-    padding: 5ch;
+.technologies {
+    background: #F0F0F0;
+    padding: 5ch 15ch;
+}
+
+.description {
+    padding-left: 7ch;
+    display:flex;
+    align-items:center;
+}
+
+.contributors {
+    background: #ffffff;
+    padding: 5ch 15ch;
+}
+
+.thank-you {
+    padding-right: 7ch;
     display: flex;
+    align-items: center;
+}
+
+.pc-version {
+    padding: 5ch 15ch;
     background-color: #594AE2;
     color: #ffffff;
 }
+
+    .pc-version .holder {
+        padding: 7ch;
+    }
 
 .download {
     text-align: center;
@@ -44,24 +75,69 @@ footer {
     padding: 5ch 15ch;
 }
 
-a {
+footer a {
     text-decoration: none;
     color: #616161;
     transition: color 0.3s;
 }
 
-    a:hover {
+    footer a:hover {
         text-decoration: underline;
         color: #181818
     }
 
-@media (max-width: 800px) {
+    footer .copyright {
+        display: flex;
+        justify-content: space-around;
+    }
+
+@media (max-width: 600px) {
+    footer .copyright {
+        display: block;
+        text-align: center;
+    }
+}
+
+@media (max-width: 935px) {
+    .pc-version .holder {
+        padding: 0;
+    }
+
     footer {
-        padding: 5ch 5ch;
+        padding: 5ch;
+    }
+
+    .description {
+        padding: 0;
+        justify-content: center;
+    }
+
+    .thank-you {
+        padding: 0;
+        justify-content: center;
+    }
+
+    .holder {
+        display: block;
+        text-align: center;
+    }
+    .holder img {
+        display: none;
     }
 }
 
 @media (max-width: 1100px) {
+    .technologies {
+        padding: 5ch;
+    }
+
+    .contributors {
+        padding: 5ch;
+    }
+
+    .pc-version {
+        padding: 5ch;
+    }
     .features {
         display: block;
     }
@@ -72,6 +148,7 @@ a {
         max-width: 270px;
     }
 }
+
 
 @media (min-width: 1400px) {
     .feature {

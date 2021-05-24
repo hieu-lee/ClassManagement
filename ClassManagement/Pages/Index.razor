@@ -1,4 +1,5 @@
 ﻿@page "/"
+@inject NavigationManager navigationManager 
 
 <div class="info">
     <div class="info-text">
@@ -13,21 +14,21 @@
     </div>
 </div>
 <div class="features">
-    <div class="feature" id="classes">
+    <div class="feature" id="classes" @onclick="@(() => { navigationManager.NavigateTo("/Classes"); })">
         <MudIcon Style="width: 35px; height: 35px; margin-right: 5px;" Icon="@Icons.Outlined.Class" Color="Color.Primary" />
         <div class="abstract">
             <MudText Typo="Typo.h5" Color="Color.Primary">Classes</MudText>
-            <MudText Typo="Typo.body2">Manage your classes with many features such as create/remove classes, change class' schedule, adding descriptions and more</MudText>
+            <MudText Typo="Typo.body2">Manage your classes with many features such as create/remove classes, change class' schedules, adding descriptions and more</MudText>
         </div>
     </div>
-    <div class="feature" id="students">
+    <div class="feature" id="students" @onclick="@(() => { navigationManager.NavigateTo("/Students"); })">
         <MudIcon Style="width: 35px; height: 35px; margin-right: 5px;" Icon="@Icons.Outlined.People" Color="Color.Primary"/>
         <div class="abstract">
             <MudText Typo="Typo.h5" Color="Color.Primary">Students</MudText>
             <MudText Typo="Typo.body2">Manage your students with many features such as create/remove students, calculating student's average grade, adding description and more</MudText>
         </div>
     </div>
-    <div class="feature" id="grades">
+    <div class="feature" id="grades" @onclick="@(() => { navigationManager.NavigateTo("/ViewScore"); })">
         <MudIcon Style="width: 35px; height: 35px; margin-right: 5px;" Icon="@Icons.Outlined.Grade" Color="Color.Primary"/>
         <div class="abstract">
             <MudText Typo="Typo.h5" Color="Color.Primary">Tests & Grades</MudText>
@@ -42,20 +43,50 @@
         </div>
     </div>
 </div>
-<div class="pc-version">
-    <div class="pc-version-text">
-        <MudText Typo="Typo.h6">Ready to Get Started with the PC Version?</MudText>
-        <MudText Style="margin-top: 1ch;" Typo="Typo.body2">Experience MEDU right on your personal computer</MudText>
-    </div>
-    <div class="download">
-        <div>
-            <MudText Typo="Typo.caption">Supported on Windows x32 and x64</MudText>
+<div class="technologies">
+    <div class="holder">
+        <div class="description">
+            <div>
+                <MudText Typo="Typo.h4">Technologies</MudText>
+                <MudText Style="margin: 1ch 0;" Typo="Typo.body2">We use Blazor Framework of .NET to write MEDU in <a href="https://dotnet.microsoft.com/languages/csharp" target="_blank" rel="noopener" style="color: #594AE2">C#</a></MudText>
+                <a href="https://dotnet.microsoft.com/" target="_blank" rel="noopenner" style="text-decoration: none;">
+                    <MudButton Variant="Variant.Filled" Style="background-color: #ffffff; color: #594AE2">Learn about .NET</MudButton>
+                </a>
+            </div>
         </div>
-        <MudButton Variant="Variant.Filled" Style="background-color: #ffffff; color: #594AE2; margin-top: 1ch;">Download</MudButton>
+        <img src="working-robot2.svg" width="450" height="213" alt="Technologies" />
+    </div>
+</div>
+<div class="contributors">
+    <div class="holder">
+        <img src="working-robot.svg" width="450" height="213" alt="Working robot" />
+        <div class="thank-you">
+            <div style="max-width: 46ch;">
+                <MudText Typo="Typo.h4">Thank You to All the Contributors</MudText>
+                <MudText Style="margin: 1ch 0;" Typo="Typo.body2">MEDU is open source and we are very thankful for many contributions it receives from the community</MudText>
+                <a href="https://github.com/hieu-lee/ClassManagement/graphs/contributors" target="_blank" rel="noopener" style="text-decoration: none;">
+                    <MudButton Variant="Variant.Filled" Style="background-color: #ffffff; color: #594AE2">See the Contributors</MudButton>
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="pc-version">
+    <div class="holder">
+        <div class="pc-version-text">
+            <MudText Typo="Typo.h6">Ready to Get Started with the PC Version?</MudText>
+            <MudText Style="margin-top: 1ch;" Typo="Typo.body2">Experience MEDU right on your personal computer</MudText>
+        </div>
+        <div class="download">
+            <div>
+                <MudText Typo="Typo.caption">Supported on Windows x32 and x64</MudText>
+            </div>
+            <MudButton Variant="Variant.Filled" Style="background-color: #ffffff; color: #594AE2; margin-top: 1ch;">Download</MudButton>
+        </div>
     </div>
 </div>
 <footer>
-    <ul style="display: flex; justify-content: space-around;">
+    <ul class="copyright">
         <li>
             <a rel="noopener" href="https://dotnet.microsoft.com/learn/aspnet/what-is-aspnet-core" target="_blank">Powered by .NET 5</a>
         </li>
