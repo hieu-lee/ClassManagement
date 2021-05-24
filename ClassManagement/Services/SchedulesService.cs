@@ -1,5 +1,6 @@
 ﻿using ClassManagement.Data;
 using ClassManagement.Models;
+using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -16,20 +17,20 @@ namespace ClassManagement.Services
             this.dbContext = dbContext;
         }
 
-        public List<ClassSchedule> GetAllSchedules()
+        public async Task<List<ClassSchedule>> GetAllSchedulesAsync()
         {
-            return dbContext.ClassSchedules.ToList();
+            return await dbContext.ClassSchedules.ToListAsync();
         }
 
-        public List<ClassSchedule> GetScheduleFromDate(DateTime Date)
+        public async Task<List<ClassSchedule>> GetScheduleFromDateAsync(DateTime Date)
         {
-            return dbContext.ClassSchedules.Where(s => s.Day == Date.DayOfWeek).ToList();
+            return await dbContext.ClassSchedules.Where(s => s.Day == Date.DayOfWeek).ToListAsync();
         }
 
-        public ClassSchedule GetOneNextSchedule(DateTime Date, HashSet<ClassSchedule> NotifiedSchedule)
+        public async Task<ClassSchedule> GetOneNextScheduleAsync(DateTime Date, HashSet<ClassSchedule> NotifiedSchedule)
         {
             var time = Date.TimeOfDay.Add(TimeSpan.FromMinutes(15));
-            return dbContext.ClassSchedules.Where(s => (s.Day == Date.DayOfWeek) && (!NotifiedSchedule.Contains(s)) && (s.StartTime.Value <= time)).FirstOrDefault();
+            return await dbContext.ClassSchedules.Where(s => (s.Day == Date.DayOfWeek) && (!NotifiedSchedule.Contains(s)) && (s.StartTime.Value <= time)).FirstOrDefaultAsync();
         }
     }
 }

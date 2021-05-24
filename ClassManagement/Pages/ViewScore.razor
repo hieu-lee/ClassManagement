@@ -4,51 +4,61 @@
 @inject GradesService gradesService
 
 <MudContainer MaxWidth="MaxWidth.Large">
-    <div style="display: flex; justify-content: space-around">
-        <MudTextField @bind-Value="ClassCode" Label="Name of Class" Placeholder="(if left empty, will display for all classes)"
-                      Variant="Variant.Text" Style="max-width:400px;"></MudTextField>
+    <MudText Typo="Typo.h3" Style="text-align:center;">My Grades</MudText>
+    @if (loading)
+    {
+        <MudProgressLinear Color="Color.Primary" Indeterminate="true" Class="my-7" />
+        <MudText Typo="Typo.h3" Style="text-align: center;">Getting all your grades</MudText>
+    }
+    else
+    {
+        <div style="display: flex; justify-content: space-around; margin-top: 3ch;">
+            <MudTextField @bind-Value="ClassCode" Label="Name of Class" Placeholder="(if left empty, will display for all classes)"
+                          Variant="Variant.Text" Style="max-width:400px;"></MudTextField>
 
-        <MudTextField @bind-Value="StudentName" Label="Name of Student" Placeholder="(if left empty, will display for all students)"
-                      Variant="Variant.Text" Style="max-width:400px;"></MudTextField>
-        <MudIconButton @onclick="DisplayScores" Icon="@Icons.Material.Filled.Search" Style="color: #594AE2" />
-    </div>
-    <br />
-    <div style="display:flex; justify-content:center;">
-        <MudButton Variant="Variant.Filled" Color="Color.Primary" @onclick="DisplayScores">Display Scores for Selected</MudButton>
-    </div>
-    <br />
-    <br />
+            <MudTextField @bind-Value="StudentName" Label="Name of Student" Placeholder="(if left empty, will display for all students)"
+                          Variant="Variant.Text" Style="max-width:400px;"></MudTextField>
+            <div>
+                <MudIconButton @onclick="DisplayScores" Icon="@Icons.Material.Filled.Search" Style="color: #594AE2" />
+            </div>
+        </div>
+        <br />
+        <div style="display:flex; justify-content:center;">
+            <MudButton Variant="Variant.Outlined" Color="Color.Primary" @onclick="() => { MultiSelect = !MultiSelect; }">@Mode</MudButton>
+        </div>
+        <br />
+        <br />
 
-    @*<ul>
-            @if (grades != null && grades.Any())
-                @foreach (var grade in grades)
-                {
-                    <li>@grade.StdName, @grade.GradeinNum, @grade.ClassCode, id = @grade.Id</li>
-                    <MudTextField @bind-Value="@grade.GradeinNum"> </MudTextField>
-                }
-        </ul>*@
+        @*<ul>
+                @if (grades != null && grades.Any())
+                    @foreach (var grade in grades)
+                    {
+                        <li>@grade.StdName, @grade.GradeinNum, @grade.ClassCode, id = @grade.Id</li>
+                        <MudTextField @bind-Value="@grade.GradeinNum"> </MudTextField>
+                    }
+            </ul>*@
 
-    <MudTable Items="@grades" Hover="true">
-        <HeaderContent>
-            <MudTh>Student Name</MudTh>
-            <MudTh>Grade in number</MudTh>
-            <MudTh>Relevance</MudTh>
-            <MudTh>Class Code</MudTh>
-            <MudTh>Grade Id</MudTh>
-        </HeaderContent>
-        <RowTemplate>
-            <MudTd DataLabel="Student Name">@context.StdName</MudTd>
-            <MudTd DataLabel="Grade in number">@context.GradeinNum</MudTd>
-            <MudTd DataLabel="Relevance">@context.RelativeValue</MudTd>
-            <MudTd DataLabel="Class Code">@context.ClassCode</MudTd>
-            <MudTd DataLabel="Grade Id">@context.Id</MudTd>
-        </RowTemplate>
+        <MudTable Items="@grades" Hover="true" Striped="true" MultiSelection="@MultiSelect">
+            <HeaderContent>
+                <MudTh>Student Name</MudTh>
+                <MudTh>Grade in number</MudTh>
+                <MudTh>Relevance</MudTh>
+                <MudTh>Class Code</MudTh>
+                <MudTh>Grade Id</MudTh>
+            </HeaderContent>
+            <RowTemplate>
+                <MudTd DataLabel="Student Name">@context.StdName</MudTd>
+                <MudTd DataLabel="Grade in number">@context.GradeinNum</MudTd>
+                <MudTd DataLabel="Relevance">@context.RelativeValue</MudTd>
+                <MudTd DataLabel="Class Code">@context.ClassCode</MudTd>
+                <MudTd DataLabel="Grade Id">@context.Id</MudTd>
+            </RowTemplate>
 
-        <PagerContent>
-            <MudTablePager PageSizeOptions="new int[]{50, 100}" />
-        </PagerContent>
-    </MudTable>
-
+            <PagerContent>
+                <MudTablePager PageSizeOptions="new int[]{50, 100}" />
+            </PagerContent>
+        </MudTable>
+    }
 </MudContainer>
 
 
@@ -58,8 +68,10 @@
     private string StudentName;
     private List<string> StudentNames;
     private List<string> ClassCodes;
-
+    private bool MultiSelect = false;
     private SortedSet<Grade> grades;
+    private string Mode => MultiSelect ? "Cancel" : "Edit";
+    private bool loading = true;
 
     private void DisplayScores()
     {
@@ -71,8 +83,9 @@
     {
         ServiceResult svrs = gradesService.GetGradesFromStudentAndClass(StudentName, ClassCode);
         grades = svrs.Grades;
+        loading = false;
         StudentNames = await gradesService.GetAllStudentNames();
         ClassCodes = await classesService.GetAllClassCodes();
-        
+
     }
 }
