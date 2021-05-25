@@ -1,4 +1,8 @@
-﻿.holder {
+﻿ul {
+    list-style: none;
+}
+
+.holder {
     max-width: 1280px;
     margin: 0 auto;
     justify-content: space-between;
