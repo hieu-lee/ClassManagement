@@ -15,7 +15,7 @@ namespace ClassManagement.Services
     {
         SessionService session; 
         ISnackbar Snackbar;
-        Timer notificationTimer = new(30000);
+        Timer notificationTimer = new(10000);
         NavigationManager navigationManager;
         public NotificationService(SessionService session, ISnackbar Snackbar, NavigationManager navigationManager)
         {
@@ -44,7 +44,6 @@ namespace ClassManagement.Services
                 var schedules = dbConnection.Query<ClassSchedule>(@"SELECT Id, HashCode, Day, StartTime, EndTime, ClassroomCode FROM ClassSchedules WHERE Day = @Day", new { Day }).ToList();
                 schedule = schedules.Where(s => (!NotifiedSchedule.Contains(s)) && (time1 <= s.StartTime.Value) && (s.StartTime.Value <= time2)).FirstOrDefault();
             }
-            Console.WriteLine(DateTime.Now);
             return schedule;
         }
         public async Task PushNotification()
