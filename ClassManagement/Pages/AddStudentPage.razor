@@ -1,6 +1,7 @@
 ﻿@page "/AddStudent"
 @inject ClassesService classesService
 @inject ISnackbar Snackbar
+@inject NotificationService notificationService
 
 
 <div style="max-width: 500px; margin: 5ch auto; padding-bottom: 5ch;">
@@ -11,11 +12,11 @@
             <MudCardContent>
                 <MudTextField Label="Name" Required="true" HelperText="Must be unique, have at least 6 characters and less than 11 characters"
                               @bind-Value="NewStudent.Name" For="@(() => NewStudent.Name)" />
-                <MudDatePicker Label="Date of Birth" Required="true" @bind-Date="NewStudent.DateOfBirth" For="@(() => NewStudent.DateOfBirth)"/>
+                <MudDatePicker Label="Date of Birth" Required="true" @bind-Date="NewStudent.DateOfBirth" For="@(() => NewStudent.DateOfBirth)" />
                 <MudSelect Label="Gender" Required="true" @bind-Value="NewStudent.Gender" For="@(() => NewStudent.Gender)" T="string">
-                    <MudSelectItem Value="@("Male")"/>
-                    <MudSelectItem Value="@("Female")"/>
-                    <MudSelectItem Value="@("Other")"/>
+                    <MudSelectItem Value="@("Male")" />
+                    <MudSelectItem Value="@("Female")" />
+                    <MudSelectItem Value="@("Other")" />
                 </MudSelect>
                 <MudTextField Label="Description" Class="mt-3"
                               @bind-Value="NewStudent.Description" For="@(() => NewStudent.Description)" Lines="5" />
@@ -33,7 +34,7 @@
                         @foreach (var Code in ClassCodes)
                         {
                             <MudSelectItem T="string" Value="@Code">@Code</MudSelectItem>
-                        } 
+                        }
                     </MudSelect>
                     <MudCardActions>
                         <MudButton @onclick="AddNewClassCode" Variant="Variant.Outlined" Color="Color.Primary" Style="margin: 0 auto;">Add Class</MudButton>

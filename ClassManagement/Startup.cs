@@ -45,6 +45,9 @@ namespace ClassManagement
             
             services.AddScoped<ClassesService>();
             services.AddScoped<GradesService>();
+            services.AddScoped<SchedulesService>();
+            services.AddScoped<SessionService>();
+            services.AddScoped<NotificationService>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
