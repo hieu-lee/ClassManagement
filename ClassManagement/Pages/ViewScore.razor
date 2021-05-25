@@ -13,20 +13,33 @@
     }
     else
     {
-        <div style="display: flex; justify-content: space-around; margin-top: 3ch;">
-            <MudTextField @bind-Value="ClassCode" Label="Name of Class" Placeholder="(if left empty, will display for all classes)"
-                          Variant="Variant.Text" Style="max-width:400px;"></MudTextField>
-
-            <MudTextField @bind-Value="StudentName" Label="Name of Student" Placeholder="(if left empty, will display for all students)"
-                          Variant="Variant.Text" Style="max-width:400px;"></MudTextField>
+        <div style="display: flex; justify-content: space-between; margin-top: 3ch;">
             <div>
-                <MudIconButton @onclick="DisplayScores" Icon="@Icons.Material.Filled.Search" Style="color: #594AE2" />
+                <MudTextField @bind-Value="ClassCode" Label="Class Code" Placeholder="Code"
+                              Variant="Variant.Text" Style="max-width:400px; min-width:300px;"></MudTextField>
+
+                <MudTextField @bind-Value="StudentName" Label="Student Name" Placeholder="Name"
+                              Variant="Variant.Text" Style="max-width:400px; min-width:300px;"></MudTextField>
+            </div>
+            <div style="display:flex; align-items: center">
+                <div>
+                    <div>
+                        <MudTooltip Text="Search">
+                            <MudIconButton @onclick="DisplayScores" Icon="@Icons.Material.Filled.Search" Style="color: #594AE2" />
+                        </MudTooltip>
+                    </div>
+                    <div>
+                        <MudTooltip Text="@Mode">
+                            <MudIconButton Icon="@EditIcon" Style="color: #594AE2" @onclick="() => { MultiSelect = !MultiSelect; }" />
+                        </MudTooltip>
+                    </div>
+                </div>
             </div>
         </div>
         <br />
-        <div style="display:flex; justify-content:center;">
+        @*<div style="display:flex; justify-content:center;">
             <MudButton Variant="Variant.Outlined" Color="Color.Primary" @onclick="() => { MultiSelect = !MultiSelect; }">@Mode</MudButton>
-        </div>
+        </div>*@
         <br />
         <br />
 
@@ -78,6 +91,7 @@
     private bool MultiSelect = false;
     private SortedSet<Grade> grades;
     private string Mode => MultiSelect ? "Cancel" : "Edit";
+    private string EditIcon => MultiSelect ? Icons.Material.Filled.EditOff : Icons.Material.Filled.Edit;
     private bool loading = true;
 
     private void DisplayScores()
