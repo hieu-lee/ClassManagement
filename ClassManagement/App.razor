@@ -1,5 +1,6 @@
 @inject ISnackbar Snackbar
 @inject NavigationManager navigationManager
+@inject IJSRuntime JsRuntime
 @using System.Timers;
 @using Dapper;
 @using Microsoft.Data.Sqlite;
@@ -21,11 +22,13 @@
 @code {
     HashSet<ClassSchedule> NotifiedSchedules = new();
     Timer notificationTimer = new(30000);
+    IJSObjectReference module;
 
-    protected override void OnAfterRender(bool firstRender)
+    protected override async Task OnAfterRenderAsync(bool firstRender)
     {
         if (firstRender)
         {
+            module = await JsRuntime.InvokeAsync<IJSObjectReference>("import", "./Utils.js");
             notificationTimer.Enabled = true;
             notificationTimer.Elapsed += async (s, e) =>
             {
@@ -62,7 +65,25 @@
                     return Task.CompletedTask;
                 };
             });
+            await module.InvokeVoidAsync("PlayAudio");
             NotifiedSchedules.Add(schedule);
+            Timer tempTimer = new(900000);
+            tempTimer.Elapsed += async (s, e) =>
+            {
+                Snackbar.Add($"{schedule.ClassroomCode} starts at {schedule.StartTime}", Severity.Info, config =>
+                {
+                    config.Onclick = snackbar =>
+                    {
+                        navigationManager.NavigateTo("/Classes");
+                        return Task.CompletedTask;
+                    };
+                });
+                await module.InvokeVoidAsync("PlayAudio");
+                NotifiedSchedules.Remove(schedule);
+                tempTimer.Enabled = false;
+                tempTimer.Dispose();
+            };
+            tempTimer.Enabled = true;
         }
     }
 }

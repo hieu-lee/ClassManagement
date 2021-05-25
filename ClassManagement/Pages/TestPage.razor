@@ -4,9 +4,10 @@
 @inject NavigationManager navigationManager
 @inject GradesService gradesService
 @inject ClassesService classesService
+@inject IJSRuntime JsRuntime
 
 <h3>TestPage</h3>
-
+<MudButton OnClick="PlayAudio">Test Sound</MudButton>
 <span> Current grades stored: </span>
 <br />
 
@@ -65,6 +66,7 @@
 @code {
 
     bool disabled = false;
+    IJSObjectReference module;
 
     [Parameter]
     public string id { get; set; }
@@ -75,8 +77,8 @@
     [Parameter]
     public string AlertText { get; set; }
 
-    private SortedSet<Grade> myGrades;
-    private SortedSet<Grade> studentGrades;
+    private SortedSet<Grade> myGrades = new();
+    private SortedSet<Grade> studentGrades = new();
 
     private double NewGradeInNum;
 
@@ -91,6 +93,11 @@
     private Class defaultClass;
 
     private Grade myGrade = new();
+
+    private async Task PlayAudio()
+    {
+        await module.InvokeVoidAsync("PlayAudio");
+    }
 
     private async Task AddNewScore()
     {
@@ -128,9 +135,13 @@
         studentGrades = svrs.Grades;
     }
 
-    protected override void OnInitialized()
+    protected override async Task OnAfterRenderAsync(bool firstrender)
     {
-        myGrades = gradesService.GetAllGrades();
+        if (firstrender)
+        {
+            module = await JsRuntime.InvokeAsync<IJSObjectReference>("import", "./Utils.js");
+            myGrades = gradesService.GetAllGrades();
+        }
     }
 
 
