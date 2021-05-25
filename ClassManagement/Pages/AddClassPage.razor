@@ -59,6 +59,7 @@
 
         protected override void OnInitialized()
         {
+            Snackbar.Add(DummyClass.Code);
             NewSchedule = new() { Classroom = DummyClass, ClassroomCode = DummyClass.Code };
         }
 

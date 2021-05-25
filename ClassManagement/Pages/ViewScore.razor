@@ -61,6 +61,10 @@
     }
 </MudContainer>
 
+<div>
+    <MudIconButton @onclick="CalculateAverage" Icon="@Icons.Material.Filled.Search" Style="color: #594AE2" />
+</div>
+
 
 
 @code {
@@ -78,7 +82,10 @@
         ServiceResult svrs = gradesService.GetGradesFromStudentAndClass(StudentName, ClassCode);
         grades = svrs.Grades;
     }
+    private void CalculateAverage()
+        {
 
+        }
     protected override async Task OnInitializedAsync()
     {
         ServiceResult svrs = gradesService.GetGradesFromStudentAndClass(StudentName, ClassCode);
