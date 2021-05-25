@@ -133,8 +133,22 @@ namespace ClassManagement.Services
                 StdName = GStudent.Name
             };
             await CreateNewGradeAsync(myGrade);
+            GStudent.Grades.Add(myGrade);
+            GClass.Grades.Add(myGrade);
             return new() { success = true };
 
+        }
+
+        public async Task<ServiceResult> DeleteGrade (string gradeId)
+        {
+            var grade = dbContext.Grades.Find(gradeId);
+            if (grade is not null)
+            {
+                dbContext.Grades.Remove(grade);
+                await dbContext.SaveChangesAsync();
+                return new() { success = true };
+            }
+            return new() { success = false, err = "Grade does not exist." };
         }
 
     }

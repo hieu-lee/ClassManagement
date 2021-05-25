@@ -29,6 +29,7 @@
     {
         if (firstRender)
         {
+            SqlMapper.AddTypeHandler(new TimeSpanHandler());
             module = await JsRuntime.InvokeAsync<IJSObjectReference>("import", "./Utils.js");
             notificationTimer.Enabled = true;
             notificationTimer.Elapsed += async (s, e) =>
@@ -44,7 +45,6 @@
         var time2 = Date.TimeOfDay.Add(TimeSpan.FromMinutes(15));
         var Day = Date.DayOfWeek;
         ClassSchedule schedule;
-        SqlMapper.AddTypeHandler(new TimeSpanHandler());
         using (var dbConnection = new SqliteConnection("Data Source=classmanagement.db"))
         {
             await dbConnection.OpenAsync();
