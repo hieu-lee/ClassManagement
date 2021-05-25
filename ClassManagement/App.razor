@@ -4,6 +4,7 @@
 @using System.Timers;
 @using Dapper;
 @using Microsoft.Data.Sqlite;
+@using ClassManagement.Data;
 
 <Router AppAssembly="@typeof(Program).Assembly" PreferExactMatches="@true">
     <Found Context="routeData">
@@ -43,6 +44,7 @@
         var time2 = Date.TimeOfDay.Add(TimeSpan.FromMinutes(15));
         var Day = Date.DayOfWeek;
         ClassSchedule schedule;
+        SqlMapper.AddTypeHandler(new TimeSpanHandler());
         using (var dbConnection = new SqliteConnection("Data Source=classmanagement.db"))
         {
             await dbConnection.OpenAsync();
