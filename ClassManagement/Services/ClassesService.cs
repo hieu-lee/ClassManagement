@@ -14,6 +14,7 @@ namespace ClassManagement.Services
 
         public ClassesService(AppDbContext dbContext)
         {
+            Console.WriteLine("init");
             this.dbContext = dbContext;
         }
 

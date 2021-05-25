@@ -1,4 +1,8 @@
-@inject NotificationService notificationService 
+@inject ISnackbar Snackbar
+@inject NavigationManager navigationManager
+@using System.Timers;
+@using Dapper;
+@using Microsoft.Data.Sqlite;
 
 <Router AppAssembly="@typeof(Program).Assembly" PreferExactMatches="@true">
     <Found Context="routeData">
@@ -13,3 +17,52 @@
 <MudThemeProvider />
 <MudDialogProvider />
 <MudSnackbarProvider />
+
+@code {
+    HashSet<ClassSchedule> NotifiedSchedules = new();
+    Timer notificationTimer = new(30000);
+
+    protected override void OnAfterRender(bool firstRender)
+    {
+        if (firstRender)
+        {
+            notificationTimer.Enabled = true;
+            notificationTimer.Elapsed += async (s, e) =>
+            {
+                await PushNotification();
+            };
+        }
+    }
+
+    public async Task<ClassSchedule> GetOneNextScheduleAsync(DateTime Date, HashSet<ClassSchedule> NotifiedSchedule)
+    {
+        var time1 = Date.TimeOfDay;
+        var time2 = Date.TimeOfDay.Add(TimeSpan.FromMinutes(15));
+        var Day = Date.DayOfWeek;
+        ClassSchedule schedule;
+        using (var dbConnection = new SqliteConnection("Data Source=classmanagement.db"))
+        {
+            await dbConnection.OpenAsync();
+            var schedules = dbConnection.Query<ClassSchedule>(@"SELECT Id, HashCode, Day, StartTime, EndTime, ClassroomCode FROM ClassSchedules WHERE Day = @Day", new { Day }).ToList();
+            schedule = schedules.Where(s => (!NotifiedSchedule.Contains(s)) && (time1 <= s.StartTime.Value) && (s.StartTime.Value <= time2)).FirstOrDefault();
+        }
+        return schedule;
+    }
+
+    public async Task PushNotification()
+    {
+        var schedule = await GetOneNextScheduleAsync(DateTime.Now, NotifiedSchedules);
+        if (schedule is not null)
+        {
+            Snackbar.Add($"{schedule.ClassroomCode} starts at {schedule.StartTime}", Severity.Info, config =>
+            {
+                config.Onclick = snackbar =>
+                {
+                    navigationManager.NavigateTo("/Classes");
+                    return Task.CompletedTask;
+                };
+            });
+            NotifiedSchedules.Add(schedule);
+        }
+    }
+}

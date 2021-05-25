@@ -1,5 +1,5 @@
 ﻿@page "/"
-@inject NavigationManager navigationManager 
+@inject NavigationManager navigationManager
 
 <div class="info">
     <div class="info-text">
@@ -22,14 +22,14 @@
         </div>
     </div>
     <div class="feature" id="students" @onclick="@(() => { navigationManager.NavigateTo("/Students"); })">
-        <MudIcon Style="width: 35px; height: 35px; margin-right: 5px;" Icon="@Icons.Outlined.People" Color="Color.Primary"/>
+        <MudIcon Style="width: 35px; height: 35px; margin-right: 5px;" Icon="@Icons.Outlined.People" Color="Color.Primary" />
         <div class="abstract">
             <MudText Typo="Typo.h5" Color="Color.Primary">Students</MudText>
             <MudText Typo="Typo.body2">Manage your students with many features such as create/remove students, calculating student's average grade, adding description and more</MudText>
         </div>
     </div>
     <div class="feature" id="grades" @onclick="@(() => { navigationManager.NavigateTo("/ViewScore"); })">
-        <MudIcon Style="width: 35px; height: 35px; margin-right: 5px;" Icon="@Icons.Outlined.Grade" Color="Color.Primary"/>
+        <MudIcon Style="width: 35px; height: 35px; margin-right: 5px;" Icon="@Icons.Outlined.Grade" Color="Color.Primary" />
         <div class="abstract">
             <MudText Typo="Typo.h5" Color="Color.Primary">Tests & Grades</MudText>
             <MudText Typo="Typo.body2">Manage your tests & grades with many features such as create/remove tests/grades, calculating average grade, filtering grades by classes/students/tests and more</MudText>
