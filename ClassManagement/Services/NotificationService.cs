@@ -1,5 +1,4 @@
-﻿using ClassManagement.Data;
-using ClassManagement.Models;
+﻿using ClassManagement.Models;
 using Dapper;
 using Microsoft.AspNetCore.Components;
 using Microsoft.Data.Sqlite;
@@ -16,12 +15,10 @@ namespace ClassManagement.Services
     {
         SessionService session; 
         ISnackbar Snackbar;
-        Timer notificationTimer = new(10000);
+        Timer notificationTimer = new(30000);
         NavigationManager navigationManager;
-        AppDbContext dbContext;
-        public NotificationService(SessionService session, ISnackbar Snackbar, NavigationManager navigationManager, AppDbContext dbContext)
+        public NotificationService(SessionService session, ISnackbar Snackbar, NavigationManager navigationManager)
         {
-            this.dbContext = dbContext;
             this.session = session;
             this.Snackbar = Snackbar;
             this.navigationManager = navigationManager;
