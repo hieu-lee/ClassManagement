@@ -37,22 +37,14 @@
             </div>
         </div>
         <br />
-        @*<div style="display:flex; justify-content:center;">
+        <div style="display:flex; justify-content:center;">
             <MudButton Variant="Variant.Outlined" Color="Color.Primary" @onclick="() => { MultiSelect = !MultiSelect; }">@Mode</MudButton>
-        </div>*@
+        </div>
         <br />
         <br />
 
-        @*<ul>
-                @if (grades != null && grades.Any())
-                    @foreach (var grade in grades)
-                    {
-                        <li>@grade.StdName, @grade.GradeinNum, @grade.ClassCode, id = @grade.Id</li>
-                        <MudTextField @bind-Value="@grade.GradeinNum"> </MudTextField>
-                    }
-            </ul>*@
 
-        <MudTable Items="@grades" Hover="true" Striped="true" MultiSelection="@MultiSelect">
+        <MudTable Items="@grades" Hover="true" Striped="true" MultiSelection="@MultiSelect" @bind-SelectedItems="selectedGrades">
             <HeaderContent>
                 <MudTh>Student Name</MudTh>
                 <MudTh>Grade in number</MudTh>
@@ -75,11 +67,12 @@
             </PagerContent>
         </MudTable>
     }
+    <div style="display:flex; justify-content:center;">
+        <MudButton @onclick="CalculateAverage" Variant="Variant.Outlined" Color="Color.Primary"
+                   Style="@($"margin: auto; display: {isClassNull};")">Calculate average of class: @ClassCode</MudButton>
+    </div>
 </MudContainer>
 
-<div>
-    <MudButton @onclick="CalculateAverage" Variant="Variant.Outlined" Color="Color.Primary" Style="margin: 0 auto;">Calculate average</MudButton>
-</div>
 
 
 
@@ -90,14 +83,24 @@
     private List<string> ClassCodes;
     private bool MultiSelect = false;
     private SortedSet<Grade> grades;
+    private HashSet<Grade> selectedGrades;
+
     private string Mode => MultiSelect ? "Cancel" : "Edit";
     private string EditIcon => MultiSelect ? Icons.Material.Filled.EditOff : Icons.Material.Filled.Edit;
     private bool loading = true;
+    private string isClassNull;
 
     private void DisplayScores()
     {
         ServiceResult svrs = gradesService.GetGradesFromStudentAndClass(StudentName, ClassCode);
         grades = svrs.Grades;
+
+        if (ClassCode is not null)
+        {
+            isClassNull = "inline";
+
+        }
+        else isClassNull = "none";
     }
     private void CalculateAverage()
     {
@@ -122,11 +125,20 @@
     }
     protected override async Task OnInitializedAsync()
     {
-        ServiceResult svrs = gradesService.GetGradesFromStudentAndClass(StudentName, ClassCode);
-        grades = svrs.Grades;
-        loading = false;
-        StudentNames = await gradesService.GetAllStudentNames();
-        ClassCodes = await classesService.GetAllClassCodes();
+        loading = true;
+        if (grades is null)
+        {
+            ServiceResult svrs = gradesService.GetGradesFromStudentAndClass(StudentName, ClassCode);
+            grades = svrs.Grades;
+            isClassNull = "none";
+        }
 
+        if (StudentNames is null)
+            StudentNames = await gradesService.GetAllStudentNames();
+
+        if (ClassCodes is null)
+            ClassCodes = await classesService.GetAllClassCodes();
+
+        loading = false;
     }
 }

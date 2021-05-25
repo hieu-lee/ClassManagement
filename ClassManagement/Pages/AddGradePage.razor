@@ -7,7 +7,7 @@
 
 <div style="max-width: 500px; margin: 5ch auto; padding-bottom: 5ch;">
     <h3 style="text-align: center;">Create new grade</h3>
-    <EditForm Model="@NewGrade" OnValidSubmit="SubmitForm">
+    <EditForm Model="@NewGrade">
         <DataAnnotationsValidator />
         <MudCard Style="border-top: 10px solid #594AE2">
             <MudCardContent>
@@ -43,11 +43,7 @@
             <MudCardActions>
                 <MudButton @onclick="AddNewGrade" Variant="Variant.Outlined" Color="Color.Primary" Style="margin: 0 auto;">Add Grade</MudButton>
             </MudCardActions>
-            <MudCardActions>
-                <MudButton ButtonType="ButtonType.Submit" Variant="Variant.Filled" Color="Color.Primary" Style="margin: 0 auto;">
-                    Why is submit button not working ;-;
-                </MudButton>
-            </MudCardActions>
+            
         </MudCard>
     </EditForm>
 </div>
@@ -94,12 +90,6 @@
         await gradesService.CreateNewGradeAsyncBetter(NewGrade.GradeinNum, gradeClass, gradeStudent);
         Snackbar.Add("Successfully added new grade", Severity.Success);
         return;
-    }
-
-    private async Task SubmitForm()
-    {
-        Snackbar.Add("Successfully added nothing part 2", Severity.Success);
-
     }
 
 }
