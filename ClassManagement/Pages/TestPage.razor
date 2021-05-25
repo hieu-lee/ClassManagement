@@ -1,9 +1,10 @@
 ﻿@page "/Grades/{id}"
 @page "/grade"
-@page "/Grades" 
+@page "/Grades"
 @inject NavigationManager navigationManager
 @inject GradesService gradesService
 @inject ClassesService classesService
+
 <h3>TestPage</h3>
 
 <span> Current grades stored: </span>
@@ -48,15 +49,15 @@
 <br />
 
 <MudButton Variant="Variant.Filled" Color="Color.Primary" @onclick="DisplayScore">Display Student Score</MudButton>
-<br /> 
+<br />
 
 <ul>
-    @if (studentGrades!= null && studentGrades.Any())
-    @foreach (var grade in studentGrades)
-    {
-        <li>@grade.StdName, @grade.GradeinNum, @grade.ClassCode, id = @grade.Id</li>
-        <MudTextField @bind-Value ="@grade.GradeinNum"> </MudTextField>
-    }
+    @if (studentGrades != null && studentGrades.Any())
+        @foreach (var grade in studentGrades)
+        {
+            <li>@grade.StdName, @grade.GradeinNum, @grade.ClassCode, id = @grade.Id</li>
+            <MudTextField @bind-Value="@grade.GradeinNum"> </MudTextField>
+        }
 </ul>
 
 
@@ -97,7 +98,7 @@
         defaultStudent = gradesService.GetStudentFromName(NewStudentName);
         // maybe alerts
 
-        
+
         if (string.IsNullOrEmpty(ClassCode)) ClassCode = "CSE101"; // default value
         defaultClass = gradesService.GetClassFromCode(ClassCode);
 

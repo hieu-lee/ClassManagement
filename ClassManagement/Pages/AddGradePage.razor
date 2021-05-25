@@ -1,5 +1,4 @@
-﻿
-@page "/AddGrade"
+﻿@page "/AddGrade"
 @inject ClassesService classesService
 @inject NavigationManager navigationManager
 @inject GradesService gradesService
@@ -19,7 +18,7 @@
 
                 <MudTextField Label="Description" Class="mt-3"
                               @bind-Value="NewGrade.Description" For="@(() => NewGrade.Description)" Lines="5" />
-                
+
                 <div>
                     <h5 style="margin-top: 20px; text-align: center;">Select Class</h5>
                     <MudSelect Label="Class" Required="true" @bind-Value="@ClassCode" T="string">
@@ -100,7 +99,7 @@
     private async Task SubmitForm()
     {
         Snackbar.Add("Successfully added nothing part 2", Severity.Success);
-        
+
     }
 
 }

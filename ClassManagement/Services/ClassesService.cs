@@ -77,6 +77,7 @@ namespace ClassManagement.Services
             {
                 return new() { success = false, err = "Class has already existed" };
             }
+            NewClass.GetHashCode();
             dbContext.Classes.Add(NewClass);
             await dbContext.SaveChangesAsync();
             return new() { success = true };

@@ -3,7 +3,6 @@
 @inject ClassesService classesService
 @inject ISnackbar Snackbar
 
-
 <div style="max-width: 500px; margin: 5ch auto; padding-bottom: 5ch;">
     <h3 style="text-align: center;">Create new class</h3>
     <EditForm Model="@NewClass" OnValidSubmit="SubmitForm">
@@ -11,13 +10,13 @@
         <MudCard Style="border-top: 10px solid #594AE2">
             <MudCardContent>
                 <MudTextField Label="Code" Required="true" HelperText="Must be unique, have at least 6 characters and less than 11 characters"
-                                @bind-Value="NewClass.Code" For="@(() => NewClass.Code)" />
+                              @bind-Value="NewClass.Code" For="@(() => NewClass.Code)" />
                 <MudTextField Label="Name" Required="true" Class="mt-3"
-                                @bind-Value="NewClass.Name" For="@(() => NewClass.Name)" />
+                              @bind-Value="NewClass.Name" For="@(() => NewClass.Name)" />
                 <MudTextField Label="Address" Class="mt-3"
-                                @bind-Value="NewClass.Address" For="@(() => NewClass.Address)" />
+                              @bind-Value="NewClass.Address" For="@(() => NewClass.Address)" />
                 <MudTextField Label="Description" Class="mt-3"
-                                @bind-Value="NewClass.Description" For="@(() => NewClass.Description)" Lines="5" />
+                              @bind-Value="NewClass.Description" For="@(() => NewClass.Description)" Lines="5" />
                 <ul style="margin-top: 10px;">
                     @foreach (var schedule in DummyClass.Schedules)
                     {
@@ -51,77 +50,76 @@
     </EditForm>
 </div>
 
-    @code {
-        private Class NewClass = new();
-        private Class DummyClass = new() { Code = "BAKA02", Name = "Baka" };
-        private ClassSchedule NewSchedule;
-        private Regex rgx = new("[^A-Za-z0-9]");
+@code {
+    private Class NewClass = new();
+    private Class DummyClass = new() { Code = "BAKA02", Name = "Baka" };
+    private ClassSchedule NewSchedule;
+    private Regex rgx = new("[^A-Za-z0-9]");
 
-        protected override void OnInitialized()
+    protected override void OnInitialized()
+    {
+        NewSchedule = new() { Classroom = DummyClass, ClassroomCode = DummyClass.Code };
+    }
+
+    private void AddNewSchedule()
+    {
+        if (DummyClass.Schedules.Contains(NewSchedule))
         {
-            Snackbar.Add(DummyClass.Code);
+            return;
+        }
+        if (NewSchedule.EndTime is null || NewSchedule.StartTime is null)
+        {
+            Snackbar.Add("You need to fill in the time to add new schedule", Severity.Error);
+            return;
+        }
+        if (NewSchedule.EndTime.Value <= NewSchedule.StartTime.Value)
+        {
+            Snackbar.Add("The end time must be after the start time", Severity.Error);
+            return;
+        }
+        else
+        {
+            DummyClass.Schedules.Add(NewSchedule);
             NewSchedule = new() { Classroom = DummyClass, ClassroomCode = DummyClass.Code };
-        }
-
-        private void AddNewSchedule()
-        {
-            if (DummyClass.Schedules.Contains(NewSchedule))
-            {
-                return;
-            }
-            if (NewSchedule.EndTime is null || NewSchedule.StartTime is null)
-            {
-                Snackbar.Add("You need to fill in the time to add new schedule", Severity.Error);
-                return;
-            }
-            if (NewSchedule.EndTime.Value <= NewSchedule.StartTime.Value)
-            {
-                Snackbar.Add("The end time must be after the start time", Severity.Error);
-                return;
-            }
-            else
-            {
-                DummyClass.Schedules.Add(NewSchedule);
-                NewSchedule = new() { Classroom = DummyClass, ClassroomCode = DummyClass.Code };
-                StateHasChanged();
-                Snackbar.Add("Successfully add new schedule to class", Severity.Success);
-            }
-        }
-
-        private async Task SubmitForm()
-        {
-            if (rgx.IsMatch(NewClass.Code))
-            {
-                Snackbar.Add("Special characters and whitespaces is not allowed in the code", Severity.Error);
-                return;
-            }
-            if (DummyClass.Schedules.Count == 0)
-            {
-                Snackbar.Add("Your class must have at least one schedule", Severity.Error);
-                return;
-            }
-            NewClass.Code = NewClass.Code.Trim().ToUpper();
-            NewClass.Name = NewClass.Name.Trim();
-            NewClass.Name = NewClass.Name.First().ToString().ToUpper() + NewClass.Name.Substring(1);
-            Parallel.ForEach(DummyClass.Schedules, schedule =>
-            {
-                schedule.Classroom = NewClass;
-                schedule.ClassroomCode = NewClass.Code;
-                NewClass.Schedules.Add(schedule);
-            });
-            var res = await classesService.CreateNewClass(NewClass);
-            if (res.success)
-            {
-                NewClass = new();
-                DummyClass.Schedules.Clear();
-                StateHasChanged();
-                Snackbar.Add("Successfully create new class", Severity.Success);
-                return;
-            }
-            else
-            {
-                Snackbar.Add(res.err, Severity.Error);
-                return;
-            }
+            StateHasChanged();
+            Snackbar.Add("Successfully add new schedule to class", Severity.Success);
         }
     }
+
+    private async Task SubmitForm()
+    {
+        if (rgx.IsMatch(NewClass.Code))
+        {
+            Snackbar.Add("Special characters and whitespaces is not allowed in the code", Severity.Error);
+            return;
+        }
+        if (DummyClass.Schedules.Count == 0)
+        {
+            Snackbar.Add("Your class must have at least one schedule", Severity.Error);
+            return;
+        }
+        NewClass.Code = NewClass.Code.Trim().ToUpper();
+        NewClass.Name = NewClass.Name.Trim();
+        NewClass.Name = NewClass.Name.First().ToString().ToUpper() + NewClass.Name.Substring(1);
+        Parallel.ForEach(DummyClass.Schedules, schedule =>
+        {
+            schedule.Classroom = NewClass;
+            schedule.ClassroomCode = NewClass.Code;
+            NewClass.Schedules.Add(schedule);
+        });
+        var res = await classesService.CreateNewClass(NewClass);
+        if (res.success)
+        {
+            NewClass = new();
+            DummyClass.Schedules.Clear();
+            StateHasChanged();
+            Snackbar.Add("Successfully create new class", Severity.Success);
+            return;
+        }
+        else
+        {
+            Snackbar.Add(res.err, Severity.Error);
+            return;
+        }
+    }
+}

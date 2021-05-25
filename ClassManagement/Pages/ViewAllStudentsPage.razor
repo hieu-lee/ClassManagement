@@ -1,6 +1,6 @@
 ﻿@page "/Students"
 @inject ClassesService classesService
-@inject ISnackbar Snackbar 
+@inject ISnackbar Snackbar
 
 <MudContainer MaxWidth="MaxWidth.Large">
     <MudText Style="text-align: center;" Typo="Typo.h3">Student Records</MudText>
@@ -19,16 +19,16 @@
             <div style="display: flex; align-items: center;">
                 <MudIconButton @onclick="DisplayStudents">
                     <MudIcon Style="width: 2.5ch; height: 2.5ch; color: #594AE2" Icon="@Icons.Material.Filled.Search" />
-                </MudIconButton> 
+                </MudIconButton>
             </div>
         </div>
-        <hr/>
+        <hr />
         <ul style="margin-top: 3ch;">
             <Virtualize Items="StudentsToDisplay" Context="student">
                 <li>
-                    <StudentItem student="student" OnDeleteClick="async () => { await DeleteStudentAsync(student); }"/>
+                    <StudentItem student="student" OnDeleteClick="async () => { await DeleteStudentAsync(student); }" />
                 </li>
-                <hr/>
+                <hr />
             </Virtualize>
         </ul>
     }
