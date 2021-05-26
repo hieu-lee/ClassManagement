@@ -70,12 +70,6 @@ namespace ClassManagement.Services
             return new() { success = true, DayNotes = notes };
         }
 
-        public async Task<Grade[]> GetGradesFromClassAsync(string ClassCode)
-        {
-            var res = await dbContext.Grades.Where(s => s.ClassCode == ClassCode).ToArrayAsync();
-            return res;
-        }
-
         public async Task<ServiceResult> CreateNewClass(Class NewClass)
         {
             var Class = dbContext.Classes.Find(NewClass.Code);
@@ -157,8 +151,8 @@ namespace ClassManagement.Services
 
         public async Task<ServiceResult> DeleteStudentFromClass(string studentId, string ClassCode) 
         {
-            var Class = dbContext.Classes.Where(s => s.Code == ClassCode).Include(s => s.Students).FirstOrDefault();
-            var Student = dbContext.Students.Where(s => s.Id == studentId).Include(s => s.Classes).FirstOrDefault();
+            var Class = dbContext.Classes.Find(ClassCode);
+            var Student = dbContext.Students.Find(studentId);
             if (Class is null)
             {
                 return new() { success = false, err = "Invalid Class" };
@@ -171,24 +165,6 @@ namespace ClassManagement.Services
             Student.Classes.Remove(Class);
             dbContext.Classes.Update(Class);
             dbContext.Students.Update(Student);
-            await dbContext.SaveChangesAsync();
-            return new() { success = true };
-        }
-        public async Task<ServiceResult> DeleteManyStudentsFromClass(HashSet<Student> students, string ClassCode)
-        {
-            var Class = dbContext.Classes.Where(s => s.Code == ClassCode).Include(s => s.Students).FirstOrDefault();
-            if (Class is null)
-            {
-                return new() { success = false, err = "Invalid Class" };
-            }
-            Parallel.ForEach(students, std =>
-            {
-                var Student = dbContext.Students.Where(s => s.Id == std.Id).Include(s => s.Classes).FirstOrDefault();
-                Class.Students.Remove(Student);
-                Student.Classes.Remove(Class);
-                dbContext.Students.Update(Student);
-            });
-            dbContext.Classes.Update(Class);
             await dbContext.SaveChangesAsync();
             return new() { success = true };
         }
