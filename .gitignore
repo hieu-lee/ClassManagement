@@ -366,3 +366,9 @@ FodyWeavers.xsd
 *.db
 */Migrations/*
 Migrations/*
+/ClassManagement/classmanagement.db-wal
+/ClassManagement/classmanagement.db-shm
+/ClassManagement/classmanagement.db-wal
+/ClassManagement/classmanagement.db-shm
+*.db-wal
+*.db-shm

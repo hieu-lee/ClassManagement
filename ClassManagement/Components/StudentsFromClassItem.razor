@@ -1,0 +1,101 @@
+﻿@inject ClassesService classesService
+@inject ISnackbar Snackbar
+
+<MudCard Style="margin-top: 5ch;">
+    <div style="display: flex; justify-content: space-between; margin-top: 2ch; padding: 0 2ch;">
+        <MudTextField Style="max-width: 30ch;" @bind-Value="searchString" Placeholder="Student Name" Adornment="Adornment.Start" AdornmentIcon="@Icons.Material.Filled.Search" IconSize="Size.Medium"/>
+        <div style="margin-top: 1ch;">
+            <MudTooltip Text="@Mode">
+                <MudIconButton Icon="@EditIcon" @onclick="() => { MultiSelect = !MultiSelect; }" />
+            </MudTooltip>
+        </div>
+    </div>
+    <MudTable Filter="new Func<Student,bool>(FilterFunc)" Items="@Students" Hover="true" Striped="true" MultiSelection="@MultiSelect" @bind-SelectedItems="selectedStudents" SortLabel="Sort By">
+        <ToolBarContent>
+            <MudText Typo="Typo.h6">All Students</MudText>
+            <MudToolBarSpacer />
+            <MudButton OnClick="DeleteManyStudentsAsync" Variant="Variant.Outlined" Color="Color.Secondary" Style="@($"color: red; border: 1px solid red; display: {deleteManyDisplay}")">Delete Students</MudButton>
+        </ToolBarContent>
+        <HeaderContent>
+            <MudTh><MudTableSortLabel InitialDirection="SortDirection.Ascending" SortBy="new Func<Student, object>(x=>x.Name)">Student Name</MudTableSortLabel></MudTh>
+            <MudTh><MudTableSortLabel SortBy="new Func<Student, object>(x=>x.Gender)">Gender</MudTableSortLabel></MudTh>
+            <MudTh><MudTableSortLabel SortBy="new Func<Student, object>(x=>x.Age)">Age</MudTableSortLabel></MudTh>
+            <MudTh><MudTableSortLabel SortBy="new Func<Student, object>(x=>x.DateOfBirth)">Date of Birth</MudTableSortLabel></MudTh>
+        </HeaderContent>
+        <RowTemplate>
+            <MudTd DataLabel="Student Name">@context.Name</MudTd>
+            <MudTd DataLabel="Grade in number">@context.Gender</MudTd>
+            <MudTd DataLabel="Relevance">@context.Age</MudTd>
+            <MudTd DataLabel="Class Code">@context.DateOfBirth</MudTd>
+            <MudIconButton OnClick="@(async () => { await DeleteStudentAsync(context); })"
+                           Icon="@Icons.Material.Filled.Delete">Delete grade</MudIconButton>
+        </RowTemplate>
+
+        <PagerContent>
+            <MudTablePager PageSizeOptions="new int[]{50, 100}" />
+        </PagerContent>
+    </MudTable>
+</MudCard>
+
+@code {
+    [Parameter]
+    public HashSet<Student> Students
+    {
+        get => _Students;
+        set
+        {
+            if (_Students == value) return;
+            _Students = value;
+            StudentsChanged.InvokeAsync(value);
+        }
+    }
+    [Parameter]
+    public EventCallback<HashSet<Student>> StudentsChanged { get; set; }
+    [Parameter]
+    public string ClassCode { get; set; }
+    private bool MultiSelect = false;
+    private string deleteManyDisplay => MultiSelect ? "inline" : "none";
+    private string Mode => MultiSelect ? "Cancel" : "Edit";
+    private string EditIcon => MultiSelect ? Icons.Material.Filled.EditOff : Icons.Material.Filled.Edit;
+    private string searchString;
+    private HashSet<Student> _Students;
+    private HashSet<Student> selectedStudents { get; set; }
+
+    private async Task DeleteStudentAsync(Student student)
+    {
+        var task = classesService.DeleteStudentFromClass(student.Id, ClassCode);
+        Students.Remove(student);
+        StateHasChanged();
+        var res = await task;
+        if (res.success)
+        {
+            Snackbar.Add("Successfully deleted grade", Severity.Success);
+            return;
+        }
+        else
+        {
+            Snackbar.Add(res.err, Severity.Error);
+            return;
+        }
+    }
+
+    private async Task DeleteManyStudentsAsync()
+    {
+        var task = classesService.DeleteManyStudentsFromClass(selectedStudents, ClassCode);
+        foreach (var s in selectedStudents)
+        {
+            Students.Remove(s);
+        }
+        StateHasChanged();
+        await task;
+    }
+
+    private bool FilterFunc(Student std)
+    {
+        if (string.IsNullOrWhiteSpace(searchString))
+            return true;
+        if (std.Name.Contains(searchString, StringComparison.OrdinalIgnoreCase))
+            return true;
+        return false;
+    }
+}
