@@ -15,11 +15,14 @@
     {
         <div style="display: flex; justify-content: space-between; margin-top: 3ch;">
             <div>
-                <MudTextField @bind-Value="ClassCode" Label="Class Code" Placeholder="Code"
-                              Variant="Variant.Text" Style="max-width:400px; min-width:300px;"></MudTextField>
-
-                <MudTextField @bind-Value="StudentName" Label="Student Name" Placeholder="Name"
-                              Variant="Variant.Text" Style="max-width:400px; min-width:300px;"></MudTextField>
+                <div>
+                    <MudTextField @bind-Value="ClassCode" Label="Class Code" Placeholder="Code"
+                                  Variant="Variant.Text" Style="max-width:400px; min-width:300px;"></MudTextField>
+                </div>
+                <div style="margin-top: 1ch;">
+                    <MudTextField @bind-Value="StudentName" Label="Student Name" Placeholder="Name"
+                                  Variant="Variant.Text" Style="max-width:400px; min-width:300px;"></MudTextField>
+                </div>
             </div>
             <div style="display:flex; align-items: center">
                 <div>
@@ -28,7 +31,7 @@
                             <MudIconButton @onclick="DisplayScores" Icon="@Icons.Material.Filled.Search" Style="color: #594AE2" />
                         </MudTooltip>
                     </div>
-                    <div>
+                    <div style="margin-top: 1ch;">
                         <MudTooltip Text="@Mode">
                             <MudIconButton Icon="@EditIcon" Style="color: #594AE2" @onclick="() => { MultiSelect = !MultiSelect; }" />
                         </MudTooltip>
@@ -36,38 +39,41 @@
                 </div>
             </div>
         </div>
-        <br />
+        @*<br />
         <div style="display:flex; justify-content:center;">
             <MudButton Variant="Variant.Outlined" Color="Color.Primary" @onclick="() => { MultiSelect = !MultiSelect; }">@Mode</MudButton>
-        </div>
-        <br />
-        <br />
+        </div>*@
+        <MudCard Style="margin-top: 3ch;">
+            <MudTable Items="@grades" Hover="true" Striped="true" MultiSelection="@MultiSelect" @bind-SelectedItems="selectedGrades">
+                <ToolBarContent>
+                    <MudText Typo="Typo.h6">Grades Table</MudText>
+                    <MudToolBarSpacer />
+                    <MudButton OnClick="DeleteManyGradesAsync" Variant="Variant.Outlined" Color="Color.Secondary" Style="@($"color: red; border: 1px solid red; display: {deleteManyDisplay}")">Delete Grades</MudButton>
+                </ToolBarContent>
+                <HeaderContent>
+                    <MudTh>Student Name</MudTh>
+                    <MudTh>Grade in number</MudTh>
+                    <MudTh>Relevance</MudTh>
+                    <MudTh>Class Code</MudTh>
+                    @*<MudTh>Grade Id</MudTh>*@
+                </HeaderContent>
+                <RowTemplate>
+                    <MudTd DataLabel="Student Name">@context.StdName</MudTd>
+                    <MudTd DataLabel="Grade in number">@context.GradeinNum</MudTd>
+                    <MudTd DataLabel="Relevance">@context.RelativeValue</MudTd>
+                    <MudTd DataLabel="Class Code">@context.ClassCode</MudTd>
+                    @*<MudTd DataLabel="Grade Id">@context.Id</MudTd>*@
+                    <MudIconButton OnClick="@(async () => { await DeleteGradeAsync(context); })"
+                                   Icon="@Icons.Material.Filled.Delete">Delete grade</MudIconButton>
+                </RowTemplate>
 
-
-        <MudTable Items="@grades" Hover="true" Striped="true" MultiSelection="@MultiSelect" @bind-SelectedItems="selectedGrades">
-            <HeaderContent>
-                <MudTh>Student Name</MudTh>
-                <MudTh>Grade in number</MudTh>
-                <MudTh>Relevance</MudTh>
-                <MudTh>Class Code</MudTh>
-                <MudTh>Grade Id</MudTh>
-            </HeaderContent>
-            <RowTemplate>
-                <MudTd DataLabel="Student Name">@context.StdName</MudTd>
-                <MudTd DataLabel="Grade in number">@context.GradeinNum</MudTd>
-                <MudTd DataLabel="Relevance">@context.RelativeValue</MudTd>
-                <MudTd DataLabel="Class Code">@context.ClassCode</MudTd>
-                <MudTd DataLabel="Grade Id">@context.Id</MudTd>
-                <MudIconButton OnClick="@(async () => { await DeleteGradeAsync(context); })"
-                               Icon="@Icons.Material.Filled.Delete">Delete grade</MudIconButton>
-            </RowTemplate>
-
-            <PagerContent>
-                <MudTablePager PageSizeOptions="new int[]{50, 100}" />
-            </PagerContent>
-        </MudTable>
+                <PagerContent>
+                    <MudTablePager PageSizeOptions="new int[]{50, 100}" />
+                </PagerContent>
+            </MudTable>
+        </MudCard>
     }
-    <div style="display:flex; justify-content:center;">
+    <div style="display:flex; justify-content:center; margin-top: 3ch;">
         <MudButton @onclick="CalculateAverage" Variant="Variant.Outlined" Color="Color.Primary"
                    Style="@($"margin: auto; display: {isClassNull};")">Calculate average of class: @ClassCode</MudButton>
     </div>
@@ -86,26 +92,25 @@
     private HashSet<Grade> selectedGrades;
 
     private string Mode => MultiSelect ? "Cancel" : "Edit";
+    private string deleteManyDisplay => MultiSelect ? "inline" : "none";
     private string EditIcon => MultiSelect ? Icons.Material.Filled.EditOff : Icons.Material.Filled.Edit;
     private bool loading = true;
-    private string isClassNull;
+    private string isClassNull => string.IsNullOrWhiteSpace(ClassCode) ? "none" : "inline";
 
     private void DisplayScores()
     {
         ServiceResult svrs = gradesService.GetGradesFromStudentAndClass(StudentName, ClassCode);
         grades = svrs.Grades;
-
-        if (ClassCode is not null)
-        {
-            isClassNull = "inline";
-
-        }
-        else isClassNull = "none";
     }
     private void CalculateAverage()
     {
         NavManager.NavigateTo("/AverageScores");
 
+    }
+    private async Task DeleteManyGradesAsync()
+    {
+        await gradesService.DeleteManyGradesAsync(selectedGrades);
+        grades.RemoveWhere(s => selectedGrades.Contains(s));
     }
     private async Task DeleteGradeAsync(Grade grade)
     {
@@ -130,7 +135,6 @@
         {
             ServiceResult svrs = gradesService.GetGradesFromStudentAndClass(StudentName, ClassCode);
             grades = svrs.Grades;
-            isClassNull = "none";
         }
 
         if (StudentNames is null)
