@@ -19,15 +19,10 @@
             <MudText Style="max-height: 6ch; overflow-y:scroll;" Typo="Typo.body2">@student.Description</MudText>
         </div>
         <div>
-            <MudIconButton @onclick="DisplayMore">
-                <MudIcon Icon="@ImgSource" Style="width: 3ch; height: 3ch; color: #594AE2" />
+            <MudIconButton @onclick="@(() => OnDeleteClick.InvokeAsync())">
+                <MudIcon Icon="@Icons.Material.Filled.Delete" Style="color: red"/>
             </MudIconButton>
         </div>
-    </div>
-</div>
-<div style="height: @DeleteHeight; transition: height 0.5s; margin-top: 2.5ch;">
-    <div @onclick="@(() => OnDeleteClick.InvokeAsync())" style="background-color: red; border-radius: 5px; text-align: center; height: @DeleteHeight; transition: height 0.5s; cursor: pointer;">
-        <MudIcon Icon="@Icons.Material.Filled.Delete" Style="@($"color: #ffffff; width: 30px; transition: height 0.5s; height: {DeleteHeight};")" />
     </div>
 </div>
 
@@ -37,12 +32,4 @@
 
     [Parameter]
     public Student student { get; set; }
-
-    private string DeleteHeight = "0";
-    private string ImgSource => StyleConsts.ImgSourceLookUp[DeleteHeight];
-
-    private void DisplayMore()
-    {
-        DeleteHeight = (DeleteHeight == "0") ? "30px" : "0";
-    }
 }

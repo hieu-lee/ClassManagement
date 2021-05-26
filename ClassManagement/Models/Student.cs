@@ -12,7 +12,7 @@ namespace ClassManagement.Models
         [Required]
         public string Name { get; set; }
 #nullable enable
-        public string? ClassesCodesToString { get; set; }
+        public string ClassesCodesToString => GetAllClassesCode();
         public string? Description { get; set; }
 #nullable disable
         [Required]
@@ -29,10 +29,6 @@ namespace ClassManagement.Models
         }
         public string GetAllClassesCode()
         {
-            if (ClassesCodesToString is not null)
-            {
-                return ClassesCodesToString;
-            }
             var res = "";
             var n = Classes.Count;
             var i = 0;
@@ -41,7 +37,6 @@ namespace ClassManagement.Models
                 res += (i == n-1)?$"{cls.Code}": $"{cls.Code}, ";
                 i++;
             }
-            ClassesCodesToString = res;
             return res;
         }
 
