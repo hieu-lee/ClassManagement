@@ -13,7 +13,7 @@
             <MudCardContent>
                 <MudTextField Label="Grade in number" Required="true" HelperText="Must be non-empty"
                               @bind-Value="NewGrade.GradeinNum" For="@(() => NewGrade.GradeinNum)" />
-                <MudTextField Label="He so diem" Required="true" HelperText="Must be non-empty"
+                <MudTextField Label="He so diem" Required="true" HelperText="Must be non-empty. Default= 1"
                               @bind-Value="NewGrade.RelativeValue" For="@(() => NewGrade.RelativeValue)" />
                 <MudTextField Label="Exam Name" Required="true" HelperText="Must be non-empty"
                               @bind-Value="NewGrade.ExamName" For="@(() => NewGrade.ExamName)"/>
@@ -106,6 +106,7 @@
         StudentName = string.Empty;
         NewGrade.GradeinNum = 0;
         NewGrade.RelativeValue = 1;
+
         NewGrade.Description = string.Empty;
         NewGrade.ExamTime = DateTime.Now;
         NewGrade.ExamName = string.Empty;

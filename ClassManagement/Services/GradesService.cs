@@ -132,7 +132,8 @@ namespace ClassManagement.Services
                 GradeinNum = NewGrade.GradeinNum,
                 StdName = GStudent.Name,
                 ExamName = NewGrade.ExamName,
-                ExamTime = NewGrade.ExamTime
+                ExamTime = NewGrade.ExamTime,
+                RelativeValue = NewGrade.RelativeValue
             };
             await CreateNewGradeAsync(myGrade);
             GStudent.Grades.Add(myGrade);
