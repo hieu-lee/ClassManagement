@@ -151,5 +151,12 @@ namespace ClassManagement.Services
             return new() { success = false, err = "Grade does not exist." };
         }
 
+        public async Task<ServiceResult> DeleteManyGradesAsync(HashSet<Grade> grades)
+        {
+            dbContext.Grades.RemoveRange(grades);
+            await dbContext.SaveChangesAsync();
+            return new() { success = true };
+        }
+
     }
 }
