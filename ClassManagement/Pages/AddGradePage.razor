@@ -85,17 +85,20 @@
             Snackbar.Add("You have to fill in the student name", Severity.Error);
             return;
         }
+        if (string.IsNullOrEmpty(NewGrade.ExamName))
+        {
+            Snackbar.Add("You have to fill in the exam name", Severity.Error);
+            return;
+        }
+        if (NewGrade.ExamTime is null)
+        {
+            Snackbar.Add("You have to choose an exam date", Severity.Error);
+            return;
+        }
 
         Class gradeClass = gradesService.GetClassFromCode(ClassCode);
         Student gradeStudent = gradesService.GetStudentFromName(StudentName);
-
-        //ServiceResult svrs = classesService.GetStudentsFromClass(gradeClass);
-        //students = svrs.Students;
-        //if (students.Contains(gradeStudent) == false)
-        //{
-        //    Snackbar.Add("Student does not belong in class", Severity.Error);
-        //    return;
-        //}
+    
 
         await gradesService.CreateNewGradeAsyncBetter(NewGrade, gradeClass, gradeStudent);
         Snackbar.Add("Successfully added new grade", Severity.Success);
@@ -104,6 +107,8 @@
         NewGrade.GradeinNum = 0;
         NewGrade.RelativeValue = 1;
         NewGrade.Description = string.Empty;
+        NewGrade.ExamTime = DateTime.Now;
+        NewGrade.ExamName = string.Empty;
         return;
     }
 
