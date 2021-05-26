@@ -21,6 +21,12 @@ namespace ClassManagement.Models
         [Required]
         public string StdName { get; set; }
 
+        [Required]
+        public string ExamName { get; set; }
+
+        [Required]
+        public DateTime? ExamTime { get; set; }
+
         [ForeignKey("Student")]
         public string StudentId { get; set; } = string.Empty;
         public Student Student { get; set; } = new();

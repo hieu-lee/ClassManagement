@@ -55,6 +55,8 @@
                     <MudTh>Grade in number</MudTh>
                     <MudTh>Relevance</MudTh>
                     <MudTh>Class Code</MudTh>
+                    <MudTh>Exam Name</MudTh>
+                    <MudTh>Exam Time</MudTh>
                     @*<MudTh>Grade Id</MudTh>*@
                 </HeaderContent>
                 <RowTemplate>
@@ -62,6 +64,8 @@
                     <MudTd DataLabel="Grade in number">@context.GradeinNum</MudTd>
                     <MudTd DataLabel="Relevance">@context.RelativeValue</MudTd>
                     <MudTd DataLabel="Class Code">@context.ClassCode</MudTd>
+                    <MudTd DataLabel="Exam Name">@context.ExamName</MudTd>
+                    <MudTh DataLabel="Exam Time">@context.ExamTime</MudTh>
                     @*<MudTd DataLabel="Grade Id">@context.Id</MudTd>*@
                     <MudIconButton OnClick="@(async () => { await DeleteGradeAsync(context); })"
                                    Icon="@Icons.Material.Filled.Delete">Delete grade</MudIconButton>
@@ -110,7 +114,10 @@
     private async Task DeleteManyGradesAsync()
     {
         await gradesService.DeleteManyGradesAsync(selectedGrades);
-        grades.RemoveWhere(s => selectedGrades.Contains(s));
+        foreach (var s in selectedGrades)
+        {
+            grades.Remove(s);
+        }
     }
     private async Task DeleteGradeAsync(Grade grade)
     {

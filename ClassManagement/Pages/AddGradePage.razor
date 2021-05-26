@@ -15,6 +15,8 @@
                               @bind-Value="NewGrade.GradeinNum" For="@(() => NewGrade.GradeinNum)" />
                 <MudTextField Label="He so diem" Required="true" HelperText="Must be non-empty"
                               @bind-Value="NewGrade.RelativeValue" For="@(() => NewGrade.RelativeValue)" />
+                <MudTextField Label="Exam Name" Required="true" HelperText="Must be non-empty"
+                              @bind-Value="NewGrade.ExamName" For="@(() => NewGrade.ExamName)"/>
 
                 <MudTextField Label="Description" Class="mt-3"
                               @bind-Value="NewGrade.Description" For="@(() => NewGrade.Description)" Lines="5" />
@@ -38,6 +40,13 @@
                     </MudSelect>
                 </div>
 
+                @*<EditForm Model="@NewExamDate" Context="ForminForm">
+                    <h5 style="margin-top: 20px; text-align: center;">Add schedule</h5>
+                   
+                </EditForm>*@
+
+                <MudDatePicker @bind-Date="@NewGrade.ExamTime" Label="Exam Date"></MudDatePicker>
+
             </MudCardContent>
 
             <MudCardActions>
@@ -55,6 +64,7 @@
     private List<string> ClassCodes, StudentNames;
     private List<MudSelectItem<string>> smts = new();
     public SortedSet<Student> students;
+    private DateTime NewExamDate;
 
     protected override async Task OnInitializedAsync()
     {
@@ -87,8 +97,13 @@
         //    return;
         //}
 
-        await gradesService.CreateNewGradeAsyncBetter(NewGrade.GradeinNum, gradeClass, gradeStudent);
+        await gradesService.CreateNewGradeAsyncBetter(NewGrade, gradeClass, gradeStudent);
         Snackbar.Add("Successfully added new grade", Severity.Success);
+        ClassCode = string.Empty;
+        StudentName = string.Empty;
+        NewGrade.GradeinNum = 0;
+        NewGrade.RelativeValue = 1;
+        NewGrade.Description = string.Empty;
         return;
     }
 

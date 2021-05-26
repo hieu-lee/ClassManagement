@@ -122,15 +122,17 @@ namespace ClassManagement.Services
             return res;
         }
 
-        public async Task<ServiceResult> CreateNewGradeAsyncBetter(double gradeNum, Class GClass, Student GStudent)
+        public async Task<ServiceResult> CreateNewGradeAsyncBetter(Grade NewGrade, Class GClass, Student GStudent)
         {
             Grade myGrade;
             myGrade = new()
             {
                 Student = GStudent,
                 Classroom = GClass,
-                GradeinNum = gradeNum,
-                StdName = GStudent.Name
+                GradeinNum = NewGrade.GradeinNum,
+                StdName = GStudent.Name,
+                ExamName = NewGrade.ExamName,
+                ExamTime = NewGrade.ExamTime
             };
             await CreateNewGradeAsync(myGrade);
             GStudent.Grades.Add(myGrade);
