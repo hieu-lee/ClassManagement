@@ -31,7 +31,7 @@ namespace ClassManagement.Services
 
         public async Task<Class> GetClass(string Code)
         {
-            var res = await dbContext.Classes.Where(s => s.Code == Code).Include(s => s.Schedules).Include(s => s.Students).FirstOrDefaultAsync();
+            var res = await dbContext.Classes.Where(s => s.Code == Code).Include(s => s.Schedules).Include(s => s.Students).AsSplitQuery().FirstOrDefaultAsync();
             return res;
         }
 
@@ -181,13 +181,13 @@ namespace ClassManagement.Services
             {
                 return new() { success = false, err = "Invalid Class" };
             }
-            Parallel.ForEach(students, std =>
+            foreach (var std in students)
             {
                 var Student = dbContext.Students.Where(s => s.Id == std.Id).Include(s => s.Classes).FirstOrDefault();
                 Class.Students.Remove(Student);
                 Student.Classes.Remove(Class);
                 dbContext.Students.Update(Student);
-            });
+            }
             dbContext.Classes.Update(Class);
             await dbContext.SaveChangesAsync();
             return new() { success = true };

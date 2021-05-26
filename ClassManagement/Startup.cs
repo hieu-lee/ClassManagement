@@ -28,7 +28,7 @@ namespace ClassManagement
             services.AddDbContext<AppDbContext>(options =>
             {
                 options.UseSqlite("Data Source = classmanagement.db");
-            });
+            }, ServiceLifetime.Transient);
             services.AddServerSideBlazor();
             services.AddMudServices(config =>
             {

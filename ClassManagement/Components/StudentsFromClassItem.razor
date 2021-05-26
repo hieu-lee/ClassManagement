@@ -1,5 +1,5 @@
-﻿@inject ClassesService classesService
-@inject ISnackbar Snackbar
+﻿@inject ISnackbar Snackbar
+@inject ClassesService classesService
 
 <MudCard Style="margin-top: 5ch;">
     <div style="display: flex; justify-content: space-between; margin-top: 2ch; padding: 0 2ch;">
@@ -69,7 +69,7 @@
         var res = await task;
         if (res.success)
         {
-            Snackbar.Add("Successfully deleted grade", Severity.Success);
+            Snackbar.Add("Successfully deleted student from class", Severity.Success);
             return;
         }
         else
@@ -81,13 +81,18 @@
 
     private async Task DeleteManyStudentsAsync()
     {
-        var task = classesService.DeleteManyStudentsFromClass(selectedStudents, ClassCode);
-        foreach (var s in selectedStudents)
+        if (selectedStudents.Any())
         {
-            Students.Remove(s);
+            var task = classesService.DeleteManyStudentsFromClass(selectedStudents, ClassCode);
+            foreach (var s in selectedStudents)
+            {
+                Students.Remove(s);
+            }
+            StateHasChanged();
+            Snackbar.Add("Successfully deleted students from class", Severity.Success);
+            await task;
+            return;
         }
-        StateHasChanged();
-        await task;
     }
 
     private bool FilterFunc(Student std)
