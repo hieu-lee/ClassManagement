@@ -1,25 +1,202 @@
 ﻿@page "/Class/{Code}"
 @inject ClassesService classesService
+@inject ISnackbar Snackbar 
 
-@if (loading)
-{
-    <MudProgressLinear Color="Color.Primary" Indeterminate="true" Class="my-7" />
-    <h3 style="text-align: center;">Getting information of class @Code</h3>
-}
-else
-{
-    <h2>@MyClass.Schedules.Count.ToString()</h2>
-}
+<MudContainer MaxWidth="MaxWidth.Large">
+    <MudText Style="margin-bottom: 1ch;" Typo="Typo.h3" Align="Align.Center">@Code</MudText>
+    @if (loading)
+    {
+        <MudProgressLinear Color="Color.Primary" Indeterminate="true" Class="my-7" />
+        <h3 style="text-align: center;">Getting information of class @Code</h3>
+    }
+    else
+    {
+        <MudTabs Elevation="4" Rounded="true" Centered="true">
+            <MudTabPanel Text="Info">
+                <MudPaper Style="margin-top: 5ch; padding: 3ch;">
+                    <MudText Typo="Typo.h4">
+                        @Code - @MyClass.Name
+                    </MudText>
+                    <hr/>
+                    <MudText Typo="Typo.h4">
+                        General Description
+                    </MudText>
+                    <MudText Typo="Typo.body1" Style="margin-top: 1ch;">
+                        @((string.IsNullOrWhiteSpace(MyClass.Description)) ? "This class has no description": MyClass.Description)
+                    </MudText>
+                    <hr />
+                    <MudText Typo="Typo.h4">
+                        Address and Schedules
+                    </MudText>
+                    <ul style="list-style: none; margin-top: 1ch;">
+                        <li style="display: flex;">
+                            <MudIcon Icon="@Icons.Material.Filled.Home" />
+                            <MudText Style="margin-left: 1ch;" Typo="Typo.subtitle1">Address: @(string.IsNullOrWhiteSpace(MyClass.Address) ? "This class has no address information" : MyClass.Address)</MudText>
+                        </li>
+                        <li style="display: flex; margin: 0.5ch 0;">
+                            <MudIcon Icon="@Icons.Material.Filled.People" />
+                            <MudText Style="margin-left: 1ch;" Typo="Typo.subtitle1">Number of Students: @MyClass.Students.Count</MudText>
+                        </li>
+                        <li>
+                            <div style="display: flex;">
+                                <MudIcon Icon="@Icons.Material.Filled.CalendarToday" />
+                                <MudText Style="margin-left: 1ch;" Typo="Typo.subtitle1">Schedules:</MudText>
+                            </div>
+                            <ul style="list-style: none; margin-top: 1.5ch;">
+                                @foreach (var schedule in MyClass.Schedules)
+                                {
+                                    <li class="schedule-item" @onclick="@(async () => { await DeleteScheduleAsync(schedule); })">
+                                        <span>@schedule.Day.ToString() from @schedule.StartTime.ToString() to @schedule.EndTime.ToString()</span>
+                                    </li>
+                                }
+                            </ul>
+                        </li>
+                    </ul>
+                </MudPaper>
+            </MudTabPanel>
+            <MudTabPanel Text="Students">
+                <StudentsFromClassItem @bind-Students="@MyClass.Students" ClassCode="@Code"/>
+            </MudTabPanel>
+            <MudTabPanel Text="Grades">
+                <MudPaper Class="pa-4" Style="margin: 5ch 0;">
+                    <MudText Style="margin-bottom: 2ch;" Align="Align.Center" Typo="Typo.h5">All Grades from @Code@((DisplayWeight is null)?"":$" with weight {DisplayWeight}")</MudText>
+                    <MudChart ChartType="ChartType.Pie" InputData="@data" InputLabels="@labels" Width="300px" Height="300px" @bind-SelectedIndex="Index" />
+                    <MudText Typo="Typo.body1" Align="Align.Center">No. Grades in range @GradeRange: @NumberOfGrades</MudText>
+                    <MudSelect Label="Grade's Weight" @bind-Value="DisplayWeight">
+                        @foreach (var weight in Weights)
+                            {
+                                <MudSelectItem Value="weight">@((weight is null)?"None":weight.ToString())</MudSelectItem>
+                            }
+                    </MudSelect>
+                </MudPaper>
+            </MudTabPanel>
+        </MudTabs>
+    }
+</MudContainer>
+
 
 @code {
     [Parameter]
     public string Code { get; set; }
+    private double? DisplayWeight;
+    private int Index = -1;
+    private double?[] Weights;
     private Class MyClass;
+    private Grade[] MyClassGrades;
     private bool loading = true;
+    double[] data => GetDataToDisplay();
+    string[] labels = { "0-3","3-5","5-7","7-8","8-9","9-10" };
+    private string GradeRange => (Index == -1) ? "0-10" : labels[Index];
+    private double NumberOfGrades => (Index == -1) ? MyClassGrades.Length : data[Index];
 
     protected override async Task OnInitializedAsync()
     {
+        var task = classesService.GetGradesFromClassAsync(Code);
         MyClass = await classesService.GetClass(Code);
+        MyClassGrades = await task;
+        HashSet<double?> TempWeights = new();
+        TempWeights.Add(null);
+        for (int i = 0; i < MyClassGrades.Length; i++)
+        {
+            TempWeights.Add(MyClassGrades[i].RelativeValue);
+        }
+        Weights = TempWeights.ToArray();
         loading = false;
+    }
+
+    private async Task DeleteScheduleAsync(ClassSchedule schedule)
+    {
+        var res = await classesService.DeleteSchedule(schedule.Id);
+        if (res.success)
+        {
+            Snackbar.Add("Successfully deleted schedule", Severity.Success);
+            MyClass.Schedules.Remove(schedule);
+            StateHasChanged();
+            return;
+        }
+        Snackbar.Add(res.err, Severity.Error);
+    }
+
+    private double[] GetDataToDisplay()
+    {
+        var res = new double[] { 0, 0, 0, 0, 0, 0 };
+        if (DisplayWeight is null)
+        {
+            for (int i = 0; i < MyClassGrades.Length; i++)
+            {
+                var g = MyClassGrades[i].GradeinNum;
+                if (g <= 3)
+                {
+                    res[0]++;
+                    continue;
+                }
+                if (g <= 5)
+                {
+                    res[1]++;
+                    continue;
+                }
+                if (g <= 7)
+                {
+                    res[2]++;
+                    continue;
+                }
+                if (g <= 8)
+                {
+                    res[3]++;
+                    continue;
+                }
+                if (g <= 9)
+                {
+                    res[4]++;
+                    continue;
+                }
+                if (g <= 10)
+                {
+                    res[5]++;
+                    continue;
+                }
+            }
+        }
+        else
+        {
+            for (int i = 0; i < MyClassGrades.Length; i++)
+            {
+                if (MyClassGrades[i].RelativeValue == DisplayWeight)
+                {
+                    var g = MyClassGrades[i].GradeinNum;
+                    if (g <= 3)
+                    {
+                        res[0]++;
+                        continue;
+                    }
+                    if (g <= 5)
+                    {
+                        res[1]++;
+                        continue;
+                    }
+                    if (g <= 7)
+                    {
+                        res[2]++;
+                        continue;
+                    }
+                    if (g <= 8)
+                    {
+                        res[3]++;
+                        continue;
+                    }
+                    if (g <= 9)
+                    {
+                        res[4]++;
+                        continue;
+                    }
+                    if (g <= 10)
+                    {
+                        res[5]++;
+                        continue;
+                    }
+                }
+            }
+        }
+        return res;
     }
 }
