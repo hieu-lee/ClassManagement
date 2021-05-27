@@ -42,6 +42,8 @@
 
 @code {
     [Parameter]
+    public EventCallback OnGradesChange { get; set; }
+    [Parameter]
     public string ClassCode { get; set; }
     private HashSet<Grade> MyGrades;
     private bool MultiSelect = false;
@@ -69,6 +71,7 @@
     private async Task DeleteManyGradesAsync()
     {
         await gradesService.DeleteManyGradesAsync(selectedGrades);
+        OnGradesChange.InvokeAsync();
         foreach (var s in selectedGrades)
         {
             MyGrades.Remove(s);
@@ -81,6 +84,7 @@
         var res = await gradesService.DeleteGrade(grade.Id);
         if (res.success)
         {
+            OnGradesChange.InvokeAsync();
             Snackbar.Add("Successfully deleted grade", Severity.Success);
             MyGrades.Remove(grade);
             StateHasChanged();

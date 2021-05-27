@@ -80,7 +80,7 @@
                 <StudentsFromClassItem @bind-Students="@MyClass.Students" ClassCode="@Code" />
             </MudTabPanel>
             <MudTabPanel Text="Grades Table">
-                <GradesTableItem ClassCode="@Code" />
+                <GradesTableItem OnGradesChange="async () => { AverageGrade = await gradesService.CalculateAverageGradeOfClass(Code); }" ClassCode="@Code" />
             </MudTabPanel>
             <MudTabPanel Text="Grades Chart">
                 <GradesChartItem ClassCode="@Code" />
