@@ -43,9 +43,9 @@ namespace ClassManagement
                 config.SnackbarConfiguration.SnackbarVariant = Variant.Filled;
             });
 
-            services.AddScoped<ClassesService>();
-            services.AddScoped<GradesService>();
-            services.AddScoped<SchedulesService>();
+            services.AddTransient<ClassesService>();
+            services.AddTransient<GradesService>();
+            services.AddTransient<SchedulesService>();
             services.AddScoped<SessionService>();
             
         }
