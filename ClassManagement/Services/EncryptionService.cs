@@ -10,7 +10,7 @@ namespace ClassManagement.Services
 {
     public class EncryptionService
     {
-        public string Encrypt(string textToEncrypt)
+        public static string Encrypt(string textToEncrypt)
         {
             try
             {
@@ -40,7 +40,7 @@ namespace ClassManagement.Services
             }
         }
 
-        public string Decrypt(string textToDecrypt)
+        public static string Decrypt(string textToDecrypt)
         {
             try
             {
