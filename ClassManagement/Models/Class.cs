@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace ClassManagement.Models
 {
@@ -20,6 +21,10 @@ namespace ClassManagement.Models
         public HashSet<Grade> Grades { get; set; } = new();
         public HashSet<ClassSchedule> Schedules { get; set; } = new();
         public HashSet<ClassNote> Notes { get; set; } = new();
+
+        [ForeignKey("Owner")]
+        public string OwnerUsername { get; set; }
+        public Account Owner { get; set; }
         public int NumberOfStudent => Students.Count;
 
         public int CompareTo(Class other)

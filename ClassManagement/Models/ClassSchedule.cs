@@ -15,6 +15,10 @@ namespace ClassManagement.Models
         public string ClassroomCode { get; set; }
         public Class Classroom { get; set; }
 
+        [ForeignKey("Owner")]
+        public string OwnerUsername { get; set; }
+        public Account Owner { get; set; }
+
         public override bool Equals(object obj)
         {
             var other = (ClassSchedule)obj;

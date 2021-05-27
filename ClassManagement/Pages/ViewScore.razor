@@ -134,13 +134,12 @@
             Snackbar.Add("Successfully deleted grade", Severity.Success);
             grades.Remove(grade);
             StateHasChanged();
-            return;
         }
         else
         {
             Snackbar.Add(res.err, Severity.Error);
-            return;
         }
+        selectedGrades = new();
     }
     protected override async Task OnInitializedAsync()
     {

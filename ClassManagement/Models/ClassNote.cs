@@ -16,6 +16,10 @@ namespace ClassManagement.Models
         [Required]
         public Class Classroom { get; init; }
 
+        [ForeignKey("Owner")]
+        public string OwnerUsername { get; set; }
+        public Account Owner { get; init; }
+
         public int CompareTo(ClassNote other)
         {
             return -Day.CompareTo(other.Day);

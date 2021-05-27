@@ -34,6 +34,10 @@ namespace ClassManagement.Models
         [ForeignKey("Classroom")]
         public string ClassCode { get; set; }
 
+        [ForeignKey("Owner")]
+        public string OwnerUsername { get; set; }
+        public Account Owner { get; set; }
+
         public string Description { get; set; }
         public Class Classroom { get; set; }
 

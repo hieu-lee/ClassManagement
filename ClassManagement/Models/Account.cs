@@ -17,12 +17,6 @@ namespace ClassManagement.Models
         [Required]
         public string Password { get; set; }
 
-        public HashSet<Class> Classes { get; set; } = new();
-
-        [ForeignKey("AccountStudent")]
-        public string StudentId { get; set; }
-        public Student AccountStudent;
-
         public int CompareTo(Account other)
         {
             return Username.CompareTo(other.Username);

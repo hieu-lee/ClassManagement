@@ -2,7 +2,7 @@
 @inject ClassesService classesService
 @inject GradesService gradesService
 @inject AccountsService accountsService
-@inject EncryptionService encryptionService
+@using ClassManagement.Services
 @inject ISnackbar Snackbar
 
 <div style="max-width: 550px; margin: 3ch auto; padding-bottom: 3ch;">
@@ -32,12 +32,11 @@
     private Student AccountStudent = new();
     private async Task CheckLogin()
     {
-        string dbpass = encryptionService.Encrypt(NewAccount.Password);
+        string dbpass = EncryptionService.Encrypt(NewAccount.Password);
         var res = await accountsService.CheckValid(NewAccount.Username, dbpass);
         if (res.success)
         {
             Snackbar.Add("Login Successful", Severity.Success);
-            AccountStudent = res.svAccount.AccountStudent;
         }
         else
         {
@@ -54,12 +53,11 @@
             NewAccount.Password = string.Empty;
             return;
         }
-        string dbpass = encryptionService.Encrypt(NewAccount.Password);
+        string dbpass = EncryptionService.Encrypt(NewAccount.Password);
         var res = await accountsService.CreateNewAccountAsync(NewAccount.Username, dbpass);
         if (res.success)
         {
             Snackbar.Add("Successfully created new account", Severity.Success);
-            AccountStudent = res.svAccount.AccountStudent;
         }
         else
         {

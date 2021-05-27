@@ -61,8 +61,7 @@ namespace ClassManagement.Services
 
         public bool CheckLength(string password)
         {
-            if (password.Length >= 6 && password.Length <= 15) return true;
-            return false;
+            return (password.Length >= 6 && password.Length <= 15);
         }
     }
 }
