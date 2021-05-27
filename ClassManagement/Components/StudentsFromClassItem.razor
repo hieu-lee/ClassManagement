@@ -22,7 +22,7 @@
             <MudTh><MudTableSortLabel SortBy="new Func<Student, object>(x=>x.Gender)">Gender</MudTableSortLabel></MudTh>
             <MudTh><MudTableSortLabel SortBy="new Func<Student, object>(x=>x.Age)">Age</MudTableSortLabel></MudTh>
             <MudTh><MudTableSortLabel SortBy="new Func<Student, object>(x=>x.DateOfBirth)">Date of Birth</MudTableSortLabel></MudTh>
-            <MudTh><MudTableSortLabel SortBy="new Func<double, object>(x=>x)">Avg. Grade</MudTableSortLabel></MudTh>
+            <MudTh><MudTableSortLabel SortBy="new Func<Student, object>(x=>AverageGrades[x.Id])">Avg. Grade</MudTableSortLabel></MudTh>
         </HeaderContent>
         <RowTemplate>
             <MudTd DataLabel="Student Name">@context.Name</MudTd>

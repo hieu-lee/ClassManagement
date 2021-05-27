@@ -19,9 +19,11 @@
                     <MudTextField Style="max-width: 45ch;" @bind-Value="@SearchClass" Placeholder="Class's code" Label="Class" />
                 </div>
                 <div style="display: flex; align-items: center;">
-                    <MudIconButton @onclick="DisplayClasses">
-                        <MudIcon Style="width: 2.5ch; height: 2.5ch; color: #594AE2" Icon="@Icons.Material.Filled.Search" />
-                    </MudIconButton>
+                    <MudTooltip Text="Search">
+                        <MudIconButton @onclick="DisplayClasses">
+                            <MudIcon Style="width: 2.5ch; height: 2.5ch; color: #594AE2" Icon="@Icons.Material.Filled.Search" />
+                        </MudIconButton>
+                    </MudTooltip>
                 </div>
             </div>
             <hr />
@@ -34,10 +36,10 @@
                                     <div style="display: flex;">
                                         <div>
                                             <MudIconButton OnClick="@(() => { navigationManager.NavigateTo($"/Class/{Class.Code}"); })">
-                                                <img class="class-pic" src="classroom.png" />
+                                                <MudIcon Style="width: 3ch; height: 3ch;" Icon="@Icons.Material.Filled.School" Color="Color.Primary"/>
                                             </MudIconButton>
                                         </div>
-                                        <div style="margin-top: 2ch; width: 25ch;">
+                                        <div style="margin-top: 2ch; max-width: 40ch;">
                                             <MudText Typo="Typo.h6">Code: @Class.Code</MudText>
                                             <MudText Typo="Typo.subtitle2">Name: @Class.Name</MudText>
                                         </div>
@@ -49,9 +51,11 @@
                                             <MudText Typo="Typo.body2"><strong>Address:</strong> @((string.IsNullOrWhiteSpace(Class.Address))?"?":Class.Address)</MudText>
                                         </div>
                                         <div>
-                                            <MudIconButton @onclick="@(() => { Class.DeleteHeight = (Class.DeleteHeight == "0") ? "30px" : "0"; })">
-                                                <MudIcon Icon="@Class.ImgSource" Style="width: 3ch; height: 3ch; color: #594AE2" />
-                                            </MudIconButton>
+                                            <MudTooltip Text="Delete">
+                                                <MudIconButton @onclick="@(async () => { await DeleteTodayClassAsync(Class); })">
+                                                    <MudIcon Icon="@Icons.Material.Filled.Delete" Style="color: red" />
+                                                </MudIconButton>
+                                            </MudTooltip>
                                         </div>
                                     </div>
                                 </div>
@@ -63,9 +67,6 @@
                                         </li>
                                     }
                                 </ul>
-                                <div @onclick="@(async () => { await DeleteTodayClassAsync(Class); })" style="background-color: red; border-radius: 5px; text-align: center; height: @Class.DeleteHeight; transition: height 0.5s; cursor: pointer;">
-                                    <MudIcon Icon="@Icons.Material.Filled.Delete" Style="@($"color: #ffffff; width: 30px; transition: height 0.5s; height: {Class.DeleteHeight};")" />
-                                </div>
                                 <hr />
                             </li>
                         </Virtualize>
@@ -81,10 +82,10 @@
                                         <div style="display: flex;">
                                             <div>
                                                 <MudIconButton OnClick="@(() => { navigationManager.NavigateTo($"/Class/{Class.Code}"); })">
-                                                    <img class="class-pic" src="classroom.png" />
+                                                    <MudIcon Style="width: 3ch; height: 3ch;" Icon="@Icons.Material.Filled.School" Color="Color.Primary" />
                                                 </MudIconButton>
                                             </div>
-                                            <div style="margin-top: 2ch; width: 25ch;">
+                                            <div style="margin-top: 2ch; max-width: 40ch;">
                                                 <MudText Typo="Typo.h6">Code: @Class.Code</MudText>
                                                 <MudText Typo="Typo.subtitle2">Name: @Class.Name</MudText>
                                             </div>
@@ -96,9 +97,11 @@
                                                 <MudText Typo="Typo.body2"><strong>Address:</strong> @((string.IsNullOrWhiteSpace(Class.Address))?"?":Class.Address)</MudText>
                                             </div>
                                             <div>
-                                                <MudIconButton @onclick="@(() => { Class.DeleteHeight = (Class.DeleteHeight == "0") ? "30px" : "0"; })">
-                                                    <MudIcon Icon="@Class.ImgSource" Style="width: 3ch; height: 3ch; color: #594AE2" />
-                                                </MudIconButton>
+                                                <MudTooltip Text="Delete">
+                                                    <MudIconButton @onclick="@(async () => { await DeleteTodayClassAsync(Class); })">
+                                                        <MudIcon Icon="@Icons.Material.Filled.Delete" Style="color: red" />
+                                                    </MudIconButton>
+                                                </MudTooltip>
                                             </div>
                                         </div>
                                     </div>
@@ -110,9 +113,6 @@
                                             </li>
                                         }
                                     </ul>
-                                    <div @onclick="@(async () => { await DeleteTodayClassAsync(Class); })" style="background-color: red; border-radius: 5px; text-align: center; height: @Class.DeleteHeight; transition: height 0.5s; cursor: pointer;">
-                                        <MudIcon Icon="@Icons.Material.Filled.Delete" Style="@($"color: #ffffff; width: 30px; transition: height 0.5s; height: {Class.DeleteHeight};")" />
-                                    </div>
                                     <hr />
                                 </li>
                             </Virtualize>

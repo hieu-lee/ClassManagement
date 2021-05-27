@@ -17,9 +17,11 @@
                 <MudTextField Style="max-width: 40ch;" @bind-Value="@SearchClass" Placeholder="Class's code" Label="Class" />
             </div>
             <div style="display: flex; align-items: center;">
-                <MudIconButton @onclick="DisplayStudents">
-                    <MudIcon Style="width: 2.5ch; height: 2.5ch; color: #594AE2" Icon="@Icons.Material.Filled.Search" />
-                </MudIconButton>
+                <MudTooltip Text="Search">
+                    <MudIconButton @onclick="DisplayStudents">
+                        <MudIcon Style="width: 2.5ch; height: 2.5ch; color: #594AE2" Icon="@Icons.Material.Filled.Search" />
+                    </MudIconButton>
+                </MudTooltip>
             </div>
         </div>
         <hr />

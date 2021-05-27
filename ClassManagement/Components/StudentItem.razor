@@ -19,9 +19,11 @@
             <MudText Style="max-height: 6ch; overflow-y:scroll;" Typo="Typo.body2">@student.Description</MudText>
         </div>
         <div>
-            <MudIconButton @onclick="@(() => OnDeleteClick.InvokeAsync())">
-                <MudIcon Icon="@Icons.Material.Filled.Delete" Style="color: red"/>
-            </MudIconButton>
+            <MudTooltip Text="Delete">
+                <MudIconButton @onclick="@(() => OnDeleteClick.InvokeAsync())">
+                    <MudIcon Icon="@Icons.Material.Filled.Delete" Style="color: red" />
+                </MudIconButton>
+            </MudTooltip>
         </div>
     </div>
 </div>
