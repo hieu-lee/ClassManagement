@@ -13,5 +13,7 @@ namespace ClassManagement.Models
         public HashSet<ClassSchedule> Schedules { get; set; }
         public Dictionary<string, double> AverageGrades { get; set; }
         public SortedSet<Grade> Grades { get; set; }
+
+        public Account svAccount { get; set; }
     }
 }

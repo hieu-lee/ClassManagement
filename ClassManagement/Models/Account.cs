@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -16,11 +17,11 @@ namespace ClassManagement.Models
         [Required]
         public string Password { get; set; }
 
-        public int? HashCode { get; set; }
-
         public HashSet<Class> Classes { get; set; } = new();
 
-      
+        [ForeignKey("AccountStudent")]
+        public string StudentId { get; set; }
+        public Student AccountStudent;
 
         public int CompareTo(Account other)
         {
@@ -34,11 +35,7 @@ namespace ClassManagement.Models
 
         public override int GetHashCode()
         {
-            if (HashCode is null)
-            {
-                HashCode = Username.GetHashCode();
-            }
-            return HashCode.Value;
+            return Username.GetHashCode();
         }
     }
 }
