@@ -12,7 +12,8 @@ namespace ClassManagement.Data
         public DbSet<ClassNote> ClassNotes { get; set; }
 
         public DbSet<Grade> Grades { get; set; }
-        //public IEnumerable<object> Grade { get; internal set; }
+        
+        public DbSet<Account> Accounts { get; set; }
 
         public AppDbContext(DbContextOptions<AppDbContext> options) : base(options) 
         {
