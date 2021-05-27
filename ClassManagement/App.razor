@@ -48,7 +48,7 @@
         using (var dbConnection = new SqliteConnection("Data Source=classmanagement.db"))
         {
             await dbConnection.OpenAsync();
-            var schedules = dbConnection.Query<ClassSchedule>(@"SELECT Id, HashCode, Day, StartTime, EndTime, ClassroomCode FROM ClassSchedules WHERE Day = @Day", new { Day }).ToList();
+            var schedules = dbConnection.Query<ClassSchedule>(@"SELECT Id, Day, StartTime, EndTime, ClassroomCode FROM ClassSchedules WHERE Day = @Day", new { Day }).ToList();
             schedule = schedules.Where(s => (!NotifiedSchedule.Contains(s)) && (time1 <= s.StartTime.Value) && (s.StartTime.Value <= time2)).FirstOrDefault();
         }
         return schedule;
