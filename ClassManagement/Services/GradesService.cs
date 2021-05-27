@@ -85,6 +85,22 @@ namespace ClassManagement.Services
             }
         }
 
+        public double? CalculateAverageGrade(ICollection<Grade> Grades)
+        {
+            if (Grades.Any())
+            {
+                double x = 0;
+                double y = 0;
+                foreach (var grade in Grades)
+                {
+                    x += grade.GradeinNum;
+                    y += grade.RelativeValue;
+                }
+                return Math.Round(x / y, 1);
+            }
+            return null;
+        }
+
         public async Task<ServiceResult> CreateNewGradeAsync(Grade NewGrade)
         {
             Student student;
