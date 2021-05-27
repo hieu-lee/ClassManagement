@@ -1,0 +1,76 @@
+﻿@page "/Login"
+@inject ClassesService classesService
+@inject GradesService gradesService
+@inject AccountsService accountsService
+@inject EncryptionService encryptionService
+@inject ISnackbar Snackbar
+
+<div style="max-width: 550px; margin: 3ch auto; padding-bottom: 3ch;">
+    <h3 style="text-align: center;">Create a new account/ Login</h3>
+    <EditForm Model="@NewAccount">
+    <DataAnnotationsValidator />
+        <MudCard Style="border-top: 10px solid #594AE2">
+            <MudCardContent>
+                <MudTextField Label="Username" Required="true" HelperText="Must be non-empty"
+                              @bind-Value="NewAccount.Username" For="@(() => NewAccount.Username)" />
+                <MudTextField Label="Password" Required="true" HelperText="Must be between 6 and 15 characters"
+                              @bind-Value="NewAccount.Password" For="@(() => NewAccount.Password)" />
+            </MudCardContent>
+
+            <MudCardActions>
+                <MudButton @onclick="CheckLogin" Variant="Variant.Outlined" Color="Color.Primary" Style="margin: 0 auto;">Login</MudButton>
+            </MudCardActions>
+            <MudCardActions>
+                <MudButton @onclick="RegisterNew" Variant="Variant.Outlined" Color="Color.Secondary" Style="margin: 0 auto;">Register</MudButton>
+            </MudCardActions>
+        </MudCard>
+    </EditForm>
+</div>
+
+@code {
+    private Account NewAccount = new();
+    private Student AccountStudent = new();
+    private async Task CheckLogin()
+    {
+        string dbpass = encryptionService.Encrypt(NewAccount.Password);
+        var res = await accountsService.CheckValid(NewAccount.Username, dbpass);
+        if (res.success)
+        {
+            Snackbar.Add("Login Successful", Severity.Success);
+            AccountStudent = res.svAccount.AccountStudent;
+        }
+        else
+        {
+            Snackbar.Add(res.err, Severity.Error);
+        }
+        NewAccount.Password = string.Empty;
+    } 
+
+    private async Task RegisterNew()
+    {
+        if (accountsService.CheckLength(NewAccount.Password) == false)
+        {
+            Snackbar.Add("Password should be between 6 and 15 characters", Severity.Error);
+            NewAccount.Password = string.Empty;
+            return;
+        }
+        string dbpass = encryptionService.Encrypt(NewAccount.Password);
+        var res = await accountsService.CreateNewAccountAsync(NewAccount.Username, dbpass);
+        if (res.success)
+        {
+            Snackbar.Add("Successfully created new account", Severity.Success);
+            AccountStudent = res.svAccount.AccountStudent;
+        }
+        else
+        {
+            Snackbar.Add(res.err, Severity.Error);
+        }
+        NewAccount.Username = string.Empty;
+        NewAccount.Password = string.Empty;
+
+    }
+    @*protected override async Task OnInitializedAsync()
+    {
+        
+    }*@
+}
