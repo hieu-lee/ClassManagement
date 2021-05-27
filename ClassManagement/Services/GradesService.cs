@@ -41,13 +41,20 @@ namespace ClassManagement.Services
 
         public Class GetClassFromCode (string classCode)
         {
-            var classes = dbContext.Classes.Where(s => s.Code == classCode).ToArray();
-            if (classes.Length == 0)
+            var clss2 = dbContext.Classes.Where(s => s.Code == classCode).FirstOrDefault();
+            if (clss2 is null)
             {
-                Class newClass = new() { Code = classCode, Name = "CS" };
+                Class newClass = new() { Code = classCode, Name = "NewCSClass" };
                 return newClass;
             }
-            return classes[0];
+            return clss2;
+            //var classes = dbContext.Classes.Where(s => s.Code == classCode).ToArray();
+            //if (classes.Length == 0)
+            //{
+            //    Class newClass = new() { Code = classCode, Name = "CS" };
+            //    return newClass;
+            //}
+            //return classes[0];
         }
         
         public ServiceResult GetGradesFromStudent(Student std)

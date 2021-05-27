@@ -93,6 +93,7 @@
     private List<string> ClassCodes;
     private bool MultiSelect = false;
     private SortedSet<Grade> grades;
+    private SortedSet<Grade> svGrades;
     private HashSet<Grade> selectedGrades;
 
     private string Mode => MultiSelect ? "Cancel" : "Edit";
@@ -103,9 +104,15 @@
 
     private void DisplayScores()
     {
+        @*grades = FilterStudentClass(StudentName, ClassCode);*@
         ServiceResult svrs = gradesService.GetGradesFromStudentAndClass(StudentName, ClassCode);
         grades = svrs.Grades;
     }
+    @*private SortedSet<Grade> FilterStudentClass (string StudentName, string ClassCode)
+    {
+        
+    }*@
+
     private void CalculateAverage()
     {
         NavManager.NavigateTo("/AverageScores");
@@ -142,6 +149,7 @@
         {
             ServiceResult svrs = gradesService.GetGradesFromStudentAndClass(StudentName, ClassCode);
             grades = svrs.Grades;
+            svGrades = grades;
         }
 
         if (StudentNames is null)
