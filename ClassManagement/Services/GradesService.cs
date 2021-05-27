@@ -109,6 +109,12 @@ namespace ClassManagement.Services
             }
         }
 
+        public async Task<double> CalculateAverageGradeOfClass(string ClassCode)
+        {
+            var grades = await dbContext.Grades.Where(s => s.ClassCode == ClassCode).ToArrayAsync();
+            return CalculateAverageGrade(grades);
+        }
+
         public double CalculateAverageGrade(ICollection<Grade> Grades)
         {
             if (Grades.Any())
@@ -117,7 +123,7 @@ namespace ClassManagement.Services
                 double y = 0;
                 foreach (var grade in Grades)
                 {
-                    x += grade.GradeinNum;
+                    x += grade.GradeinNum * grade.RelativeValue;
                     y += grade.RelativeValue;
                 }
                 return Math.Round(x / y, 1);

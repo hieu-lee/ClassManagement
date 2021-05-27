@@ -5,7 +5,7 @@
 @inject ISnackbar Snackbar
 
 
-<div style="max-width: 500px; margin: 5ch auto; padding-bottom: 5ch;">
+<div style="max-width: 450px; margin: 3ch auto; padding-bottom: 3ch;">
     <h3 style="text-align: center;">Create new grade</h3>
     <EditForm Model="@NewGrade">
         <DataAnnotationsValidator />
@@ -16,11 +16,11 @@
                 <MudTextField Label="He so diem" Required="true" HelperText="Must be non-empty. Default= 1"
                               @bind-Value="NewGrade.RelativeValue" For="@(() => NewGrade.RelativeValue)" />
                 <MudTextField Label="Exam Name" Required="true" HelperText="Must be non-empty"
-                              @bind-Value="NewGrade.ExamName" For="@(() => NewGrade.ExamName)"/>
+                              @bind-Value="NewGrade.ExamName" For="@(() => NewGrade.ExamName)" />
 
                 <MudTextField Label="Description" Class="mt-3"
                               @bind-Value="NewGrade.Description" For="@(() => NewGrade.Description)" Lines="5" />
-
+                <MudDatePicker @bind-Date="@NewGrade.ExamTime" Label="Exam Date"></MudDatePicker>
                 <div>
                     <h5 style="margin-top: 20px; text-align: center;">Select Class</h5>
                     <MudSelect Label="Class" Required="true" @bind-Value="@ClassCode" T="string">
@@ -39,13 +39,12 @@
                         }
                     </MudSelect>
                 </div>
-
                 @*<EditForm Model="@NewExamDate" Context="ForminForm">
-                    <h5 style="margin-top: 20px; text-align: center;">Add schedule</h5>
-                   
-                </EditForm>*@
+            <h5 style="margin-top: 20px; text-align: center;">Add schedule</h5>
 
-                <MudDatePicker @bind-Date="@NewGrade.ExamTime" Label="Exam Date"></MudDatePicker>
+        </EditForm>*@
+
+
 
             </MudCardContent>
 

@@ -1,5 +1,6 @@
 ﻿@page "/Class/{Code}"
 @inject ClassesService classesService
+@inject GradesService gradesService
 @inject ISnackbar Snackbar
 
 <MudContainer MaxWidth="MaxWidth.Large">
@@ -36,6 +37,10 @@
                         <li style="display: flex; margin: 0.5ch 0;">
                             <MudIcon Icon="@Icons.Material.Filled.People" />
                             <MudText Style="margin-left: 1ch;" Typo="Typo.subtitle1">Number of Students: @MyClass.Students.Count</MudText>
+                        </li>
+                        <li style="display: flex; margin: 0.5ch 0;">
+                            <MudIcon Icon="@Icons.Material.Filled.Grading" />
+                            <MudText Style="margin-left: 1ch;" Typo="Typo.subtitle1">Average Grade: @AverageGrade</MudText>
                         </li>
                         <li>
                             <div style="display: flex;">
@@ -78,6 +83,7 @@
 @code {
     [Parameter]
     public string Code { get; set; }
+    private double AverageGrade { get; set; }
     private double? DisplayWeight;
     private int Index = -1;
     private double?[] Weights;
@@ -92,6 +98,7 @@
     protected override async Task OnInitializedAsync()
     {
         var task = classesService.GetGradesFromClassAsync(Code);
+        var task1 = gradesService.CalculateAverageGradeOfClass(Code);
         MyClass = await classesService.GetClass(Code);
         MyClassGrades = await task;
         HashSet<double?> TempWeights = new();
@@ -101,6 +108,7 @@
             TempWeights.Add(MyClassGrades[i].RelativeValue);
         }
         Weights = TempWeights.ToArray();
+        AverageGrade = await task1;
         loading = false;
     }
 

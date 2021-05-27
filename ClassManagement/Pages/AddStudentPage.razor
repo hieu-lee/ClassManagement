@@ -2,13 +2,13 @@
 @inject ClassesService classesService
 @inject ISnackbar Snackbar
 
-<div style="max-width: 500px; margin: 5ch auto; padding-bottom: 5ch;">
+<div style="max-width: 450px; margin: 3ch auto; padding-bottom: 3ch;">
     <h3 style="text-align: center;">Create new student record</h3>
     <EditForm Model="@NewStudent" OnValidSubmit="SubmitForm">
         <DataAnnotationsValidator />
         <MudCard Style="border-top: 10px solid #594AE2">
             <MudCardContent>
-                <MudTextField Label="Name" Required="true" HelperText="Must be unique, have at least 6 characters and less than 11 characters"
+                <MudTextField Label="Name" Required="true" HelperText="Must be non-empty"
                               @bind-Value="NewStudent.Name" For="@(() => NewStudent.Name)" />
                 <MudDatePicker Label="Date of Birth" Required="true" @bind-Date="NewStudent.DateOfBirth" For="@(() => NewStudent.DateOfBirth)" />
                 <MudSelect Label="Gender" Required="true" @bind-Value="NewStudent.Gender" For="@(() => NewStudent.Gender)" T="string">
