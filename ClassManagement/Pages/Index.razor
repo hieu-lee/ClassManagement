@@ -14,33 +14,41 @@
     </div>
 </div>
 <ul class="features">
-    <li class="feature" id="classes" @onclick="@(() => { navigationManager.NavigateTo("/Classes"); })">
-        <MudIcon Style="width: 35px; height: 35px; margin-right: 5px;" Icon="@Icons.Outlined.Class" Color="Color.Primary" />
-        <div class="abstract">
-            <MudText Typo="Typo.h5" Color="Color.Primary">Classes</MudText>
-            <MudText Typo="Typo.body2">Manage your classes with many features such as create/remove classes, change class' schedules, adding descriptions and more</MudText>
-        </div>
+    <li class="feature" id="classes">
+        <MudLink Style="padding:3ch; display: flex;" Href="/Classes" Color="Color.Dark" Underline="Underline.None">
+            <MudIcon Style="width: 35px; height: 35px; margin-right: 5px;" Icon="@Icons.Outlined.Class" Color="Color.Primary" />
+            <div class="abstract">
+                <MudText Typo="Typo.h5" Color="Color.Primary">Classes</MudText>
+                <MudText Typo="Typo.body2">Manage your classes with many features such as create/remove classes, change class' schedules, adding descriptions and more</MudText>
+            </div>
+        </MudLink>
     </li>
-    <li class="feature" id="students" @onclick="@(() => { navigationManager.NavigateTo("/Students"); })">
-        <MudIcon Style="width: 35px; height: 35px; margin-right: 5px;" Icon="@Icons.Outlined.People" Color="Color.Primary" />
-        <div class="abstract">
-            <MudText Typo="Typo.h5" Color="Color.Primary">Students</MudText>
-            <MudText Typo="Typo.body2">Manage your students with many features such as create/remove students, calculating student's average grade, adding description and more</MudText>
-        </div>
+    <li class="feature" id="students">
+        <MudLink Style="padding:3ch; display: flex;" Href="/Students" Color="Color.Dark" Underline="Underline.None">
+            <MudIcon Style="width: 35px; height: 35px; margin-right: 5px;" Icon="@Icons.Outlined.People" Color="Color.Primary" />
+            <div class="abstract">
+                <MudText Typo="Typo.h5" Color="Color.Primary">Students</MudText>
+                <MudText Typo="Typo.body2">Manage your students with many features such as create/remove students, calculating student's average grade, adding description and more</MudText>
+            </div>
+        </MudLink>
     </li>
-    <li class="feature" id="grades" @onclick="@(() => { navigationManager.NavigateTo("/ViewScore"); })">
-        <MudIcon Style="width: 35px; height: 35px; margin-right: 5px;" Icon="@Icons.Outlined.Grade" Color="Color.Primary" />
-        <div class="abstract">
-            <MudText Typo="Typo.h5" Color="Color.Primary">Tests & Grades</MudText>
-            <MudText Typo="Typo.body2">Manage your tests & grades with many features such as create/remove tests/grades, calculating average grade, filtering grades by classes/students/tests and more</MudText>
-        </div>
+    <li class="feature" id="grades">
+        <MudLink Style="padding:3ch; display: flex;" Href="/ViewScore" Color="Color.Dark" Underline="Underline.None">
+            <MudIcon Style="width: 35px; height: 35px; margin-right: 5px;" Icon="@Icons.Outlined.Grade" Color="Color.Primary" />
+            <div class="abstract">
+                <MudText Typo="Typo.h5" Color="Color.Primary">Tests & Grades</MudText>
+                <MudText Typo="Typo.body2">Manage your tests & grades with many features such as create/remove tests/grades, calculating average grade, filtering grades by classes/students/tests and more</MudText>
+            </div>
+        </MudLink>
     </li>
     <li class="feature" id="schedules">
-        <MudIcon Style="width: 35px; height: 35px; margin-right: 5px;" Icon="@Icons.Outlined.Schedule" Color="Color.Primary" />
-        <div class="abstract">
-            <MudText Typo="Typo.h5" Color="Color.Primary">Schedules</MudText>
-            <MudText Typo="Typo.body2">Manage your teaching schedules with a complete notification system and schedule filtering by classes</MudText>
-        </div>
+        <MudLink Style="padding:3ch; display: flex;" Href="/MyWeek" Color="Color.Dark" Underline="Underline.None">
+            <MudIcon Style="width: 35px; height: 35px; margin-right: 5px;" Icon="@Icons.Outlined.Schedule" Color="Color.Primary" />
+            <div class="abstract">
+                <MudText Typo="Typo.h5" Color="Color.Primary">Schedules</MudText>
+                <MudText Typo="Typo.body2">Manage your teaching schedules with a complete notification system and schedule filtering by classes</MudText>
+            </div>
+        </MudLink>
     </li>
 </ul>
 <div class="technologies">

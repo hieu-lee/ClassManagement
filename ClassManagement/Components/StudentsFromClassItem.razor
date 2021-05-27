@@ -1,5 +1,6 @@
 ﻿@inject ISnackbar Snackbar
 @inject ClassesService classesService
+@inject GradesService gradesService
 
 <MudCard Style="margin-top: 5ch;">
     <div style="display: flex; justify-content: space-between; margin-top: 2ch; padding: 0 2ch;">
@@ -21,12 +22,14 @@
             <MudTh><MudTableSortLabel SortBy="new Func<Student, object>(x=>x.Gender)">Gender</MudTableSortLabel></MudTh>
             <MudTh><MudTableSortLabel SortBy="new Func<Student, object>(x=>x.Age)">Age</MudTableSortLabel></MudTh>
             <MudTh><MudTableSortLabel SortBy="new Func<Student, object>(x=>x.DateOfBirth)">Date of Birth</MudTableSortLabel></MudTh>
+            <MudTh><MudTableSortLabel SortBy="new Func<double, object>(x=>x)">Avg. Grade</MudTableSortLabel></MudTh>
         </HeaderContent>
         <RowTemplate>
             <MudTd DataLabel="Student Name">@context.Name</MudTd>
-            <MudTd DataLabel="Grade in number">@context.Gender</MudTd>
-            <MudTd DataLabel="Relevance">@context.Age</MudTd>
-            <MudTd DataLabel="Class Code">@context.DateOfBirth</MudTd>
+            <MudTd DataLabel="Gender">@context.Gender</MudTd>
+            <MudTd DataLabel="Age">@context.Age</MudTd>
+            <MudTd DataLabel="Date of Birth">@context.DateOfBirth</MudTd>
+            <MudTd DataLabel="Avg. Grade">@AverageGrades[context.Id]</MudTd>
             <MudIconButton OnClick="@(async () => { await DeleteStudentAsync(context); })"
                            Icon="@Icons.Material.Filled.Delete">Delete grade</MudIconButton>
         </RowTemplate>
@@ -53,6 +56,7 @@
     public EventCallback<HashSet<Student>> StudentsChanged { get; set; }
     [Parameter]
     public string ClassCode { get; set; }
+    private Dictionary<string, double> AverageGrades = new();
     private bool MultiSelect = false;
     private string deleteManyDisplay => MultiSelect ? "inline" : "none";
     private string Mode => MultiSelect ? "Cancel" : "Edit";
@@ -60,6 +64,12 @@
     private string searchString;
     private HashSet<Student> _Students;
     private HashSet<Student> selectedStudents { get; set; }
+
+    protected override async Task OnInitializedAsync()
+    {
+        var res = await gradesService.GetAverageGradesFromStudentsAndClass(Students, ClassCode);
+        AverageGrades = res.AverageGrades;
+    }
 
     private async Task DeleteStudentAsync(Student student)
     {

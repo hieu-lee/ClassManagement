@@ -5,6 +5,10 @@ html, body {
     font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
 }
 
+a:hover {
+    color: #7467EF;
+}
+
 a, .btn-link {
     color: #0366d6;
 }

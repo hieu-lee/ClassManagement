@@ -11,7 +11,7 @@ namespace ClassManagement.Models
         public SortedSet<ClassNote> Notes { get; set; }
         public HashSet<ClassNote> DayNotes { get; set; }
         public HashSet<ClassSchedule> Schedules { get; set; }
-
+        public Dictionary<string, double> AverageGrades { get; set; }
         public SortedSet<Grade> Grades { get; set; }
     }
 }

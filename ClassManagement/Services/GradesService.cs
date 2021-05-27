@@ -30,13 +30,13 @@ namespace ClassManagement.Services
 
         public Student GetStudentFromName (string studentName)
         {
-            var students = dbContext.Students.Where (s => s.Name == studentName).ToArray();
-            if (students.Length==0)
+            var student = dbContext.Students.Where(s => s.Name == studentName).FirstOrDefault();
+            if (student is null)
             {
                 Student newStudent = new() { Name = studentName, Gender = "Male", DateOfBirth = DateTime.Now.Date};
                 return newStudent;
             }
-            return students[0];
+            return student;
         }
 
         public Class GetClassFromCode (string classCode)
@@ -54,6 +54,30 @@ namespace ClassManagement.Services
         {
             var grades = new SortedSet<Grade>(dbContext.Grades.Where(s => s.StudentId == std.Id).ToArray());
             return new() { success = true, Grades = grades };
+        }
+
+        public async Task<ServiceResult> GetAverageGradesFromStudentsAndClass(ICollection<Student> students, string ClassCode)
+        {
+            Dictionary<string, double> res = new();
+            Dictionary<string, List<Grade>> gradesRes = new();
+            var task = Task.Factory.StartNew(() =>
+            {
+                foreach (var s in students)
+                {
+                    gradesRes[s.Id] = new();
+                }
+            });
+            var grades = await dbContext.Grades.Where(s => s.ClassCode == ClassCode).ToArrayAsync();
+            await task;
+            foreach (var g in grades)
+            {
+                gradesRes[g.StudentId].Add(g);
+            }
+            foreach (var s in students)
+            {
+                res[s.Id] = CalculateAverageGrade(gradesRes[s.Id]);
+            }
+            return new() { success = true, AverageGrades = res };
         }
 
         public ServiceResult GetGradesFromStudentAndClass(string studentName, string classCode)
@@ -85,7 +109,7 @@ namespace ClassManagement.Services
             }
         }
 
-        public double? CalculateAverageGrade(ICollection<Grade> Grades)
+        public double CalculateAverageGrade(ICollection<Grade> Grades)
         {
             if (Grades.Any())
             {
@@ -98,7 +122,7 @@ namespace ClassManagement.Services
                 }
                 return Math.Round(x / y, 1);
             }
-            return null;
+            return 0;
         }
 
         public async Task<ServiceResult> CreateNewGradeAsync(Grade NewGrade)
