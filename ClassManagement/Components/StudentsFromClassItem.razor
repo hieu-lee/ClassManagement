@@ -28,7 +28,7 @@
             <MudTd DataLabel="Student Name">@context.Name</MudTd>
             <MudTd DataLabel="Gender">@context.Gender</MudTd>
             <MudTd DataLabel="Age">@context.Age</MudTd>
-            <MudTd DataLabel="Date of Birth">@context.DateOfBirth</MudTd>
+            <MudTd DataLabel="Date of Birth">@context.DateOfBirth.Value.ToShortDateString()</MudTd>
             <MudTd DataLabel="Avg. Grade">@AverageGrades[context.Id]</MudTd>
             <MudIconButton OnClick="@(async () => { await DeleteStudentAsync(context); })"
                            Icon="@Icons.Material.Filled.Delete">Delete grade</MudIconButton>
