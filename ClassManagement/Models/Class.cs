@@ -10,9 +10,6 @@ namespace ClassManagement.Models
         [Required]
         [StringLength(10, ErrorMessage = "Code length must be between 6 and 10 characters", MinimumLength = 6)]
         public string Code { get; set; }
-#nullable enable
-        public int? HashCode { get; set; }
-#nullable disable
         [Required]
         public string Name { get; set; }
         public string Description { get; set; } = string.Empty;
@@ -41,11 +38,7 @@ namespace ClassManagement.Models
 
         public override int GetHashCode()
         {
-            if (HashCode is null)
-            {
-                HashCode = Code.GetHashCode();
-            }
-            return HashCode.Value;
+            return Code.GetHashCode();
         }
     }
 }

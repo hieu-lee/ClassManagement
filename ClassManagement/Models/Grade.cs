@@ -11,7 +11,6 @@ namespace ClassManagement.Models
     {
         [Key]
         public string Id { get; init; } = Guid.NewGuid().ToString();
-        public int HashCode { get; init; }
         [Required]
         public double GradeinNum { get; set; }
 
@@ -38,11 +37,6 @@ namespace ClassManagement.Models
         public string Description { get; set; }
         public Class Classroom { get; set; }
 
-        public Grade()
-        {
-            HashCode = Id.GetHashCode();
-        }
-
         public int CompareTo (Grade other)
         {
             var c = GradeinNum.CompareTo(other.GradeinNum);
@@ -56,7 +50,7 @@ namespace ClassManagement.Models
         }
         public override int GetHashCode()
         {
-            return HashCode;
+            return Id.GetHashCode();
         }
     }
 }

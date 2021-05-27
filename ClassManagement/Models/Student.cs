@@ -8,7 +8,6 @@ namespace ClassManagement.Models
     {
         [Key]
         public string Id { get; init; } = Guid.NewGuid().ToString();
-        public int HashCode { get; init; }
         [Required]
         public string Name { get; set; }
 #nullable enable
@@ -22,11 +21,6 @@ namespace ClassManagement.Models
         public DateTime? DateOfBirth { get; set; }
         public int Age => DateTime.Now.Year - DateOfBirth.Value.Year;
         public HashSet<Grade> Grades { get; set; } = new();
-
-        public Student()
-        {
-            HashCode = Id.GetHashCode();
-        }
         public string GetAllClassesCode()
         {
             var res = "";
@@ -53,7 +47,7 @@ namespace ClassManagement.Models
 
         public override int GetHashCode()
         {
-            return HashCode;
+            return Id.GetHashCode();
         }
     }
 }

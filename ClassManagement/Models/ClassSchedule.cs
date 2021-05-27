@@ -8,9 +8,6 @@ namespace ClassManagement.Models
     {
         [Key]
         public string Id { get; init; } = Guid.NewGuid().ToString();
-#nullable enable
-        public int? HashCode { get; set; }
-#nullable disable
         public DayOfWeek Day { get; set; }
         public TimeSpan? StartTime { get; set; }
         public TimeSpan? EndTime { get; set; }
@@ -26,12 +23,8 @@ namespace ClassManagement.Models
 
         public override int GetHashCode()
         {
-            if (HashCode is null)
-            {
-                var tuple = new Tuple<string, DayOfWeek, TimeSpan, TimeSpan>(ClassroomCode, Day, StartTime.Value, EndTime.Value);
-                HashCode = tuple.GetHashCode();
-            }
-            return HashCode.Value;
+            var tuple = new Tuple<string, DayOfWeek, TimeSpan, TimeSpan>(ClassroomCode, Day, StartTime.Value, EndTime.Value);
+            return tuple.GetHashCode();
         }
     }
 }

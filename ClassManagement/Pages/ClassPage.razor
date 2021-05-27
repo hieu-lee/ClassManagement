@@ -55,6 +55,23 @@
                                     </li>
                                 }
                             </ul>
+                            <EditForm Model="NewSchedule" OnValidSubmit="AddNewScheduleToClass">
+                                <h5 style="margin-top: 20px; text-align: center;">Add schedule</h5>
+                                <MudSelect Label="Day of week" Required="true" @bind-Value="NewSchedule.Day" For="@(() => NewSchedule.Day)" T="DayOfWeek">
+                                    <MudSelectItem Value="@DayOfWeek.Monday" />
+                                    <MudSelectItem Value="@DayOfWeek.Tuesday" />
+                                    <MudSelectItem Value="@DayOfWeek.Wednesday" />
+                                    <MudSelectItem Value="@DayOfWeek.Thursday" />
+                                    <MudSelectItem Value="@DayOfWeek.Friday" />
+                                    <MudSelectItem Value="@DayOfWeek.Saturday" />
+                                    <MudSelectItem Value="@DayOfWeek.Sunday" />
+                                </MudSelect>
+                                <MudTimePicker Required="true" @bind-Time="@NewSchedule.StartTime" For="@(() => NewSchedule.StartTime)" Label="Start Time" />
+                                <MudTimePicker Required="true" @bind-Time="@NewSchedule.EndTime" For="@(() => NewSchedule.EndTime)" Label="End Time" />
+                                <MudCardActions Style="margin-bottom: 5px; padding: 10px 0;">
+                                    <MudButton ButtonType="ButtonType.Submit" Variant="Variant.Outlined" Color="Color.Primary" Style="margin: 0 auto;">Add New Schedule</MudButton>
+                                </MudCardActions>
+                            </EditForm>
                         </li>
                     </ul>
                 </MudPaper>
@@ -70,7 +87,7 @@
                     <MudSelect Label="Grade's Weight" @bind-Value="DisplayWeight">
                         @foreach (var weight in Weights)
                             {
-                            <MudSelectItem Value="weight">@((weight is null)?"None":weight.ToString())</MudSelectItem>
+                                <MudSelectItem Value="weight">@((weight is null)?"None":weight.ToString())</MudSelectItem>
                             }
                     </MudSelect>
                 </MudPaper>
@@ -89,6 +106,7 @@
     private double?[] Weights;
     private Class MyClass;
     private Grade[] MyClassGrades;
+    private ClassSchedule NewSchedule;
     private bool loading = true;
     double[] data => GetDataToDisplay();
     string[] labels = { "0-3", "3-5", "5-7", "7-8", "8-9", "9-10" };
@@ -97,6 +115,7 @@
 
     protected override async Task OnInitializedAsync()
     {
+        NewSchedule = new() { ClassroomCode = Code };
         var task = classesService.GetGradesFromClassAsync(Code);
         var task1 = gradesService.CalculateAverageGradeOfClass(Code);
         MyClass = await classesService.GetClass(Code);
@@ -123,6 +142,41 @@
             return;
         }
         Snackbar.Add(res.err, Severity.Error);
+    }
+
+    private async Task AddNewScheduleToClass()
+    {
+        if (MyClass.Schedules.Contains(NewSchedule))
+        {
+            return;
+        }
+        if (NewSchedule.EndTime is null || NewSchedule.StartTime is null)
+        {
+            Snackbar.Add("You need to fill in the time to add new schedule", Severity.Error);
+            return;
+        }
+        if (NewSchedule.EndTime.Value <= NewSchedule.StartTime.Value)
+        {
+            Snackbar.Add("The end time must be after the start time", Severity.Error);
+            return;
+        }
+        else
+        {
+            var res = await classesService.AddNewScheduleToClass(NewSchedule, Code);
+            if (res.success)
+            {
+                MyClass.Schedules.Add(NewSchedule);
+                NewSchedule = new() { ClassroomCode = Code };
+                StateHasChanged();
+                Snackbar.Add("Successfully add new schedule to class", Severity.Success);
+                return;
+            }
+            else
+            {
+                Snackbar.Add(res.err, Severity.Error);
+                return;
+            }
+        }
     }
 
     private double[] GetDataToDisplay()

@@ -8,7 +8,6 @@ namespace ClassManagement.Models
     {
         [Key]
         public string Id { get; init; } = Guid.NewGuid().ToString();
-        public int HashCode { get; init; }
         [Required]
         public DateTime Day { get; init; }
         public string Content { get; set; }
@@ -16,11 +15,6 @@ namespace ClassManagement.Models
         public string ClassroomCode { get; set; }
         [Required]
         public Class Classroom { get; init; }
-
-        public ClassNote()
-        {
-            HashCode = Id.GetHashCode();
-        }
 
         public int CompareTo(ClassNote other)
         {
@@ -35,7 +29,7 @@ namespace ClassManagement.Models
 
         public override int GetHashCode()
         {
-            return HashCode;
+            return Id.GetHashCode();
         }
     }
 }
