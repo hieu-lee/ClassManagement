@@ -1,6 +1,9 @@
 @inject ISnackbar Snackbar
 @inject NavigationManager navigationManager
 @inject IJSRuntime JsRuntime
+@inject ProtectedLocalStorage localStorage
+@inject SessionService session
+@using Microsoft.AspNetCore.Components.Server.ProtectedBrowserStorage;
 @using System.Timers;
 @using Dapper;
 @using Microsoft.Data.Sqlite;
@@ -29,6 +32,18 @@
     {
         if (firstRender)
         {
+            try
+            {
+                var res = await localStorage.GetAsync<string>("MEDUUsernameState");
+                if (res.Success)
+                {
+                    session.UsernameState = res.Value;
+                }
+            }
+            catch(Exception)
+            {
+                await session.SignOutAsync();
+            }
             SqlMapper.AddTypeHandler(new TimeSpanHandler());
             module = await JsRuntime.InvokeAsync<IJSObjectReference>("import", "./Utils.js");
             notificationTimer.Enabled = true;
@@ -56,21 +71,10 @@
 
     public async Task PushNotification()
     {
-        var schedule = await GetOneNextScheduleAsync(DateTime.Now, NotifiedSchedules);
-        if (schedule is not null)
+        if (session.LoggedState)
         {
-            Snackbar.Add($"{schedule.ClassroomCode} starts at {schedule.StartTime}", Severity.Info, config =>
-            {
-                config.Onclick = snackbar =>
-                {
-                    navigationManager.NavigateTo("/Classes");
-                    return Task.CompletedTask;
-                };
-            });
-            await module.InvokeVoidAsync("PlayAudio");
-            NotifiedSchedules.Add(schedule);
-            Timer tempTimer = new(900000);
-            tempTimer.Elapsed += async (s, e) =>
+            var schedule = await GetOneNextScheduleAsync(DateTime.Now, NotifiedSchedules);
+            if (schedule is not null)
             {
                 Snackbar.Add($"{schedule.ClassroomCode} starts at {schedule.StartTime}", Severity.Info, config =>
                 {
@@ -81,11 +85,25 @@
                     };
                 });
                 await module.InvokeVoidAsync("PlayAudio");
-                NotifiedSchedules.Remove(schedule);
-                tempTimer.Enabled = false;
-                tempTimer.Dispose();
-            };
-            tempTimer.Enabled = true;
+                NotifiedSchedules.Add(schedule);
+                Timer tempTimer = new(900000);
+                tempTimer.Elapsed += async (s, e) =>
+                {
+                    Snackbar.Add($"{schedule.ClassroomCode} starts at {schedule.StartTime}", Severity.Info, config =>
+                    {
+                        config.Onclick = snackbar =>
+                        {
+                            navigationManager.NavigateTo("/Classes");
+                            return Task.CompletedTask;
+                        };
+                    });
+                    await module.InvokeVoidAsync("PlayAudio");
+                    NotifiedSchedules.Remove(schedule);
+                    tempTimer.Enabled = false;
+                    tempTimer.Dispose();
+                };
+                tempTimer.Enabled = true;
+            }
         }
     }
 }
