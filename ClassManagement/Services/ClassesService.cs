@@ -29,6 +29,11 @@ namespace ClassManagement.Services
             return res;
         }
 
+        public async Task<Class> GetClassIncludeGradesFromCode(string Code)
+        {
+            return await dbContext.Classes.Where(s => s.Code == Code).Include(s => s.Grades).FirstOrDefaultAsync();
+        }
+
         public async Task<Class> GetClass(string Code)
         {
             var res = await dbContext.Classes.Where(s => s.Code == Code).Include(s => s.Schedules).Include(s => s.Students).AsSplitQuery().FirstOrDefaultAsync();
