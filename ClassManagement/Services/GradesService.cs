@@ -175,6 +175,11 @@ namespace ClassManagement.Services
             return res;
         }
 
+        public SortedSet<Student> GetAllStudents()
+        {
+            return new (dbContext.Students.ToArray());
+        }
+
         public async Task<ServiceResult> CreateNewGradeAsyncBetter(Grade NewGrade, Class GClass, Student GStudent)
         {
             Grade myGrade;

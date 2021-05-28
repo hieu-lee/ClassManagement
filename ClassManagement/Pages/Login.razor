@@ -5,29 +5,63 @@
 @using ClassManagement.Services
 @inject ISnackbar Snackbar
 
-<div style="max-width: 550px; margin: 3ch auto; padding-bottom: 3ch;">
-    <h3 style="text-align: center;">Create a new account/ Login</h3>
-    <EditForm Model="@NewAccount">
-    <DataAnnotationsValidator />
-        <MudCard Style="border-top: 10px solid #594AE2">
-            <MudCardContent>
-                <MudTextField Label="Username" Required="true" HelperText="Must be non-empty"
-                              @bind-Value="NewAccount.Username" For="@(() => NewAccount.Username)" />
-                <MudTextField Label="Password" Required="true" HelperText="Must be between 6 and 15 characters"
-                              @bind-Value="NewAccount.Password" For="@(() => NewAccount.Password)" />
-            </MudCardContent>
+@if (!RegisterMode)
+{
+    <div style="max-width: 550px; margin: 3ch auto; padding-bottom: 3ch;">
+        Don't have account yet? 
+        <span @onclick="() => { RegisterMode = true; }" class="register">Register</span>
+    </div>
+    <div style="max-width: 550px; margin: 3ch auto; padding-bottom: 3ch;">
+        <h3 style="text-align: center;">Create a new account/ Login</h3>
+        <EditForm Model="@NewAccount">
+            <DataAnnotationsValidator />
+            <MudCard Style="border-top: 10px solid #594AE2">
+                <MudCardContent>
+                    <MudTextField Label="Username" Required="true" HelperText="Must be non-empty"
+                                  @bind-Value="NewAccount.Username" For="@(() => NewAccount.Username)" />
+                    <MudTextField Label="Password" Required="true" HelperText="Must be between 6 and 15 characters"
+                                  @bind-Value="NewAccount.Password" For="@(() => NewAccount.Password)" />
+                </MudCardContent>
 
-            <MudCardActions>
-                <MudButton @onclick="CheckLogin" Variant="Variant.Outlined" Color="Color.Primary" Style="margin: 0 auto;">Login</MudButton>
-            </MudCardActions>
-            <MudCardActions>
-                <MudButton @onclick="RegisterNew" Variant="Variant.Outlined" Color="Color.Secondary" Style="margin: 0 auto;">Register</MudButton>
-            </MudCardActions>
-        </MudCard>
-    </EditForm>
-</div>
+                <MudCardActions>
+                    <MudButton @onclick="CheckLogin" Variant="Variant.Outlined" Color="Color.Primary" Style="margin: 0 auto;">Login</MudButton>
+                </MudCardActions>
+                <MudCardActions>
+                    <MudButton @onclick="RegisterNew" Variant="Variant.Outlined" Color="Color.Secondary" Style="margin: 0 auto;">Register</MudButton>
+                </MudCardActions>
+            </MudCard>
+        </EditForm>
+    </div>
+}
+
+else
+{
+    <div style="max-width: 550px; margin: 3ch auto; padding-bottom: 3ch;">
+        <h3 style="text-align: center;">Create a new account/ Login</h3>
+        <EditForm Model="@NewAccount">
+            <DataAnnotationsValidator />
+            <MudCard Style="border-top: 10px solid #594AE2">
+                <MudCardContent>
+                    <MudTextField Label="Username" Required="true" HelperText="Must be non-empty"
+                                  @bind-Value="NewAccount.Username" For="@(() => NewAccount.Username)" />
+                    <MudTextField Label="Password" Required="true" HelperText="Must be between 6 and 15 characters"
+                                  @bind-Value="NewAccount.Password" For="@(() => NewAccount.Password)" />
+                </MudCardContent>
+
+                <MudCardActions>
+                    <MudButton @onclick="CheckLogin" Variant="Variant.Outlined" Color="Color.Primary" Style="margin: 0 auto;">Login</MudButton>
+                </MudCardActions>
+                <MudCardActions>
+                    <MudButton @onclick="RegisterNew" Variant="Variant.Outlined" Color="Color.Secondary" Style="margin: 0 auto;">Register</MudButton>
+                </MudCardActions>
+            </MudCard>
+        </EditForm>
+    </div>
+}
 
 @code {
+
+    private bool RegisterMode = false;
     private Account NewAccount = new();
     private Student AccountStudent = new();
     private async Task CheckLogin()
@@ -43,7 +77,7 @@
             Snackbar.Add(res.err, Severity.Error);
         }
         NewAccount.Password = string.Empty;
-    } 
+    }
 
     private async Task RegisterNew()
     {
@@ -68,7 +102,7 @@
 
     }
     @*protected override async Task OnInitializedAsync()
-    {
-        
-    }*@
+        {
+
+        }*@
 }
