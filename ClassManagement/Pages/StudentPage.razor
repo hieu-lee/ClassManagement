@@ -1,0 +1,51 @@
+﻿@page "/Student/{Id}"
+@inject ClassesService classesService
+
+<MudCard>
+    <MudAvatar>
+        <MudIcon Style="color: #ffffff" Icon="@Icons.Material.Filled.PeopleAlt" />
+    </MudAvatar>
+    <MudText Typo="Typo.h3">@MyStudent.Name</MudText>
+</MudCard>
+<MudCard>
+    <MudText>MEDU Profile</MudText>
+    <div style="display: flex;">
+        <div class="student-details">
+            <MudText Typo="Typo.h5">Student details</MudText>
+            <MudText Typo="Typo.subtitle1">Gender: @MyStudent.Gender</MudText>
+            <MudText Typo="Typo.subtitle1">Date of Birth: @MyStudent.DateOfBirth.Value.ToShortDateString()</MudText>
+            <MudText Typo="Typo.subtitle1">Age: @MyStudent.Age</MudText>
+        </div>
+        <div class="description">
+            <MudText Typo="Typo.h5">Description</MudText>
+            <MudText>@Description</MudText>
+        </div>
+    </div>
+    <div>
+        <div class="classes-details">
+            <MudText Typo="Typo.h5">Classes details</MudText>
+            @foreach (var cls in MyStudent.Classes)
+            {
+                <MudLink Href="@($"/Class/{cls.Id}")">@cls.Code</MudLink>
+            }
+        </div>
+        <div class="Grades">
+            <MudText Typo="Typo.h5">Grades Overview</MudText>
+        </div>
+    </div>
+    
+</MudCard>
+
+
+@code {
+    [Parameter]
+    public string Id { get; set; }
+    private Student MyStudent { get; set; }
+    private string Description => (string.IsNullOrWhiteSpace(MyStudent.Description)) ? "This student has no description" : MyStudent.Description;
+
+    protected override async Task OnInitializedAsync()
+    {
+        var res = await classesService.GetStudentAsync(Id);
+        MyStudent = res.svStudent;
+    }
+}

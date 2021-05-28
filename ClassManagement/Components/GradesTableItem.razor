@@ -57,7 +57,7 @@
 
     protected override async Task OnInitializedAsync()
     {
-        var res = await classesService.GetClassIncludeGradesFromCode(ClassId);
+        var res = await classesService.GetClassIncludeGradesFromId(ClassId);
         MyGrades = res.Grades;
     }
 
