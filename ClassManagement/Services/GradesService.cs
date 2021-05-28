@@ -12,9 +12,11 @@ namespace ClassManagement.Services
     public class GradesService
     {
         private readonly AppDbContext dbContext;
-        public GradesService (AppDbContext dbContext)
+        private readonly string UsernameState;
+        public GradesService (AppDbContext dbContext, SessionService session)
         {
             this.dbContext = dbContext;
+            UsernameState = session.UsernameState;
         }
 
         public async Task<Grade> GetGradeAsync(Student student)
@@ -61,6 +63,12 @@ namespace ClassManagement.Services
         {
             var grades = new SortedSet<Grade>(dbContext.Grades.Where(s => s.StudentId == std.Id).ToArray());
             return new() { success = true, Grades = grades };
+        }
+
+        public async Task<double> GetAverageGradeFromStudentAndClass(string StudentId, string ClassId)
+        {
+            var grades = await dbContext.Grades.Where(s => s.ClassCode == ClassId && s.StudentId == StudentId && s.OwnerUsername == UsernameState).ToArrayAsync();
+            return CalculateAverageGrade(grades);
         }
 
         public async Task<ServiceResult> GetAverageGradesFromStudentsAndClass(ICollection<Student> students, string ClassId)
