@@ -31,7 +31,7 @@ namespace ClassManagement.Services
             return res;
         }
 
-        public async Task<Class> GetClassIncludeGradesFromCode(string ClassId)
+        public async Task<Class> GetClassIncludeGradesFromId(string ClassId)
         {
             return await dbContext.Classes.Where(s => s.Id == ClassId && s.OwnerUsername == UsernameState).Include(s => s.Grades).FirstOrDefaultAsync();
         }
@@ -57,6 +57,12 @@ namespace ClassManagement.Services
         {
             var students = new SortedSet<Student>(dbContext.Students.Where(s => s.OwnerUsername == UsernameState).Include(s => s.Classes).ToArray());
             return new() { success = true, Students = students };
+        }
+
+        public async Task<ServiceResult> GetStudentAsync(string StudentId)
+        {
+            var res = await dbContext.Students.Where(s => s.Id == StudentId).Include(s => s.Classes).Include(s => s.Grades).AsSplitQuery().FirstOrDefaultAsync();
+            return new() { svStudent = res };
         }
 
         public ServiceResult GetAllNotes()
