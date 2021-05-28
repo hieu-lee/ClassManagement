@@ -35,7 +35,7 @@
                                 <div style="display: flex; justify-content: space-between">
                                     <div style="display: flex;">
                                         <div>
-                                            <MudIconButton OnClick="@(() => { navigationManager.NavigateTo($"/Class/{Class.Code}"); })">
+                                            <MudIconButton OnClick="@(() => { navigationManager.NavigateTo($"/Class/{Class.Code}/{Class.Id}"); })">
                                                 <MudIcon Style="width: 3ch; height: 3ch;" Icon="@Icons.Material.Filled.School" Color="Color.Primary"/>
                                             </MudIconButton>
                                         </div>
@@ -81,7 +81,7 @@
                                     <div style="display: flex; justify-content: space-between">
                                         <div style="display: flex;">
                                             <div>
-                                                <MudIconButton OnClick="@(() => { navigationManager.NavigateTo($"/Class/{Class.Code}"); })">
+                                                <MudIconButton OnClick="@(() => { navigationManager.NavigateTo($"/Class/{Class.Code}/{Class.Id}"); })">
                                                     <MudIcon Style="width: 3ch; height: 3ch;" Icon="@Icons.Material.Filled.School" Color="Color.Primary" />
                                                 </MudIconButton>
                                             </div>
@@ -190,7 +190,7 @@
         ClassesToDisplay.Remove(Class);
         StateHasChanged();
         MyClasses.Remove(Class);
-        var res = await classesService.DeleteClass(Class.Code);
+        var res = await classesService.DeleteClass(Class.Id);
         if (res.success)
         {
             Snackbar.Add("Successfully deleted class", Severity.Success);
@@ -219,7 +219,7 @@
         ClassesToDisplay.Remove(Class);
         TodayClasses.Remove(Class);
         MyClasses.Remove(Class);
-        var res = await classesService.DeleteClass(Class.Code);
+        var res = await classesService.DeleteClass(Class.Id);
         if (res.success)
         {
             Snackbar.Add("Successfully deleted class", Severity.Success);

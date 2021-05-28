@@ -15,6 +15,8 @@
 @code {
     [Parameter]
     public string ClassCode { get; set; }
+    [Parameter]
+    public string ClassId { get; set; }
     private double? DisplayWeight;
     private int Index = -1;
     private double?[] Weights;
@@ -26,7 +28,7 @@
 
     protected override async Task OnInitializedAsync()
     {
-        MyClassGrades = await classesService.GetGradesFromClassAsync(ClassCode);
+        MyClassGrades = await classesService.GetGradesFromClassAsync(ClassId);
         HashSet<double?> TempWeights = new();
         TempWeights.Add(null);
         for (int i = 0; i < MyClassGrades.Length; i++)

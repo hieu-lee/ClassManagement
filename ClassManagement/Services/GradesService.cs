@@ -63,7 +63,7 @@ namespace ClassManagement.Services
             return new() { success = true, Grades = grades };
         }
 
-        public async Task<ServiceResult> GetAverageGradesFromStudentsAndClass(ICollection<Student> students, string ClassCode)
+        public async Task<ServiceResult> GetAverageGradesFromStudentsAndClass(ICollection<Student> students, string ClassId)
         {
             Dictionary<string, double> res = new();
             Dictionary<string, List<Grade>> gradesRes = new();
@@ -74,7 +74,7 @@ namespace ClassManagement.Services
                     gradesRes[s.Id] = new();
                 }
             });
-            var grades = await dbContext.Grades.Where(s => s.ClassCode == ClassCode).ToArrayAsync();
+            var grades = await dbContext.Grades.Where(s => s.Id == ClassId).ToArrayAsync();
             await task;
             foreach (var g in grades)
             {
@@ -116,9 +116,9 @@ namespace ClassManagement.Services
             }
         }
 
-        public async Task<double> CalculateAverageGradeOfClass(string ClassCode)
+        public async Task<double> CalculateAverageGradeOfClass(string ClassId)
         {
-            var grades = await dbContext.Grades.Where(s => s.ClassCode == ClassCode).ToArrayAsync();
+            var grades = await dbContext.Grades.Where(s => s.Id == ClassId).ToArrayAsync();
             return CalculateAverageGrade(grades);
         }
 

@@ -1,4 +1,5 @@
-﻿@page "/Class/{Code}"
+﻿@page "/Class/{Code}/{Id}"
+@inject SessionService session
 @inject ClassesService classesService
 @inject GradesService gradesService
 @inject ISnackbar Snackbar
@@ -77,13 +78,13 @@
                 </MudPaper>
             </MudTabPanel>
             <MudTabPanel Text="Students">
-                <StudentsFromClassItem @bind-Students="@MyClass.Students" ClassCode="@Code" />
+                <StudentsFromClassItem @bind-Students="@MyClass.Students" ClassId="@Id" />
             </MudTabPanel>
             <MudTabPanel Text="Grades Table">
-                <GradesTableItem OnGradesChange="async () => { AverageGrade = await gradesService.CalculateAverageGradeOfClass(Code); }" ClassCode="@Code" />
+                <GradesTableItem ClassId="@Id" OnGradesChange="async () => { AverageGrade = await gradesService.CalculateAverageGradeOfClass(Id); }" ClassCode="@Code" />
             </MudTabPanel>
             <MudTabPanel Text="Grades Chart">
-                <GradesChartItem ClassCode="@Code" />
+                <GradesChartItem ClassId="@Id" ClassCode="@Code" />
             </MudTabPanel>
         </MudTabs>
     }
@@ -93,6 +94,8 @@
 @code {
     [Parameter]
     public string Code { get; set; }
+    [Parameter]
+    public string Id { get; set; }
     private double AverageGrade { get; set; }
     private Class MyClass;
     private ClassSchedule NewSchedule;
@@ -100,9 +103,9 @@
 
     protected override async Task OnInitializedAsync()
     {
-        NewSchedule = new() { ClassroomCode = Code };
-        var task1 = gradesService.CalculateAverageGradeOfClass(Code);
-        MyClass = await classesService.GetClass(Code);
+        NewSchedule = new() { ClassroomCode = Id, OwnerUsername = session.UsernameState };
+        var task1 = gradesService.CalculateAverageGradeOfClass(Id);
+        MyClass = await classesService.GetClass(Id);
         HashSet<double?> TempWeights = new();
         TempWeights.Add(null);
         AverageGrade = await task1;
@@ -144,7 +147,7 @@
             if (res.success)
             {
                 MyClass.Schedules.Add(NewSchedule);
-                NewSchedule = new() { ClassroomCode = Code };
+                NewSchedule = new() { ClassroomCode = Id, OwnerUsername = session.UsernameState };
                 StateHasChanged();
                 Snackbar.Add("Successfully add new schedule to class", Severity.Success);
                 return;
