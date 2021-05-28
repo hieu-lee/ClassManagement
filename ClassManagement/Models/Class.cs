@@ -8,6 +8,7 @@ namespace ClassManagement.Models
 	public class Class : IComparable<Class>
     {
         [Key]
+        public string Id { get; set; } = Guid.NewGuid().ToString();
         [Required]
         [StringLength(10, ErrorMessage = "Code length must be between 6 and 10 characters", MinimumLength = 6)]
         public string Code { get; set; }
@@ -38,12 +39,13 @@ namespace ClassManagement.Models
         public override bool Equals(object obj)
         {
             var other = (Class)obj;
-            return Code.Equals(other.Code);
+            return Code.Equals(other.Code) && OwnerUsername.Equals(other.OwnerUsername);
         }
 
         public override int GetHashCode()
         {
-            return Code.GetHashCode();
+            var tuple = new Tuple<string, string>(Code, OwnerUsername);
+            return tuple.GetHashCode();
         }
     }
 }

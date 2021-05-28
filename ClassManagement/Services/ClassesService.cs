@@ -11,39 +11,41 @@ namespace ClassManagement.Services
     public class ClassesService
     {
         private readonly AppDbContext dbContext;
+        private readonly string UsernameState;
 
-        public ClassesService(AppDbContext dbContext)
+        public ClassesService(AppDbContext dbContext, SessionService session)
         {
             this.dbContext = dbContext;
+            UsernameState = session.UsernameState;
         }
 
         public SortedSet<Class> GetAllClasses()
         {
-            return new(dbContext.Classes.Include(s => s.Schedules).ToArray());
+            return new(dbContext.Classes.Where(s => s.OwnerUsername == UsernameState).Include(s => s.Schedules).ToArray());
         }
 
         public async Task<List<string>> GetAllClassCodes()
         {
-            var res = await dbContext.Classes.Select(s => s.Code).ToListAsync();
+            var res = await dbContext.Classes.Where(s => s.OwnerUsername == UsernameState).Select(s => s.Code).ToListAsync();
             res.Sort();
             return res;
         }
 
-        public async Task<Class> GetClassIncludeGradesFromCode(string Code)
+        public async Task<Class> GetClassIncludeGradesFromCode(string ClassId)
         {
-            return await dbContext.Classes.Where(s => s.Code == Code).Include(s => s.Grades).FirstOrDefaultAsync();
+            return await dbContext.Classes.Where(s => s.Id == ClassId && s.OwnerUsername == UsernameState).Include(s => s.Grades).FirstOrDefaultAsync();
         }
 
-        public async Task<Class> GetClass(string Code)
+        public async Task<Class> GetClass(string ClassId)
         {
-            var res = await dbContext.Classes.Where(s => s.Code == Code).Include(s => s.Schedules).Include(s => s.Students).AsSplitQuery().FirstOrDefaultAsync();
+            var res = await dbContext.Classes.Where(s => s.Id == ClassId && s.OwnerUsername == UsernameState).Include(s => s.Schedules).Include(s => s.Students).AsSplitQuery().FirstOrDefaultAsync();
             return res;
         }
 
         public ServiceResult GetClassesFromDay(DayOfWeek Day)
         {
             var classes = new SortedSet<Class>();
-            var dayClasses = dbContext.ClassSchedules.Where(s => s.Day == Day).ToArray();
+            var dayClasses = dbContext.ClassSchedules.Where(s => s.Day == Day && s.OwnerUsername == UsernameState).ToArray();
             for (int i = 0; i < dayClasses.Length; i++)
             {
                 classes.Add(dayClasses[i].Classroom);
@@ -53,42 +55,36 @@ namespace ClassManagement.Services
 
         public ServiceResult GetAllStudents()
         {
-            var students = new SortedSet<Student>(dbContext.Students.Include(s => s.Classes).ToArray());
-            return new() { success = true, Students = students };
-        }
-
-        public ServiceResult GetStudentsFromClass(Class ClassRoom)
-        {
-            var students = new SortedSet<Student>(dbContext.Students.Where(s => s.Classes.Contains(ClassRoom)).ToArray());
+            var students = new SortedSet<Student>(dbContext.Students.Where(s => s.OwnerUsername == UsernameState).Include(s => s.Classes).ToArray());
             return new() { success = true, Students = students };
         }
 
         public ServiceResult GetAllNotes()
         {
-            var notes = new SortedSet<ClassNote>(dbContext.ClassNotes.ToArray());
+            var notes = new SortedSet<ClassNote>(dbContext.ClassNotes.Where(s => s.OwnerUsername == UsernameState).ToArray());
             return new() { success = true, Notes = notes };
         }
 
         public ServiceResult GetNotesFromDay(DateTime Day)
         {
-            var notes = dbContext.ClassNotes.Where(s => s.Day == Day).ToHashSet();
+            var notes = dbContext.ClassNotes.Where(s => s.Day == Day && s.OwnerUsername == UsernameState).ToHashSet();
             return new() { success = true, DayNotes = notes };
         }
 
-        public async Task<Grade[]> GetGradesFromClassAsync(string ClassCode)
+        public async Task<Grade[]> GetGradesFromClassAsync(string ClassId)
         {
-            var res = await dbContext.Grades.Where(s => s.ClassCode == ClassCode).ToArrayAsync();
+            var res = await dbContext.Grades.Where(s => s.Id == ClassId && s.OwnerUsername == UsernameState).ToArrayAsync();
             return res;
         }
 
         public async Task<ServiceResult> CreateNewClass(Class NewClass)
         {
-            var Class = dbContext.Classes.Find(NewClass.Code);
+            var Class = dbContext.Classes.Where(s => s.Code == NewClass.Code && s.OwnerUsername == UsernameState).FirstOrDefault();
             if (Class is not null)
             {
                 return new() { success = false, err = "Class has already existed" };
             }
-            NewClass.GetHashCode();
+            NewClass.OwnerUsername = UsernameState;
             dbContext.Classes.Add(NewClass);
             await dbContext.SaveChangesAsync();
             return new() { success = true };
@@ -96,16 +92,17 @@ namespace ClassManagement.Services
 
         public async Task<ServiceResult> CreateNewStudent(Student student, HashSet<string> codes)
         {
-            var classes = dbContext.Classes.Where(s => codes.Contains(s.Code)).ToHashSet();
+            var classes = dbContext.Classes.Where(s => s.OwnerUsername == UsernameState && codes.Contains(s.Code)).ToHashSet();
             student.Classes = classes;
+            student.OwnerUsername = UsernameState;
             dbContext.Students.Add(student);
             await dbContext.SaveChangesAsync();
             return new() { success = true };
         }
 
-        public async Task<ServiceResult> AddNewStudentToClass(Student student, string ClassCode)
+        public async Task<ServiceResult> AddNewStudentToClass(Student student, string ClassId)
         {
-            var Class = dbContext.Classes.Find(ClassCode);
+            var Class = dbContext.Classes.Find(ClassId);
             student = dbContext.Students.Find(student.Id);
             if (Class is null)
             {
@@ -123,9 +120,10 @@ namespace ClassManagement.Services
             return new() { success = true };
         }
 
-        public async Task<ServiceResult> AddNewScheduleToClass(ClassSchedule schedule, string ClassCode)
+        public async Task<ServiceResult> AddNewScheduleToClass(ClassSchedule schedule, string ClassId)
         {
-            var Class = dbContext.Classes.Find(ClassCode);
+            schedule.OwnerUsername = UsernameState;
+            var Class = dbContext.Classes.Find(ClassId);
             if (Class is null)
             {
                 return new() { success = false, err = "Class does not exist" };
@@ -142,6 +140,7 @@ namespace ClassManagement.Services
 
         public async Task<ServiceResult> AddNewNote(ClassNote note)
         {
+            note.OwnerUsername = UsernameState;
             dbContext.ClassNotes.Add(note);
             await dbContext.SaveChangesAsync();
             return new() { success = true };
@@ -149,7 +148,7 @@ namespace ClassManagement.Services
 
         public async Task<ServiceResult> UpdateClass(Class Class)
         {
-            var OldClass = dbContext.Classes.Find(Class.Code);
+            var OldClass = dbContext.Classes.Find(Class.Id);
             if (OldClass is null)
             {
                 return new() { success = false, err = "Class does not exist" };
@@ -160,9 +159,9 @@ namespace ClassManagement.Services
             return new() { success = true };
         }
 
-        public async Task<ServiceResult> DeleteStudentFromClass(string studentId, string ClassCode)
+        public async Task<ServiceResult> DeleteStudentFromClass(string studentId, string ClassId)
         {
-            var Class = dbContext.Classes.Where(s => s.Code == ClassCode).Include(s => s.Students).FirstOrDefault();
+            var Class = dbContext.Classes.Where(s => s.Id == ClassId).Include(s => s.Students).FirstOrDefault();
             var Student = dbContext.Students.Where(s => s.Id == studentId).Include(s => s.Classes).FirstOrDefault();
             if (Class is null)
             {
@@ -179,9 +178,9 @@ namespace ClassManagement.Services
             await dbContext.SaveChangesAsync();
             return new() { success = true };
         }
-        public async Task<ServiceResult> DeleteManyStudentsFromClass(HashSet<Student> students, string ClassCode)
+        public async Task<ServiceResult> DeleteManyStudentsFromClass(HashSet<Student> students, string ClassId)
         {
-            var Class = dbContext.Classes.Where(s => s.Code == ClassCode).Include(s => s.Students).FirstOrDefault();
+            var Class = dbContext.Classes.Where(s => s.Id == ClassId).Include(s => s.Students).FirstOrDefault();
             if (Class is null)
             {
                 return new() { success = false, err = "Invalid Class" };
@@ -198,9 +197,9 @@ namespace ClassManagement.Services
             return new() { success = true };
         }
 
-        public async Task<ServiceResult> DeleteClass(string ClassCode)
+        public async Task<ServiceResult> DeleteClass(string ClassId)
         {
-            var Class = dbContext.Classes.Find(ClassCode);
+            var Class = dbContext.Classes.Find(ClassId);
             if (Class is not null)
             {
                 var task = Task.Factory.StartNew(() => { dbContext.ClassNotes.RemoveRange(Class.Notes); });
