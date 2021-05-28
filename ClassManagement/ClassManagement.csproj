@@ -6,6 +6,11 @@
 
   <ItemGroup>
     <None Remove="classmanagement.db-shm" />
+    <None Remove="Pages\Login.razor.css" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Content Include="Pages\Login.razor.css" />
   </ItemGroup>
 
   <ItemGroup>

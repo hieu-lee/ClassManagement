@@ -1,0 +1,7 @@
+﻿.register {
+    cursor: pointer;
+    color: #594AE2;
+}
+    .register:hover {
+        text-decoration: underline;
+    }

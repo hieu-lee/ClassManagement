@@ -33,19 +33,13 @@
                 <div>
                     <h5 style="margin-top: 20px; text-align: center;">Select Student</h5>
                     <MudSelect Label="Student" Required="true" @bind-Value="@StudentName" T="string">
-                        @foreach (var Name in StudentNames)
+                        @foreach (var Student in Students)
                         {
-                            <MudSelectItem T="string" Value="@Name">@Name</MudSelectItem>
+                            <MudSelectItem T="string" Value="@Student.Name">@Student.Name, @Student.DateOfBirth.Value.ToShortDateString()</MudSelectItem>
                         }
                     </MudSelect>
                 </div>
-                @*<EditForm Model="@NewExamDate" Context="ForminForm">
-            <h5 style="margin-top: 20px; text-align: center;">Add schedule</h5>
-
-        </EditForm>*@
-
-
-
+             
             </MudCardContent>
 
             <MudCardActions>
@@ -60,14 +54,21 @@
     private HashSet<string> NewStudentCodes = new();
     private string ClassCode, StudentName;
     private Grade NewGrade = new();
-    private List<string> ClassCodes, StudentNames;
+    private List<string> ClassCodes;
     private List<MudSelectItem<string>> smts = new();
-    public SortedSet<Student> students;
+    public SortedSet<Student> AllStudents; 
+    public HashSet<Student> Students;
 
     protected override async Task OnInitializedAsync()
     {
         ClassCodes = await classesService.GetAllClassCodes();
-        StudentNames = await gradesService.GetAllStudentNames();
+        AllStudents = gradesService.GetAllStudents();
+    }
+
+    private async Task GetStudentsFromClass()
+    {
+        var res = await classesService.GetClass(ClassCode);
+        Students = res.Students;
     }
 
     private async Task AddNewGrade()
