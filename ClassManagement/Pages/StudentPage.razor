@@ -1,5 +1,6 @@
 ﻿@page "/Student/{Id}"
 @inject ClassesService classesService
+@inject GradesService gradesService
 
 <MudCard>
     <MudAvatar>
@@ -31,9 +32,12 @@
         </div>
         <div class="Grades">
             <MudText Typo="Typo.h5">Grades Overview</MudText>
+            @foreach (var cls in MyStudent.Classes)
+            {
+                <MudText Typo="Typo.body1">Avg. Grade: @AverageGrades[cls.Id]</MudText>
+            }
         </div>
     </div>
-    
 </MudCard>
 
 
@@ -42,10 +46,14 @@
     public string Id { get; set; }
     private Student MyStudent { get; set; }
     private string Description => (string.IsNullOrWhiteSpace(MyStudent.Description)) ? "This student has no description" : MyStudent.Description;
+    private Dictionary<string, double> AverageGrades;
 
     protected override async Task OnInitializedAsync()
     {
+        var task = gradesService.GetAverageGradesFromStudentAndClasses(MyStudent.Classes, Id);
         var res = await classesService.GetStudentAsync(Id);
         MyStudent = res.svStudent;
+        var res1 = await task;
+        AverageGrades = res.AverageGrades;
     }
 }

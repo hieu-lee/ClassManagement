@@ -21,7 +21,7 @@ namespace ClassManagement.Services
 
         public async Task<Grade> GetGradeAsync(Student student)
         {
-            var res = await dbContext.Grades.Where(s => s.StudentId == student.Id).FirstOrDefaultAsync();
+            var res = await dbContext.Grades.Where(s => s.StudentId == student.Id && s.OwnerUsername == UsernameState).FirstOrDefaultAsync();
             return res;
         }
 
@@ -32,7 +32,7 @@ namespace ClassManagement.Services
 
         public Student GetStudentFromName (string studentName)
         {
-            var student = dbContext.Students.Where(s => s.Name == studentName).FirstOrDefault();
+            var student = dbContext.Students.Where(s => s.Name == studentName && s.OwnerUsername == UsernameState).FirstOrDefault();
             if (student is null)
             {
                 Student newStudent = new() { Name = studentName, Gender = "Male", DateOfBirth = DateTime.Now.Date};
@@ -43,7 +43,7 @@ namespace ClassManagement.Services
 
         public Class GetClassFromCode (string classCode)
         {
-            var clss2 = dbContext.Classes.Where(s => s.Code == classCode).FirstOrDefault();
+            var clss2 = dbContext.Classes.Where(s => s.Code == classCode && s.OwnerUsername == UsernameState).FirstOrDefault();
             if (clss2 is null)
             {
                 Class newClass = new() { Code = classCode, Name = "NewCSClass" };
@@ -61,7 +61,7 @@ namespace ClassManagement.Services
         
         public ServiceResult GetGradesFromStudent(Student std)
         {
-            var grades = new SortedSet<Grade>(dbContext.Grades.Where(s => s.StudentId == std.Id).ToArray());
+            var grades = new SortedSet<Grade>(dbContext.Grades.Where(s => s.StudentId == std.Id && s.OwnerUsername == UsernameState).ToArray());
             return new() { success = true, Grades = grades };
         }
 
@@ -69,6 +69,30 @@ namespace ClassManagement.Services
         {
             var grades = await dbContext.Grades.Where(s => s.ClassCode == ClassId && s.StudentId == StudentId && s.OwnerUsername == UsernameState).ToArrayAsync();
             return CalculateAverageGrade(grades);
+        }
+
+        public async Task<ServiceResult> GetAverageGradesFromStudentAndClasses(ICollection<Class> classes, string StudentId)
+        {
+            Dictionary<string, double> res = new();
+            Dictionary<string, List<Grade>> gradesRes = new();
+            var task = Task.Factory.StartNew(() =>
+            {
+                foreach (var s in classes)
+                {
+                    gradesRes[s.Id] = new();
+                }
+            });
+            var grades = await dbContext.Grades.Where(s => s.StudentId == StudentId && s.OwnerUsername == UsernameState).ToArrayAsync();
+            await task;
+            foreach (var g in grades)
+            {
+                gradesRes[g.ClassCode].Add(g);
+            }
+            foreach (var c in classes)
+            {
+                res[c.Id] = CalculateAverageGrade(gradesRes[c.Id]);
+            }
+            return new() { success = true, AverageGrades = res };
         }
 
         public async Task<ServiceResult> GetAverageGradesFromStudentsAndClass(ICollection<Student> students, string ClassId)
@@ -82,7 +106,7 @@ namespace ClassManagement.Services
                     gradesRes[s.Id] = new();
                 }
             });
-            var grades = await dbContext.Grades.Where(s => s.Id == ClassId).ToArrayAsync();
+            var grades = await dbContext.Grades.Where(s => s.ClassCode == ClassId && s.OwnerUsername == UsernameState).ToArrayAsync();
             await task;
             foreach (var g in grades)
             {
