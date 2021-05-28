@@ -2,17 +2,19 @@
 @inject ClassesService classesService
 @inject GradesService gradesService
 @inject AccountsService accountsService
+@inject SessionService sessionService
+@inject NavigationManager navigationManager
 @using ClassManagement.Services
 @inject ISnackbar Snackbar
 
 @if (!RegisterMode)
 {
     <div style="max-width: 550px; margin: 3ch auto; padding-bottom: 3ch;">
-        Don't have account yet? 
+        Don't have account yet?
         <span @onclick="() => { RegisterMode = true; }" class="register">Register</span>
     </div>
     <div style="max-width: 550px; margin: 3ch auto; padding-bottom: 3ch;">
-        <h3 style="text-align: center;">Create a new account/ Login</h3>
+        <h3 style="text-align: center;">Login</h3>
         <EditForm Model="@NewAccount">
             <DataAnnotationsValidator />
             <MudCard Style="border-top: 10px solid #594AE2">
@@ -25,9 +27,6 @@
 
                 <MudCardActions>
                     <MudButton @onclick="CheckLogin" Variant="Variant.Outlined" Color="Color.Primary" Style="margin: 0 auto;">Login</MudButton>
-                </MudCardActions>
-                <MudCardActions>
-                    <MudButton @onclick="RegisterNew" Variant="Variant.Outlined" Color="Color.Secondary" Style="margin: 0 auto;">Register</MudButton>
                 </MudCardActions>
             </MudCard>
         </EditForm>
@@ -37,7 +36,11 @@
 else
 {
     <div style="max-width: 550px; margin: 3ch auto; padding-bottom: 3ch;">
-        <h3 style="text-align: center;">Create a new account/ Login</h3>
+        Already have an account?
+        <span @onclick="() => { RegisterMode = false; }" class="login">Login</span>
+    </div>
+    <div style="max-width: 550px; margin: 3ch auto; padding-bottom: 3ch;">
+        <h3 style="text-align: center;">Create a new account</h3>
         <EditForm Model="@NewAccount">
             <DataAnnotationsValidator />
             <MudCard Style="border-top: 10px solid #594AE2">
@@ -47,10 +50,6 @@ else
                     <MudTextField Label="Password" Required="true" HelperText="Must be between 6 and 15 characters"
                                   @bind-Value="NewAccount.Password" For="@(() => NewAccount.Password)" />
                 </MudCardContent>
-
-                <MudCardActions>
-                    <MudButton @onclick="CheckLogin" Variant="Variant.Outlined" Color="Color.Primary" Style="margin: 0 auto;">Login</MudButton>
-                </MudCardActions>
                 <MudCardActions>
                     <MudButton @onclick="RegisterNew" Variant="Variant.Outlined" Color="Color.Secondary" Style="margin: 0 auto;">Register</MudButton>
                 </MudCardActions>
@@ -71,6 +70,8 @@ else
         if (res.success)
         {
             Snackbar.Add("Login Successful", Severity.Success);
+            await sessionService.SignInAsync(res.svAccount);
+            navigationManager.NavigateTo("/Students");
         }
         else
         {
@@ -92,6 +93,8 @@ else
         if (res.success)
         {
             Snackbar.Add("Successfully created new account", Severity.Success);
+            await sessionService.SignUpAsync(res.svAccount);
+            RegisterMode = false;
         }
         else
         {
