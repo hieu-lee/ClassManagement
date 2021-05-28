@@ -104,7 +104,7 @@
         NewClass.Name = NewClass.Name.First().ToString().ToUpper() + NewClass.Name.Substring(1);
         Parallel.ForEach(DummyClass.Schedules, schedule =>
         {
-            schedule.ClassroomCode = NewClass.Code;
+            schedule.ClassroomCode = NewClass.Id;
             NewClass.Schedules.Add(schedule);
         });
         var res = await classesService.CreateNewClass(NewClass);

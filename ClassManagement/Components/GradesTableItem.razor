@@ -45,6 +45,8 @@
     public EventCallback OnGradesChange { get; set; }
     [Parameter]
     public string ClassCode { get; set; }
+    [Parameter]
+    public string ClassId { get; set; }
     private HashSet<Grade> MyGrades;
     private bool MultiSelect = false;
     private string deleteManyDisplay => MultiSelect ? "inline" : "none";
@@ -55,7 +57,7 @@
 
     protected override async Task OnInitializedAsync()
     {
-        var res = await classesService.GetClassIncludeGradesFromCode(ClassCode);
+        var res = await classesService.GetClassIncludeGradesFromCode(ClassId);
         MyGrades = res.Grades;
     }
 
