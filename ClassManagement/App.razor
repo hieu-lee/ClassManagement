@@ -1,13 +1,13 @@
-@inject ISnackbar Snackbar
-@inject NavigationManager navigationManager
-@inject IJSRuntime JsRuntime
-@inject ProtectedLocalStorage localStorage
-@inject SessionService session
 @using Microsoft.AspNetCore.Components.Server.ProtectedBrowserStorage;
 @using System.Timers;
 @using Dapper;
 @using Microsoft.Data.Sqlite;
 @using ClassManagement.Data;
+@inject ISnackbar Snackbar
+@inject NavigationManager navigationManager
+@inject IJSRuntime JsRuntime
+@inject ProtectedLocalStorage localStorage
+@inject SessionService session
 
 <Router AppAssembly="@typeof(Program).Assembly" PreferExactMatches="@true">
     <Found Context="routeData">

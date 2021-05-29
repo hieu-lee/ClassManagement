@@ -103,7 +103,7 @@
 
     protected override async Task OnInitializedAsync()
     {
-        NewSchedule = new() { ClassroomId = Id, ClassCode = Code, OwnerUsername = session.UsernameState };
+        NewSchedule = new() { ClassroomId = Id, ClassCode = Code };
         var task1 = gradesService.CalculateAverageGradeOfClass(Id);
         MyClass = await classesService.GetClass(Id);
         HashSet<double?> TempWeights = new();
@@ -147,7 +147,7 @@
             if (res.success)
             {
                 MyClass.Schedules.Add(NewSchedule);
-                NewSchedule = new() { ClassroomId = Id, ClassCode = Code, OwnerUsername = session.UsernameState };
+                NewSchedule = new() { ClassroomId = Id, ClassCode = Code };
                 StateHasChanged();
                 Snackbar.Add("Successfully add new schedule to class", Severity.Success);
                 return;
