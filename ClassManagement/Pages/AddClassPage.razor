@@ -59,7 +59,7 @@
 
     protected override void OnInitialized()
     {
-        NewSchedule = new() { Classroom = DummyClass, ClassroomCode = DummyClass.Code, OwnerUsername = session.UsernameState };
+        NewSchedule = new() { ClassroomId = NewClass.Id, ClassCode = DummyClass.Code, OwnerUsername = session.UsernameState };
     }
 
     private void AddNewSchedule()
@@ -81,7 +81,7 @@
         else
         {
             DummyClass.Schedules.Add(NewSchedule);
-            NewSchedule = new() { Classroom = DummyClass, ClassroomCode = DummyClass.Code, OwnerUsername = session.UsernameState };
+            NewSchedule = new() { ClassroomId = NewClass.Id, ClassCode = DummyClass.Code, OwnerUsername = session.UsernameState };
             StateHasChanged();
             Snackbar.Add("Successfully add new schedule to class", Severity.Success);
         }
@@ -104,7 +104,7 @@
         NewClass.Name = NewClass.Name.First().ToString().ToUpper() + NewClass.Name.Substring(1);
         Parallel.ForEach(DummyClass.Schedules, schedule =>
         {
-            schedule.ClassroomCode = NewClass.Id;
+            schedule.ClassCode = NewClass.Code;
             NewClass.Schedules.Add(schedule);
         });
         var res = await classesService.CreateNewClass(NewClass);

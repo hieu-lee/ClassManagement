@@ -248,7 +248,7 @@ namespace ClassManagement.Services
             var Schedule = dbContext.ClassSchedules.Find(ScheduleId);
             if (Schedule is not null)
             {
-                var Class = dbContext.Classes.Find(Schedule.ClassroomCode);
+                var Class = dbContext.Classes.Find(Schedule.ClassroomId);
                 Class.Schedules.Remove(Schedule);
                 dbContext.ClassSchedules.Remove(Schedule);
                 dbContext.Classes.Update(Class);

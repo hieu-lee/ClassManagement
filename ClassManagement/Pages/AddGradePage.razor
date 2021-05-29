@@ -33,7 +33,7 @@
                 <div>
                     <h5 style="margin-top: 20px; text-align: center;">Select Student</h5>
                     <MudSelect Label="Student" Required="true" @bind-Value="@StudentName" T="string">
-                        @foreach (var Student in Students)
+                        @foreach (var Student in AllStudents)
                         {
                             <MudSelectItem T="string" Value="@Student.Name">@Student.Name, @Student.DateOfBirth.Value.ToShortDateString()</MudSelectItem>
                         }

@@ -172,7 +172,7 @@ namespace ClassManagement.Services
 
         public SortedSet<Student> GetAllStudents()
         {
-            return new (dbContext.Students.ToArray());
+            return new (dbContext.Students.Where(s => s.OwnerUsername == UsernameState).ToArray());
         }
 
         public async Task<ServiceResult> CreateNewGradeAsyncBetter(Grade NewGrade, Class GClass, Student GStudent)

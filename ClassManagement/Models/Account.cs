@@ -15,6 +15,7 @@ namespace ClassManagement.Models
         public string Username { get; set; }
 
         [Required]
+        [StringLength(15, ErrorMessage = "Password length must be between 6 and 15 characters", MinimumLength = 6)]
         public string Password { get; set; }
 
         public int CompareTo(Account other)

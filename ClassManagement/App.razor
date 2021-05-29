@@ -63,7 +63,7 @@
         using (var dbConnection = new SqliteConnection("Data Source=classmanagement.db"))
         {
             await dbConnection.OpenAsync();
-            var schedules = dbConnection.Query<ClassSchedule>(@"SELECT Id, Day, StartTime, EndTime, ClassroomCode FROM ClassSchedules WHERE Day = @Day", new { Day }).ToList();
+            var schedules = dbConnection.Query<ClassSchedule>(@"SELECT Id, ClassCode, Day, StartTime, EndTime, ClassroomId FROM ClassSchedules WHERE Day = @Day", new { Day }).ToList();
             schedule = schedules.Where(s => (!NotifiedSchedule.Contains(s)) && (time1 <= s.StartTime.Value) && (s.StartTime.Value <= time2)).FirstOrDefault();
         }
         return schedule;
@@ -76,7 +76,7 @@
             var schedule = await GetOneNextScheduleAsync(DateTime.Now, NotifiedSchedules);
             if (schedule is not null)
             {
-                Snackbar.Add($"{schedule.ClassroomCode} starts at {schedule.StartTime}", Severity.Info, config =>
+                Snackbar.Add($"{schedule.ClassCode} starts at {schedule.StartTime}", Severity.Info, config =>
                 {
                     config.Onclick = snackbar =>
                     {
@@ -89,11 +89,11 @@
                 Timer tempTimer = new(900000);
                 tempTimer.Elapsed += async (s, e) =>
                 {
-                    Snackbar.Add($"{schedule.ClassroomCode} starts at {schedule.StartTime}", Severity.Info, config =>
+                    Snackbar.Add($"{schedule.ClassCode} starts at {schedule.StartTime}", Severity.Info, config =>
                     {
                         config.Onclick = snackbar =>
                         {
-                            navigationManager.NavigateTo("/Classes");
+                            navigationManager.NavigateTo($"/Class/{schedule.ClassCode}/{schedule.ClassroomId}");
                             return Task.CompletedTask;
                         };
                     });

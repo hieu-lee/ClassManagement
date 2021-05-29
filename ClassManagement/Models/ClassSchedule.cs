@@ -12,7 +12,8 @@ namespace ClassManagement.Models
         public TimeSpan? StartTime { get; set; }
         public TimeSpan? EndTime { get; set; }
         [ForeignKey("Classroom")]
-        public string ClassroomCode { get; set; }
+        public string ClassroomId{ get; set; }
+        public string ClassCode { get; set; }
         public Class Classroom { get; set; }
 
         [ForeignKey("Owner")]
@@ -22,12 +23,12 @@ namespace ClassManagement.Models
         public override bool Equals(object obj)
         {
             var other = (ClassSchedule)obj;
-            return ClassroomCode.Equals(other.ClassroomCode) && Day.Equals(other.Day) && StartTime.Equals(other.StartTime) && EndTime.Equals(other.EndTime);
+            return ClassCode.Equals(other.ClassCode) && OwnerUsername.Equals(other.OwnerUsername) && Day.Equals(other.Day) && StartTime.Equals(other.StartTime) && EndTime.Equals(other.EndTime);
         }
 
         public override int GetHashCode()
         {
-            var tuple = new Tuple<string, DayOfWeek, TimeSpan, TimeSpan>(ClassroomCode, Day, StartTime.Value, EndTime.Value);
+            var tuple = new Tuple<string, string, DayOfWeek, TimeSpan, TimeSpan>(ClassCode, OwnerUsername, Day, StartTime.Value, EndTime.Value);
             return tuple.GetHashCode();
         }
     }
