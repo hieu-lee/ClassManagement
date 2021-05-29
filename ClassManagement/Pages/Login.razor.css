@@ -2,6 +2,15 @@
     cursor: pointer;
     color: #594AE2;
 }
-    .register:hover {
-        text-decoration: underline;
-    }
+.register:hover {
+    text-decoration: underline;
+}
+
+.login {
+    cursor: pointer;
+    color: darkred;
+}
+
+.login:hover {
+    text-decoration: underline;
+}
