@@ -33,12 +33,12 @@ namespace ClassManagement.Services
 
         public async Task<Class> GetClassIncludeGradesFromId(string ClassId)
         {
-            return await dbContext.Classes.Where(s => s.Id == ClassId).Include(s => s.Grades).FirstOrDefaultAsync();
+            return await dbContext.Classes.Where(s => s.Id == ClassId && s.OwnerUsername == UsernameState).Include(s => s.Grades).FirstOrDefaultAsync();
         }
 
         public async Task<Class> GetClass(string ClassId)
         {
-            var res = await dbContext.Classes.Where(s => s.Id == ClassId).Include(s => s.Schedules).Include(s => s.Students).AsSplitQuery().FirstOrDefaultAsync();
+            var res = await dbContext.Classes.Where(s => s.Id == ClassId && s.OwnerUsername == UsernameState).Include(s => s.Schedules).Include(s => s.Students).AsSplitQuery().FirstOrDefaultAsync();
             return res;
         }
 
@@ -61,7 +61,7 @@ namespace ClassManagement.Services
 
         public async Task<ServiceResult> GetStudentAsync(string StudentId)
         {
-            var res = await dbContext.Students.Where(s => s.Id == StudentId).Include(s => s.Classes).Include(s => s.Grades).AsSplitQuery().FirstOrDefaultAsync();
+            var res = await dbContext.Students.Where(s => s.Id == StudentId && s.OwnerUsername == UsernameState).Include(s => s.Classes).Include(s => s.Grades).AsSplitQuery().FirstOrDefaultAsync();
             return new() { svStudent = res };
         }
 

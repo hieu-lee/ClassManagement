@@ -58,7 +58,7 @@
     private ClassSchedule NewSchedule;
     private Regex rgx = new("[^A-Za-z0-9]");
 
-    protected override void OnInitialized()
+    protected override async Task OnInitializedAsync()
     {
         if (!session.LoggedState)
         {
