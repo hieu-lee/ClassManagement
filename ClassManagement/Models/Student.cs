@@ -50,6 +50,10 @@ namespace ClassManagement.Models
             return Id.Equals(other.Id);
         }
 
+        public override string ToString()
+        {
+            return $"{Name} - {DateOfBirth.Value.ToShortDateString()}";
+        }
         public override int GetHashCode()
         {
             return Id.GetHashCode();
