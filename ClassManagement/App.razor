@@ -30,20 +30,23 @@
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
+
+        try
+        {
+            var res = await localStorage.GetAsync<string>("MEDUUsernameState");
+            if (res.Success)
+            {
+                session.UsernameState = res.Value;
+            }
+        }
+
+        catch (Exception)
+        {
+            await session.SignOutAsync();
+        }
+
         if (firstRender)
         {
-            try
-            {
-                var res = await localStorage.GetAsync<string>("MEDUUsernameState");
-                if (res.Success)
-                {
-                    session.UsernameState = res.Value;
-                }
-            }
-            catch(Exception)
-            {
-                await session.SignOutAsync();
-            }
             SqlMapper.AddTypeHandler(new TimeSpanHandler());
             module = await JsRuntime.InvokeAsync<IJSObjectReference>("import", "./Utils.js");
             notificationTimer.Enabled = true;

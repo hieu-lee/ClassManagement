@@ -70,7 +70,7 @@ namespace ClassManagement.Services
                     gradesRes[s.Id] = new();
                 }
             });
-            var grades = await dbContext.Grades.Where(s => s.StudentId == StudentId && s.OwnerUsername == UsernameState).ToArrayAsync();
+            var grades = await dbContext.Grades.Where(s => s.StudentId == StudentId).ToArrayAsync();
             await task;
             foreach (var g in grades)
             {

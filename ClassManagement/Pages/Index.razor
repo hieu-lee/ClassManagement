@@ -1,12 +1,13 @@
 ﻿@page "/"
 @inject NavigationManager navigationManager
+@inject SessionService session
 
 <div class="info">
     <div class="info-text">
         <MudText Typo="Typo.h1">MEDU</MudText>
         <MudText Typo="Typo.h5">Free application for personal education system management</MudText>
         <div class="buttons-holder">
-            <MudButton Variant="Variant.Filled" Color="Color.Primary" Style="padding: 2.5ch;"><MudText Typo="Typo.body1">Get Started</MudText></MudButton>
+            <MudButton OnClick="GetStarted" Variant="Variant.Filled" Color="Color.Primary" Style="padding: 2.5ch;"><MudText Typo="Typo.body1">Get Started</MudText></MudButton>
             <a rel="noopener" href="https://github.com/hieu-lee/ClassManagement" target="_blank" style="text-decoration: none;">
                 <MudButton Variant="Variant.Filled" Style="background-color: #454545; margin-left: 3ch; color: #ffffff; padding: 2.5ch; width: 142px;"><MudText Typo="Typo.body1">Github</MudText></MudButton>
             </a>
@@ -109,3 +110,17 @@
         </li>
     </ul>
 </footer>
+
+@code {
+    private void GetStarted()
+    {
+        if (session.LoggedState)
+        {
+            navigationManager.NavigateTo("/Classes");
+        }
+        else
+        {
+            navigationManager.NavigateTo("/Login");
+        }
+    }
+} 
