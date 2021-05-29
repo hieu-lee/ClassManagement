@@ -38,8 +38,8 @@
 
 
 @code {
-    private SortedSet<Student> MyStudents;
-    private SortedSet<Student> StudentsToDisplay;
+    private SortedSet<Student> MyStudents = new();
+    private SortedSet<Student> StudentsToDisplay = new();
     private bool loading = true;
     private string SearchName;
     private string SearchClass;

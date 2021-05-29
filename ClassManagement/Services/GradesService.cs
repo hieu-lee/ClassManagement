@@ -111,7 +111,7 @@ namespace ClassManagement.Services
         {
             if (string.IsNullOrEmpty(studentName) && string.IsNullOrEmpty(classCode))
             {
-                var grades = new SortedSet<Grade>(dbContext.Grades.ToArray());
+                var grades = new SortedSet<Grade>(dbContext.Grades.Where(s => s.OwnerUsername == UsernameState).ToArray());
                 return new() { success = true, Grades = grades };
             }
 
