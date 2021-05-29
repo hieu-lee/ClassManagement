@@ -170,10 +170,9 @@ namespace ClassManagement.Services
             return new (dbContext.Students.Where(s => s.OwnerUsername == UsernameState).ToArray());
         }
 
-        public async Task<ServiceResult> CreateNewGradeAsyncBetter(Grade NewGrade, string ClassCode, string StudentName)
+        public async Task<ServiceResult> CreateNewGradeAsyncBetter(Grade NewGrade, string ClassCode, Student GStudent)
         {
             Class GClass = GetClassFromCode(ClassCode);
-            Student GStudent = GetStudentFromName(StudentName);
             Grade myGrade;
             myGrade = new()
             {

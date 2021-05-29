@@ -33,10 +33,10 @@
                 </div>
                 <div>
                     <h5 style="margin-top: 20px; text-align: center;">Select Student</h5>
-                    <MudSelect Label="Student" Required="true" @bind-Value="@StudentName" T="string">
-                        @foreach (var Student in Students)
+                    <MudSelect Label="Student" Required="true" @bind-Value="@gradeStudent" T="Student">
+                        @foreach (var s in Students)
                         {
-                            <MudSelectItem T="string" Value="@Student.Name">@Student.Name, @Student.DateOfBirth.Value.ToShortDateString()</MudSelectItem>
+                            <MudSelectItem T="Student" Value="@s">@s.ToString()</MudSelectItem>
                         }
                     </MudSelect>
                 </div>
@@ -53,7 +53,8 @@
 
 @code {
     private HashSet<string> NewStudentCodes = new();
-    private string ClassCode, StudentName;
+    private string ClassCode;
+    private Student gradeStudent;
     private Grade NewGrade = new();
     private List<string> ClassCodes;
     private List<MudSelectItem<string>> smts = new();
@@ -72,7 +73,6 @@
         Students = AllStudents.ToHashSet();
 
         ClassCode = string.Empty;
-        StudentName = string.Empty;
         NewGrade.GradeinNum = 5;
         NewGrade.RelativeValue = 1;
 
@@ -94,7 +94,7 @@
             Snackbar.Add("You have to fill in the class code", Severity.Error);
             return;
         }
-        if (string.IsNullOrEmpty(StudentName))
+        if (gradeStudent is null)
         {
             Snackbar.Add("You have to fill in the student name", Severity.Error);
             return;
@@ -117,11 +117,10 @@
 
 
 
-        await gradesService.CreateNewGradeAsyncBetter(NewGrade, ClassCode, StudentName);
+        await gradesService.CreateNewGradeAsyncBetter(NewGrade, ClassCode, gradeStudent);
         Snackbar.Add("Successfully added new grade", Severity.Success);
 
         ClassCode = string.Empty;
-        StudentName = string.Empty;
         NewGrade.GradeinNum = 5;
         NewGrade.RelativeValue = 1;
 
