@@ -79,7 +79,7 @@ namespace ClassManagement.Services
 
         public async Task<Grade[]> GetGradesFromClassAsync(string ClassId)
         {
-            var res = await dbContext.Grades.Where(s => s.Id == ClassId && s.OwnerUsername == UsernameState).ToArrayAsync();
+            var res = await dbContext.Grades.Where(s => s.ClassId == ClassId && s.OwnerUsername == UsernameState).ToArrayAsync();
             return res;
         }
 

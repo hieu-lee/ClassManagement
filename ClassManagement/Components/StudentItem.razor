@@ -1,7 +1,9 @@
-﻿<div style="display: flex; justify-content: space-between;">
+﻿@inject NavigationManager navigationManager 
+
+<div style="display: flex; justify-content: space-between;">
     <div style="display: flex;">
         <MudAvatar Style="background-color: #f0f0f0; width: 5ch; height: 5ch;">
-            <MudIconButton>
+            <MudIconButton OnClick="@(() => { navigationManager.NavigateTo($"Student/{student.Id}");})">
                 <MudIcon Icon="@Icons.Material.Filled.People" Style="width: 3ch; height: 3ch; color: #594AE2" />
             </MudIconButton>
         </MudAvatar>

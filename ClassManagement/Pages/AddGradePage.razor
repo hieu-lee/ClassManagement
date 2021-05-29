@@ -33,7 +33,7 @@
                 <div>
                     <h5 style="margin-top: 20px; text-align: center;">Select Student</h5>
                     <MudSelect Label="Student" Required="true" @bind-Value="@StudentName" T="string">
-                        @foreach (var Student in AllStudents)
+                        @foreach (var Student in Students)
                         {
                             <MudSelectItem T="string" Value="@Student.Name">@Student.Name, @Student.DateOfBirth.Value.ToShortDateString()</MudSelectItem>
                         }
@@ -63,6 +63,16 @@
     {
         ClassCodes = await classesService.GetAllClassCodes();
         AllStudents = gradesService.GetAllStudents();
+        Students = AllStudents.ToHashSet();
+
+        ClassCode = string.Empty;
+        StudentName = string.Empty;
+        NewGrade.GradeinNum = 5;
+        NewGrade.RelativeValue = 1;
+
+        NewGrade.Description = string.Empty;
+        NewGrade.ExamTime = DateTime.Now;
+        NewGrade.ExamName = string.Empty;
     }
 
     private async Task GetStudentsFromClass()
@@ -73,7 +83,6 @@
 
     private async Task AddNewGrade()
     {
-        //Snackbar.Add("Successfully added nothing part 2", Severity.Success);
         if (string.IsNullOrEmpty(ClassCode))
         {
             Snackbar.Add("You have to fill in the class code", Severity.Error);
@@ -99,15 +108,15 @@
             Snackbar.Add("Grade in Num must be between 1 and 10", Severity.Error);
             return;
         }
-        Class gradeClass = gradesService.GetClassFromCode(ClassCode);
-        Student gradeStudent = gradesService.GetStudentFromName(StudentName);
+        
 
 
-        await gradesService.CreateNewGradeAsyncBetter(NewGrade, gradeClass, gradeStudent);
+        await gradesService.CreateNewGradeAsyncBetter(NewGrade, ClassCode, StudentName);
         Snackbar.Add("Successfully added new grade", Severity.Success);
+
         ClassCode = string.Empty;
         StudentName = string.Empty;
-        NewGrade.GradeinNum = 0;
+        NewGrade.GradeinNum = 5;
         NewGrade.RelativeValue = 1;
 
         NewGrade.Description = string.Empty;
