@@ -4,7 +4,7 @@
 
 <MudCard Style="margin-top: 5ch; padding: 0 6.5ch;">
     <div style="display: flex; justify-content: space-between; margin-top: 2ch; padding: 0 2ch;">
-        <MudTextField Style="max-width: 30ch;" @bind-Value="searchString" Placeholder="Student Name" Adornment="Adornment.Start" AdornmentIcon="@Icons.Material.Filled.Search" IconSize="Size.Medium" />
+        <MudTextField Style="max-width: 30ch;" @bind-Value="searchString" Placeholder="Class Code" Adornment="Adornment.Start" AdornmentIcon="@Icons.Material.Filled.Search" IconSize="Size.Medium" />
         <div style="margin-top: 1ch;">
             <MudTooltip Text="@Mode">
                 <MudIconButton Icon="@EditIcon" @onclick="() => { MultiSelect = !MultiSelect; }" />
@@ -13,19 +13,19 @@
     </div>
     <MudTable Filter="new Func<Grade,bool>(FilterFunc)" Items="@MyGrades" Hover="true" Striped="true" MultiSelection="@MultiSelect" @bind-SelectedItems="selectedGrades" SortLabel="Sort By">
         <ToolBarContent>
-            <MudText Typo="Typo.h6">Grades of Class @ClassCode</MudText>
+            <MudText Typo="Typo.h6">Grades of @StudentName</MudText>
             <MudToolBarSpacer />
             <MudButton OnClick="DeleteManyGradesAsync" Variant="Variant.Outlined" Color="Color.Secondary" Style="@($"color: red; border: 1px solid red; display: {deleteManyDisplay}")">Delete Grades</MudButton>
         </ToolBarContent>
         <HeaderContent>
-            <MudTh><MudTableSortLabel InitialDirection="SortDirection.Ascending" SortBy="new Func<Grade, object>(x=>x.StdName)">Student Name</MudTableSortLabel></MudTh>
+            <MudTh><MudTableSortLabel InitialDirection="SortDirection.Ascending" SortBy="new Func<Grade, object>(x=>x.ClassCode)">Class</MudTableSortLabel></MudTh>
             <MudTh><MudTableSortLabel SortBy="new Func<Grade, object>(x=>x.GradeinNum)">Grade in Num</MudTableSortLabel></MudTh>
             <MudTh><MudTableSortLabel SortBy="new Func<Grade, object>(x=>x.RelativeValue)">Weight</MudTableSortLabel></MudTh>
             <MudTh><MudTableSortLabel SortBy="new Func<Grade, object>(x=>x.ExamName)">Exam Name</MudTableSortLabel></MudTh>
             <MudTh><MudTableSortLabel SortBy="new Func<Grade, object>(x=>x.ExamTime)">Exam Date</MudTableSortLabel></MudTh>
         </HeaderContent>
         <RowTemplate>
-            <MudTd DataLabel="Student Name">@context.StdName</MudTd>
+            <MudTd DataLabel="Student Name">@context.ClassCode</MudTd>
             <MudTd DataLabel="Grade in number">@context.GradeinNum</MudTd>
             <MudTd DataLabel="Relevance">@context.RelativeValue</MudTd>
             <MudTd DataLabel="Exam Name">@context.ExamName</MudTd>
@@ -44,9 +44,9 @@
     [Parameter]
     public EventCallback OnGradesChange { get; set; }
     [Parameter]
-    public string ClassCode { get; set; }
+    public string StudentName { get; set; }
     [Parameter]
-    public string ClassId { get; set; }
+    public string StudentId { get; set; }
     private HashSet<Grade> MyGrades;
     private bool MultiSelect = false;
     private string deleteManyDisplay => MultiSelect ? "inline" : "none";
@@ -57,15 +57,15 @@
 
     protected override async Task OnInitializedAsync()
     {
-        var res = await classesService.GetClassIncludeGradesFromId(ClassId);
-        MyGrades = res.Grades;
+        var res = await classesService.GetGradesFromStudentAsync(StudentId);
+        MyGrades = res.ToHashSet();
     }
 
     private bool FilterFunc(Grade grade)
     {
         if (string.IsNullOrWhiteSpace(searchString))
             return true;
-        if (grade.StdName.Contains(searchString, StringComparison.OrdinalIgnoreCase))
+        if (grade.ClassCode.Contains(searchString, StringComparison.OrdinalIgnoreCase))
             return true;
         return false;
     }

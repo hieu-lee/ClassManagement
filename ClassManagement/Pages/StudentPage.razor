@@ -51,10 +51,10 @@
             </MudCard>
         </MudTabPanel>
         <MudTabPanel Text="Grades Table">
-
+            <StudentGradesTableItem StudentName="@MyStudent.Name" StudentId="@MyStudent.Id" OnGradesChange="RecalculateAverageGrades" />
         </MudTabPanel>
         <MudTabPanel Text="Grades Chart">
-
+            <StudentGradesChartItem StudentName="@MyStudent.Name" StudentId="@MyStudent.Id" />
         </MudTabPanel>
     </MudTabs>
 
@@ -76,6 +76,12 @@
         }
         var res = await classesService.GetStudentAsync(Id);
         MyStudent = res.svStudent;
+        var avgGradeRes = await gradesService.GetAverageGradesFromStudentAndClasses(MyStudent.Classes, Id); ;
+        AverageGrades = avgGradeRes.AverageGrades;
+    }
+
+    private async Task RecalculateAverageGrades()
+    {
         var avgGradeRes = await gradesService.GetAverageGradesFromStudentAndClasses(MyStudent.Classes, Id); ;
         AverageGrades = avgGradeRes.AverageGrades;
     }

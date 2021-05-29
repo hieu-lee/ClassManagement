@@ -1,0 +1,123 @@
+﻿@inject ClassesService classesService
+
+<MudPaper Class="pa-4" Style="margin: 5ch 0;">
+    <MudText Style="margin-bottom: 2ch;" Align="Align.Center" Typo="Typo.h5">All Grades of @StudentName@((DisplayWeight is null)?"":$" with weight {DisplayWeight}")</MudText>
+    <MudChart ChartType="ChartType.Pie" InputData="@data" InputLabels="@labels" Width="300px" Height="300px" @bind-SelectedIndex="Index" />
+    <MudText Typo="Typo.body1" Align="Align.Center">No. Grades in range @GradeRange: @NumberOfGrades</MudText>
+    <MudSelect Label="Grade's Weight" @bind-Value="DisplayWeight">
+        @foreach (var weight in Weights)
+        {
+            <MudSelectItem Value="weight">@((weight is null)?"None":weight.ToString())</MudSelectItem>
+        }
+    </MudSelect>
+</MudPaper>
+
+@code {
+    [Parameter]
+    public string StudentName { get; set; }
+    [Parameter]
+    public string StudentId { get; set; }
+    private double? DisplayWeight;
+    private int Index = -1;
+    private double?[] Weights;
+    private Grade[] MyStudentGrades;
+    private double[] data => GetDataToDisplay();
+    private string[] labels = { "0-3", "3-5", "5-7", "7-8", "8-9", "9-10" };
+    private string GradeRange => (Index == -1) ? "0-10" : labels[Index];
+    private double NumberOfGrades => (Index == -1) ? MyStudentGrades.Length : data[Index];
+
+    protected override async Task OnInitializedAsync()
+    {
+        MyStudentGrades = await classesService.GetGradesFromStudentAsync(StudentId);
+        HashSet<double?> TempWeights = new();
+        TempWeights.Add(null);
+        for (int i = 0; i < MyStudentGrades.Length; i++)
+        {
+            TempWeights.Add(MyStudentGrades[i].RelativeValue);
+        }
+        Weights = TempWeights.ToArray();
+    }
+
+    private double[] GetDataToDisplay()
+    {
+        var res = new double[] { 0, 0, 0, 0, 0, 0 };
+        if (DisplayWeight is null)
+        {
+            for (int i = 0; i < MyStudentGrades.Length; i++)
+            {
+                var g = MyStudentGrades[i].GradeinNum;
+                if (g <= 3)
+                {
+                    res[0]++;
+                    continue;
+                }
+                if (g <= 5)
+                {
+                    res[1]++;
+                    continue;
+                }
+                if (g <= 7)
+                {
+                    res[2]++;
+                    continue;
+                }
+                if (g <= 8)
+                {
+                    res[3]++;
+                    continue;
+                }
+                if (g <= 9)
+                {
+                    res[4]++;
+                    continue;
+                }
+                if (g <= 10)
+                {
+                    res[5]++;
+                    continue;
+                }
+            }
+        }
+        else
+        {
+            for (int i = 0; i < MyStudentGrades.Length; i++)
+            {
+                if (MyStudentGrades[i].RelativeValue == DisplayWeight)
+                {
+                    var g = MyStudentGrades[i].GradeinNum;
+                    if (g <= 3)
+                    {
+                        res[0]++;
+                        continue;
+                    }
+                    if (g <= 5)
+                    {
+                        res[1]++;
+                        continue;
+                    }
+                    if (g <= 7)
+                    {
+                        res[2]++;
+                        continue;
+                    }
+                    if (g <= 8)
+                    {
+                        res[3]++;
+                        continue;
+                    }
+                    if (g <= 9)
+                    {
+                        res[4]++;
+                        continue;
+                    }
+                    if (g <= 10)
+                    {
+                        res[5]++;
+                        continue;
+                    }
+                }
+            }
+        }
+        return res;
+    }
+}

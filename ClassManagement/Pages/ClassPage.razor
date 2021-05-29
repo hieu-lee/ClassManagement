@@ -82,10 +82,10 @@
                 <StudentsFromClassItem @bind-Students="@MyClass.Students" ClassId="@Id" />
             </MudTabPanel>
             <MudTabPanel Text="Grades Table">
-                <GradesTableItem ClassId="@Id" OnGradesChange="async () => { AverageGrade = await gradesService.CalculateAverageGradeOfClass(Id); }" ClassCode="@Code" />
+                <ClassGradesTableItem ClassId="@Id" OnGradesChange="async () => { AverageGrade = await gradesService.CalculateAverageGradeOfClass(Id); }" ClassCode="@Code" />
             </MudTabPanel>
             <MudTabPanel Text="Grades Chart">
-                <GradesChartItem ClassId="@Id" ClassCode="@Code" />
+                <ClassGradesChartItem ClassId="@Id" ClassCode="@Code" />
             </MudTabPanel>
         </MudTabs>
     }
@@ -111,7 +111,7 @@
         }
         NewSchedule = new() { ClassroomId = Id, ClassCode = Code };
         var task1 = gradesService.CalculateAverageGradeOfClass(Id);
-        MyClass = await classesService.GetClass(Id);
+        MyClass = await classesService.GetClassAsync(Id);
         HashSet<double?> TempWeights = new();
         TempWeights.Add(null);
         AverageGrade = await task1;

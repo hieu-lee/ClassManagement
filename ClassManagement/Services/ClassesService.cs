@@ -31,12 +31,7 @@ namespace ClassManagement.Services
             return res;
         }
 
-        public async Task<Class> GetClassIncludeGradesFromId(string ClassId)
-        {
-            return await dbContext.Classes.Where(s => s.Id == ClassId && s.OwnerUsername == UsernameState).Include(s => s.Grades).FirstOrDefaultAsync();
-        }
-
-        public async Task<Class> GetClass(string ClassId)
+        public async Task<Class> GetClassAsync(string ClassId)
         {
             var res = await dbContext.Classes.Where(s => s.Id == ClassId && s.OwnerUsername == UsernameState).Include(s => s.Schedules).Include(s => s.Students).AsSplitQuery().FirstOrDefaultAsync();
             return res;
@@ -80,6 +75,12 @@ namespace ClassManagement.Services
         public async Task<Grade[]> GetGradesFromClassAsync(string ClassId)
         {
             var res = await dbContext.Grades.Where(s => s.ClassId == ClassId && s.OwnerUsername == UsernameState).ToArrayAsync();
+            return res;
+        }
+
+        public async Task<Grade[]> GetGradesFromStudentAsync(string StudentId)
+        {
+            var res = await dbContext.Grades.Where(s => s.StudentId == StudentId && s.OwnerUsername == UsernameState).ToArrayAsync();
             return res;
         }
 
