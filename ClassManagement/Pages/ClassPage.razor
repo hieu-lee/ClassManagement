@@ -3,6 +3,7 @@
 @inject ClassesService classesService
 @inject GradesService gradesService
 @inject ISnackbar Snackbar
+@inject NavigationManager navigationManager
 
 <MudContainer MaxWidth="MaxWidth.Large">
     <MudText Style="margin-bottom: 1ch;" Typo="Typo.h3" Align="Align.Center">@Code</MudText>
@@ -103,6 +104,11 @@
 
     protected override async Task OnInitializedAsync()
     {
+        if (!session.LoggedState)
+        {
+            navigationManager.NavigateTo("/");
+            return;
+        }
         NewSchedule = new() { ClassroomId = Id, ClassCode = Code };
         var task1 = gradesService.CalculateAverageGradeOfClass(Id);
         MyClass = await classesService.GetClass(Id);

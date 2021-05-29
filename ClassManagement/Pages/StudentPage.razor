@@ -67,6 +67,11 @@
 
     protected override async Task OnInitializedAsync()
     {
+        if (!session.LoggedState)
+        {
+            navigationManager.NavigateTo("/");
+            return;
+        }
         var res = await classesService.GetStudentAsync(Id);
         MyStudent = res.svStudent;
         var avgGradeRes = await gradesService.GetAverageGradesFromStudentAndClasses(MyStudent.Classes, Id); ;
