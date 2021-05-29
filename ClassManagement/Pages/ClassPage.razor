@@ -87,6 +87,9 @@
             <MudTabPanel Text="Grades Chart">
                 <ClassGradesChartItem ClassId="@Id" ClassCode="@Code" />
             </MudTabPanel>
+            <MudTabPanel Text="Add Student">
+                <AddStudentToClassItem @bind-Students="@MyClass.Students" ClassCode="@Code" ClassId="@Id"/>
+            </MudTabPanel>
         </MudTabs>
     }
 </MudContainer>

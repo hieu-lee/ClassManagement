@@ -53,6 +53,21 @@ namespace ClassManagement.Services
             var students = new SortedSet<Student>(dbContext.Students.Where(s => s.OwnerUsername == UsernameState).Include(s => s.Classes).ToArray());
             return new() { success = true, Students = students };
         }
+        public async Task<ServiceResult> GetStudentsFromOtherClasses(string ClassId)
+        {
+            var task = dbContext.Classes.FindAsync(ClassId);
+            var AllStudents = dbContext.Students.Where(s => s.OwnerUsername == UsernameState).Include(s => s.Classes).ToArray();
+            var students = new SortedSet<Student>();
+            var cls = await task;
+            foreach (var s in AllStudents)
+            {
+                if (!s.Classes.Contains(cls))
+                {
+                    students.Add(s);
+                }
+            }
+            return new() { success = true, Students = students };
+        }
 
         public async Task<ServiceResult> GetStudentAsync(string StudentId)
         {
@@ -109,15 +124,12 @@ namespace ClassManagement.Services
 
         public async Task<ServiceResult> AddNewStudentToClass(Student student, string ClassId)
         {
-            var Class = dbContext.Classes.Find(ClassId);
+            var task = dbContext.Classes.Where(s => s.Id == ClassId && s.OwnerUsername == UsernameState).FirstOrDefaultAsync();
             student = dbContext.Students.Find(student.Id);
+            var Class = await task;
             if (Class is null)
             {
                 return new() { success = false, err = "Class does not exist" };
-            }
-            if (Class.Students.Contains(student))
-            {
-                return new() { success = false, err = "Student has already been in class" };
             }
             student.Classes.Add(Class);
             Class.Students.Add(student);
