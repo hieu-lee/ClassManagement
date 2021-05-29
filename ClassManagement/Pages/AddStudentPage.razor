@@ -1,6 +1,8 @@
 ﻿@page "/AddStudent"
 @inject ClassesService classesService
 @inject ISnackbar Snackbar
+@inject NavigationManager navigationManager
+@inject SessionService session
 
 <div style="max-width: 550px; margin: 3ch auto; padding-bottom: 3ch;">
     <h3 style="text-align: center;">Create new student record</h3>
@@ -55,6 +57,11 @@
 
     protected override async Task OnInitializedAsync()
     {
+        if (!session.LoggedState)
+        {
+            navigationManager.NavigateTo("/");
+            return;
+        }
         ClassCodes = await classesService.GetAllClassCodes();
     }
 

@@ -3,6 +3,7 @@
 @inject NavigationManager navigationManager
 @inject GradesService gradesService
 @inject ISnackbar Snackbar
+@inject SessionService session
 
 
 <div style="max-width: 550px; margin: 3ch auto; padding-bottom: 3ch;">
@@ -39,13 +40,13 @@
                         }
                     </MudSelect>
                 </div>
-             
+
             </MudCardContent>
 
             <MudCardActions>
                 <MudButton @onclick="AddNewGrade" Variant="Variant.Outlined" Color="Color.Primary" Style="margin: 0 auto;">Add Grade</MudButton>
             </MudCardActions>
-            
+
         </MudCard>
     </EditForm>
 </div>
@@ -61,6 +62,11 @@
 
     protected override async Task OnInitializedAsync()
     {
+        if (!session.LoggedState)
+        {
+            navigationManager.NavigateTo("/");
+            return;
+        }
         ClassCodes = await classesService.GetAllClassCodes();
         AllStudents = gradesService.GetAllStudents();
         Students = AllStudents.ToHashSet();
@@ -108,7 +114,7 @@
             Snackbar.Add("Grade in Num must be between 1 and 10", Severity.Error);
             return;
         }
-        
+
 
 
         await gradesService.CreateNewGradeAsyncBetter(NewGrade, ClassCode, StudentName);
