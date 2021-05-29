@@ -2,44 +2,56 @@
 @inject ClassesService classesService
 @inject GradesService gradesService
 
-<MudCard>
-    <MudAvatar>
-        <MudIcon Style="color: #ffffff" Icon="@Icons.Material.Filled.PeopleAlt" />
-    </MudAvatar>
-    <MudText Typo="Typo.h3">@MyStudent.Name</MudText>
-</MudCard>
-<MudCard>
-    <MudText>MEDU Profile</MudText>
-    <div style="display: flex;">
-        <div class="student-details">
-            <MudText Typo="Typo.h5">Student details</MudText>
-            <MudText Typo="Typo.subtitle1">Gender: @MyStudent.Gender</MudText>
-            <MudText Typo="Typo.subtitle1">Date of Birth: @MyStudent.DateOfBirth.Value.ToShortDateString()</MudText>
-            <MudText Typo="Typo.subtitle1">Age: @MyStudent.Age</MudText>
-        </div>
-        <div class="description">
-            <MudText Typo="Typo.h5">Description</MudText>
-            <MudText Typo="Typo.body1">@Description</MudText>
-        </div>
-    </div>
-    <div>
-        <div class="classes-details">
-            <MudText Typo="Typo.h5">Classes details</MudText>
-            @foreach (var cls in MyStudent.Classes)
-            {
-                <MudLink Href="@($"/Class/{cls.Id}")">@cls.Code</MudLink>
-            }
-        </div>
-        <div class="Grades">
-            <MudText Typo="Typo.h5">Grades Overview</MudText>
-            @foreach (var cls in MyStudent.Classes)
-            {
-                <MudText Typo="Typo.body1">Avg. Grade: @AverageGrades[cls.Id]</MudText>
-            }
-        </div>
-    </div>
-</MudCard>
+<MudContainer MaxWidth="MaxWidth.Large">
+    <MudCard>
+        <MudAvatar Style="background-color: #E6E6E6; width: 80px; height: 80px;">
+            <MudIcon Style="color: #ffffff" Icon="@Icons.Material.Filled.PeopleAlt" />
+        </MudAvatar>
+        <MudText Typo="Typo.h3">@MyStudent.Name</MudText>
+    </MudCard>
+    <MudTabs Elevation="4" Rounded="true" Centered="true">
+        <MudTabPanel Text="Info">
+            <MudCard>
+                <MudText>MEDU Profile</MudText>
+                <div style="display: flex;">
+                    <div class="student-details">
+                        <MudText Typo="Typo.h5">Student details</MudText>
+                        <MudText Typo="Typo.subtitle1">Gender: @MyStudent.Gender</MudText>
+                        <MudText Typo="Typo.subtitle1">Date of Birth: @MyStudent.DateOfBirth.Value.ToShortDateString()</MudText>
+                        <MudText Typo="Typo.subtitle1">Age: @MyStudent.Age</MudText>
+                    </div>
+                    <div class="description">
+                        <MudText Typo="Typo.h5">Description</MudText>
+                        <MudText Typo="Typo.body1">@Description</MudText>
+                    </div>
+                </div>
+                <div>
+                    <div class="classes-details">
+                        <MudText Typo="Typo.h5">Classes details</MudText>
+                        @foreach (var cls in MyStudent.Classes)
+                        {
+                            <MudLink Href="@($"/Class/{cls.Id}")">@cls.Code</MudLink>
+                        }
+                    </div>
+                    <div class="Grades">
+                        <MudText Typo="Typo.h5">Grades Overview</MudText>
+                        @foreach (var cls in MyStudent.Classes)
+                        {
+                            <MudText Typo="Typo.body1">Avg. Grade: @AverageGrades[cls.Id]</MudText>
+                        }
+                    </div>
+                </div>
+            </MudCard>
+        </MudTabPanel>
+        <MudTabPanel Text="Grades Table">
 
+        </MudTabPanel>
+        <MudTabPanel Text="Grades Chart">
+
+        </MudTabPanel>
+    </MudTabs>
+
+</MudContainer>
 
 @code {
     [Parameter]

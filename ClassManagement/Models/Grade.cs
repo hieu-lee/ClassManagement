@@ -21,6 +21,9 @@ namespace ClassManagement.Models
         public string StdName { get; set; }
 
         [Required]
+        public string ClassCode { get; set; }
+
+        [Required]
         public string ExamName { get; set; }
 
         [Required]
@@ -32,7 +35,7 @@ namespace ClassManagement.Models
 
 
         [ForeignKey("Classroom")]
-        public string ClassCode { get; set; }
+        public string ClassId{ get; set; }
 
         [ForeignKey("Owner")]
         public string OwnerUsername { get; set; }

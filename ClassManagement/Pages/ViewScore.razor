@@ -44,7 +44,7 @@
             <MudButton Variant="Variant.Outlined" Color="Color.Primary" @onclick="() => { MultiSelect = !MultiSelect; }">@Mode</MudButton>
         </div>*@
         <MudCard Style="margin-top: 3ch;">
-            <MudTable Items="@grades" Hover="true" Striped="true" MultiSelection="@MultiSelect" @bind-SelectedItems="selectedGrades">
+            <MudTable Items="@displayGrades" Hover="true" Striped="true" MultiSelection="@MultiSelect" @bind-SelectedItems="selectedGrades">
                 <ToolBarContent>
                     <MudText Typo="Typo.h6">Grades Table</MudText>
                     <MudToolBarSpacer />
@@ -93,6 +93,7 @@
     private List<string> ClassCodes;
     private bool MultiSelect = false;
     private SortedSet<Grade> grades;
+    private SortedSet<Grade> displayGrades = new();
     private SortedSet<Grade> svGrades;
     private HashSet<Grade> selectedGrades;
 
@@ -104,9 +105,38 @@
 
     private void DisplayScores()
     {
+        if (string.IsNullOrWhiteSpace(StudentName) && string.IsNullOrWhiteSpace(ClassCode))
+        {
+            displayGrades = grades;
+            return;
+        }
+        if (string.IsNullOrWhiteSpace(StudentName))
+        {
+            displayGrades = new();
+            foreach (var g in grades)
+            {
+                if (g.ClassCode == ClassCode)
+                {
+                    displayGrades.Add(g);
+                }
+            }
+            return;
+        }
+        if (string.IsNullOrWhiteSpace(ClassCode))
+        {
+            displayGrades = new();
+            foreach (var g in grades)
+            {
+                if (g.StdName == StudentName)
+                {
+                    displayGrades.Add(g);
+                }
+            }
+            return;
+        }
         @*grades = FilterStudentClass(StudentName, ClassCode);*@
-        ServiceResult svrs = gradesService.GetGradesFromStudentAndClass(StudentName, ClassCode);
-        grades = svrs.Grades;
+        //ServiceResult svrs = gradesService.GetGradesFromStudentAndClass(StudentName, ClassCode);
+        //grades = svrs.Grades;
     }
     @*private SortedSet<Grade> FilterStudentClass (string StudentName, string ClassCode)
     {
@@ -148,6 +178,7 @@
         {
             ServiceResult svrs = gradesService.GetGradesFromStudentAndClass(StudentName, ClassCode);
             grades = svrs.Grades;
+            displayGrades = grades;
             svGrades = grades;
         }
 
