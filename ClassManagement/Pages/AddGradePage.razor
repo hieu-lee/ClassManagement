@@ -126,7 +126,6 @@ else
             Snackbar.Add(res.err, Severity.Error);
             return;
         }
-        await gradesService.CreateNewGradeAsyncBetter(NewGrade, ClassCode, gradeStudent);
         Snackbar.Add("Successfully added new grade", Severity.Success);
 
         ClassCode = string.Empty;
