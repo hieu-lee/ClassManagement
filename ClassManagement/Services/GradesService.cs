@@ -1,5 +1,7 @@
 ﻿using ClassManagement.Data;
 using ClassManagement.Models;
+using Dapper;
+using Microsoft.Data.Sqlite;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
@@ -46,14 +48,7 @@ namespace ClassManagement.Services
             var clss2 = dbContext.Classes.Where(s => s.Code == classCode && s.OwnerUsername == UsernameState).FirstOrDefault();
             return clss2;
         }
-
-        public Class GetClassWithStudentsFromCode(string classCode)
-        {
-            var clss2 = dbContext.Classes.Where(s => s.Code == classCode && s.OwnerUsername == UsernameState).Include(s => s.Students).FirstOrDefault();
-            return clss2;
-        }
-
-
+        
         public ServiceResult GetGradesFromStudent(Student std)
         {
             var grades = new SortedSet<Grade>(dbContext.Grades.Where(s => s.StudentId == std.Id && s.OwnerUsername == UsernameState).ToArray());
@@ -179,28 +174,60 @@ namespace ClassManagement.Services
 
         public async Task<ServiceResult> CreateNewGradeAsyncBetter(Grade NewGrade, string ClassCode, Student GStudent)
         {
-            Class GClass = GetClassWithStudentsFromCode(ClassCode);
-            if (!GClass.Students.Contains(GStudent)){
-                return new() { success = false, err = "Error: Class does not contain student." };
-            }
-            Grade myGrade;
-            myGrade = new()
+            ClassStudent res;
+            var ClassesId = dbContext.Classes.Where(s => s.Code == ClassCode && s.OwnerUsername == UsernameState).Select(s => s.Id).FirstOrDefault();
+            var StudentsId = GStudent.Id;
+            using (var dbConnection = new SqliteConnection("Data Source=classmanagement.db"))
             {
-                Student = GStudent,
-                Classroom = GClass,
-                ClassCode = GClass.Code,
-                GradeinNum = NewGrade.GradeinNum,
-                StdName = GStudent.Name,
-                ExamName = NewGrade.ExamName,
-                ExamTime = NewGrade.ExamTime,
-                RelativeValue = NewGrade.RelativeValue,
-                OwnerUsername = UsernameState
-            };
-            dbContext.Grades.Add(myGrade);
-            await dbContext.SaveChangesAsync();
-            return new() { success = true };
-
+                await dbConnection.OpenAsync();
+                res = dbConnection.Query<ClassStudent>(@"SELECT ClassesId, StudentsId FROM ClassStudent WHERE ClassesId = @ClassesId AND StudentsId = @StudentsId", new { ClassesId, StudentsId }).FirstOrDefault();
+            }
+            if (res is null)
+            {
+                return new() { success = false, err = "Class does not contain student." };
+            }
+            else
+            {
+                Class GClass = GetClassFromCode(ClassCode);
+                Grade myGrade;
+                myGrade = new()
+                {
+                    Student = GStudent,
+                    Classroom = GClass,
+                    ClassCode = GClass.Code,
+                    GradeinNum = NewGrade.GradeinNum,
+                    StdName = GStudent.Name,
+                    ExamName = NewGrade.ExamName,
+                    ExamTime = NewGrade.ExamTime,
+                    RelativeValue = NewGrade.RelativeValue,
+                    OwnerUsername = UsernameState
+                };
+                dbContext.Grades.Add(myGrade);
+                await dbContext.SaveChangesAsync();
+                return new() { success = true };
+            }
         }
+
+        //public async Task<ServiceResult> CreateNewGradeAsyncBetter(Grade NewGrade, string ClassCode, Student GStudent)
+        //{
+        //    Class GClass = GetClassFromCode(ClassCode);
+        //    Grade myGrade;
+        //    myGrade = new()
+        //        {
+        //            Student = GStudent,
+        //            Classroom = GClass,
+        //            ClassCode = GClass.Code,
+        //            GradeinNum = NewGrade.GradeinNum,
+        //            StdName = GStudent.Name,
+        //            ExamName = NewGrade.ExamName,
+        //            ExamTime = NewGrade.ExamTime,
+        //            RelativeValue = NewGrade.RelativeValue,
+        //            OwnerUsername = UsernameState
+        //};
+        //dbContext.Grades.Add(myGrade);
+        //        await dbContext.SaveChangesAsync();
+        //        return new() { success = true };
+        //}
 
         public async Task<ServiceResult> DeleteGrade (string gradeId)
         {
