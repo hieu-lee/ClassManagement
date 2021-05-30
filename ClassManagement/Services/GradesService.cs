@@ -174,13 +174,13 @@ namespace ClassManagement.Services
 
         public async Task<ServiceResult> CreateNewGradeAsyncBetter(Grade NewGrade, string ClassCode, Student GStudent)
         {
-            ClassStudent? res;
+            ClassStudent res;
             var ClassesId = dbContext.Classes.Where(s => s.Code == ClassCode && s.OwnerUsername == UsernameState).Select(s => s.Id).FirstOrDefault();
             var StudentsId = GStudent.Id;
             using (var dbConnection = new SqliteConnection("Data Source=classmanagement.db"))
             {
                 await dbConnection.OpenAsync();
-                res = dbConnection.Query<ClassStudent?>(@"SELECT ClassesId, StudentsId FROM ClassStudent WHERE ClassesId = @ClassesId AND StudentsId = @StudentsId", new { ClassesId, StudentsId }).FirstOrDefault();
+                res = dbConnection.Query<ClassStudent>(@"SELECT ClassesId, StudentsId FROM ClassStudent WHERE ClassesId = @ClassesId AND StudentsId = @StudentsId", new { ClassesId, StudentsId }).FirstOrDefault();
             }
             if (res is null)
             {

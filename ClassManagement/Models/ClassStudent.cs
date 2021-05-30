@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 
 namespace ClassManagement.Models
 {
-    public struct ClassStudent
+    public class ClassStudent
     {
         public string ClassesId { get; set; }
         public string StudentsId { get; set; }
