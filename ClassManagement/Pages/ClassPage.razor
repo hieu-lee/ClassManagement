@@ -82,10 +82,13 @@
                 <StudentsFromClassItem @bind-Students="@MyClass.Students" ClassId="@Id" />
             </MudTabPanel>
             <MudTabPanel Text="Grades Table">
-                <GradesTableItem ClassId="@Id" OnGradesChange="async () => { AverageGrade = await gradesService.CalculateAverageGradeOfClass(Id); }" ClassCode="@Code" />
+                <ClassGradesTableItem ClassId="@Id" OnGradesChange="async () => { AverageGrade = await gradesService.CalculateAverageGradeOfClass(Id); }" ClassCode="@Code" />
             </MudTabPanel>
             <MudTabPanel Text="Grades Chart">
-                <GradesChartItem ClassId="@Id" ClassCode="@Code" />
+                <ClassGradesChartItem ClassId="@Id" ClassCode="@Code" />
+            </MudTabPanel>
+            <MudTabPanel Text="Add Student">
+                <AddStudentToClassItem @bind-Students="@MyClass.Students" ClassCode="@Code" ClassId="@Id"/>
             </MudTabPanel>
         </MudTabs>
     }
@@ -109,9 +112,9 @@
             navigationManager.NavigateTo("/");
             return;
         }
-        NewSchedule = new() { ClassroomId = Id, ClassCode = Code };
+        NewSchedule = new() { ClassroomId = Id, ClassCode = Code, OwnerUsername = session.UsernameState };
         var task1 = gradesService.CalculateAverageGradeOfClass(Id);
-        MyClass = await classesService.GetClass(Id);
+        MyClass = await classesService.GetClassAsync(Id);
         HashSet<double?> TempWeights = new();
         TempWeights.Add(null);
         AverageGrade = await task1;
@@ -153,7 +156,7 @@
             if (res.success)
             {
                 MyClass.Schedules.Add(NewSchedule);
-                NewSchedule = new() { ClassroomId = Id, ClassCode = Code };
+                NewSchedule = new() { ClassroomId = Id, ClassCode = Code, OwnerUsername = session.UsernameState };
                 StateHasChanged();
                 Snackbar.Add("Successfully add new schedule to class", Severity.Success);
                 return;

@@ -1,0 +1,125 @@
+﻿@inject ClassesService classesService
+@inject ISnackbar Snackbar
+
+<MudCard Style="margin-top: 5ch; padding: 1ch 4ch;">
+    <div class="search" style="display: flex; justify-content: space-between;">
+        <div>
+            <MudTextField Style="max-width: 40ch;" @bind-Value="@SearchName" Placeholder="Student's name" Label="Name" />
+            <MudTextField Style="max-width: 40ch;" @bind-Value="@SearchClass" Placeholder="Class's code" Label="Class" />
+        </div>
+        <div style="display: flex; align-items: center;">
+            <MudTooltip Text="Search">
+                <MudIconButton @onclick="DisplayStudents">
+                    <MudIcon Style="width: 2.5ch; height: 2.5ch; color: #594AE2" Icon="@Icons.Material.Filled.Search" />
+                </MudIconButton>
+            </MudTooltip>
+        </div>
+    </div>
+    <hr />
+    <ul style="margin-top: 3ch;">
+        <Virtualize Items="StudentsToDisplay" Context="student">
+            <li>
+                <AddStudentItem student="student" OnAddClick="async () => { await AddStudentAsync(student); }" />
+            </li>
+            <hr />
+        </Virtualize>
+    </ul>
+</MudCard>
+
+
+@code {
+    [Parameter]
+    public HashSet<Student> Students
+    {
+        get => _Students;
+        set
+        {
+            if (_Students == value) return;
+            _Students = value;
+            StudentsChanged.InvokeAsync(value);
+        }
+    }
+    [Parameter]
+    public EventCallback<HashSet<Student>> StudentsChanged { get; set; }
+    [Parameter]
+    public string ClassId { get; set; }
+    [Parameter]
+    public string ClassCode { get; set; }
+    private HashSet<Student> _Students;
+    private SortedSet<Student> MyStudents;
+    private SortedSet<Student> StudentsToDisplay = new();
+    private string SearchName;
+    private string SearchClass;
+
+    protected override async Task OnInitializedAsync()
+    {
+        var res = await classesService.GetStudentsFromOtherClasses(ClassId);
+        MyStudents = res.Students;
+        StudentsToDisplay = MyStudents;
+    }
+
+    private async Task AddStudentAsync(Student student)
+    {
+        var task = classesService.AddNewStudentToClass(student, ClassId);
+        MyStudents.Remove(student);
+        StudentsToDisplay.Remove(student);
+        var res = await task;
+        if (res.success)
+        {
+            Students.Add(student);
+            Snackbar.Add($"Successfully added {student.Name} to {ClassCode}", Severity.Success);
+        }
+        else
+        {
+            Snackbar.Add(res.err, Severity.Error);
+        }
+
+    }
+
+    private void DisplayStudents()
+    {
+        if (string.IsNullOrWhiteSpace(SearchName) && string.IsNullOrWhiteSpace(SearchClass))
+        {
+            StudentsToDisplay = MyStudents;
+            return;
+        }
+        StudentsToDisplay = new();
+        if (!string.IsNullOrWhiteSpace(SearchClass) && !string.IsNullOrWhiteSpace(SearchName))
+        {
+            SearchName = SearchName.Trim().ToUpper();
+            SearchClass = SearchClass.Trim().ToUpper();
+            foreach (var student in MyStudents)
+            {
+                if (student.Name.ToUpper() == SearchName && student.Classes.Contains(new() { Code = SearchClass }))
+                {
+                    StudentsToDisplay.Add(student);
+                }
+            }
+            return;
+        }
+        if (!string.IsNullOrWhiteSpace(SearchClass))
+        {
+            SearchClass = SearchClass.Trim().ToUpper();
+            foreach (var student in MyStudents)
+            {
+                if (student.Classes.Contains(new() { Code = SearchClass }))
+                {
+                    StudentsToDisplay.Add(student);
+                }
+            }
+            return;
+        }
+        if (!string.IsNullOrWhiteSpace(SearchName))
+        {
+            SearchName = SearchName.Trim().ToUpper();
+            foreach (var student in MyStudents)
+            {
+                if (student.Name.ToUpper() == SearchName)
+                {
+                    StudentsToDisplay.Add(student);
+                }
+            }
+            return;
+        }
+    }
+}

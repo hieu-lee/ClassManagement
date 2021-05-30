@@ -31,14 +31,9 @@ namespace ClassManagement.Services
             return res;
         }
 
-        public async Task<Class> GetClassIncludeGradesFromId(string ClassId)
+        public async Task<Class> GetClassAsync(string ClassId)
         {
-            return await dbContext.Classes.Where(s => s.Id == ClassId).Include(s => s.Grades).FirstOrDefaultAsync();
-        }
-
-        public async Task<Class> GetClass(string ClassId)
-        {
-            var res = await dbContext.Classes.Where(s => s.Id == ClassId).Include(s => s.Schedules).Include(s => s.Students).AsSplitQuery().FirstOrDefaultAsync();
+            var res = await dbContext.Classes.Where(s => s.Id == ClassId && s.OwnerUsername == UsernameState).Include(s => s.Schedules).Include(s => s.Students).AsSplitQuery().FirstOrDefaultAsync();
             return res;
         }
 
@@ -58,10 +53,25 @@ namespace ClassManagement.Services
             var students = new SortedSet<Student>(dbContext.Students.Where(s => s.OwnerUsername == UsernameState).Include(s => s.Classes).ToArray());
             return new() { success = true, Students = students };
         }
+        public async Task<ServiceResult> GetStudentsFromOtherClasses(string ClassId)
+        {
+            var task = dbContext.Classes.FindAsync(ClassId);
+            var AllStudents = dbContext.Students.Where(s => s.OwnerUsername == UsernameState).Include(s => s.Classes).ToArray();
+            var students = new SortedSet<Student>();
+            var cls = await task;
+            foreach (var s in AllStudents)
+            {
+                if (!s.Classes.Contains(cls))
+                {
+                    students.Add(s);
+                }
+            }
+            return new() { success = true, Students = students };
+        }
 
         public async Task<ServiceResult> GetStudentAsync(string StudentId)
         {
-            var res = await dbContext.Students.Where(s => s.Id == StudentId).Include(s => s.Classes).Include(s => s.Grades).AsSplitQuery().FirstOrDefaultAsync();
+            var res = await dbContext.Students.Where(s => s.Id == StudentId && s.OwnerUsername == UsernameState).Include(s => s.Classes).Include(s => s.Grades).AsSplitQuery().FirstOrDefaultAsync();
             return new() { svStudent = res };
         }
 
@@ -80,6 +90,12 @@ namespace ClassManagement.Services
         public async Task<Grade[]> GetGradesFromClassAsync(string ClassId)
         {
             var res = await dbContext.Grades.Where(s => s.ClassId == ClassId && s.OwnerUsername == UsernameState).ToArrayAsync();
+            return res;
+        }
+
+        public async Task<Grade[]> GetGradesFromStudentAsync(string StudentId)
+        {
+            var res = await dbContext.Grades.Where(s => s.StudentId == StudentId && s.OwnerUsername == UsernameState).ToArrayAsync();
             return res;
         }
 
@@ -108,15 +124,12 @@ namespace ClassManagement.Services
 
         public async Task<ServiceResult> AddNewStudentToClass(Student student, string ClassId)
         {
-            var Class = dbContext.Classes.Find(ClassId);
+            var task = dbContext.Classes.Where(s => s.Id == ClassId && s.OwnerUsername == UsernameState).FirstOrDefaultAsync();
             student = dbContext.Students.Find(student.Id);
+            var Class = await task;
             if (Class is null)
             {
                 return new() { success = false, err = "Class does not exist" };
-            }
-            if (Class.Students.Contains(student))
-            {
-                return new() { success = false, err = "Student has already been in class" };
             }
             student.Classes.Add(Class);
             Class.Students.Add(student);
@@ -129,7 +142,7 @@ namespace ClassManagement.Services
         public async Task<ServiceResult> AddNewScheduleToClass(ClassSchedule schedule, string ClassId)
         {
             schedule.OwnerUsername = UsernameState;
-            var Class = dbContext.Classes.Find(ClassId);
+            var Class = dbContext.Classes.Where(s => s.Id == ClassId && s.OwnerUsername == UsernameState).FirstOrDefault();
             if (Class is null)
             {
                 return new() { success = false, err = "Class does not exist" };

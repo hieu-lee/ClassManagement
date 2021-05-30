@@ -3,6 +3,7 @@
 @inject ISnackbar Snackbar
 @inject GradesService gradesService
 @inject NavigationManager NavManager
+@inject SessionService session
 
 <MudContainer MaxWidth="MaxWidth.Large">
     <MudText Typo="Typo.h3" Style="text-align:center;">My Grades</MudText>
@@ -143,51 +144,56 @@
         
     }*@
 
-    private void CalculateAverage()
+private void CalculateAverage()
+{
+    NavManager.NavigateTo("/AverageScores");
+    selectedGrades = new();
+}
+private async Task DeleteManyGradesAsync()
+{
+    await gradesService.DeleteManyGradesAsync(selectedGrades);
+    foreach (var s in selectedGrades)
     {
-        NavManager.NavigateTo("/AverageScores");
-        selectedGrades = new();
+        grades.Remove(s);
     }
-    private async Task DeleteManyGradesAsync()
+}
+private async Task DeleteGradeAsync(Grade grade)
+{
+    var res = await gradesService.DeleteGrade(grade.Id);
+    if (res.success)
     {
-        await gradesService.DeleteManyGradesAsync(selectedGrades);
-        foreach (var s in selectedGrades)
-        {
-            grades.Remove(s);
-        }
+        Snackbar.Add("Successfully deleted grade", Severity.Success);
+        grades.Remove(grade);
+        StateHasChanged();
     }
-    private async Task DeleteGradeAsync(Grade grade)
+    else
     {
-        var res = await gradesService.DeleteGrade(grade.Id);
-        if (res.success)
-        {
-            Snackbar.Add("Successfully deleted grade", Severity.Success);
-            grades.Remove(grade);
-            StateHasChanged();
-        }
-        else
-        {
-            Snackbar.Add(res.err, Severity.Error);
-        }
-        selectedGrades = new();
+        Snackbar.Add(res.err, Severity.Error);
     }
-    protected override async Task OnInitializedAsync()
+    selectedGrades = new();
+}
+protected override async Task OnInitializedAsync()
+{
+    if (!session.LoggedState)
     {
-        loading = true;
-        if (grades is null)
-        {
-            ServiceResult svrs = gradesService.GetGradesFromStudentAndClass(StudentName, ClassCode);
-            grades = svrs.Grades;
-            displayGrades = grades;
-            svGrades = grades;
-        }
+        NavManager.NavigateTo("/");
+        return;
+    }
+    loading = true;
+    if (grades is null)
+    {
+        ServiceResult svrs = gradesService.GetGradesFromStudentAndClass(StudentName, ClassCode);
+        grades = svrs.Grades;
+        displayGrades = grades;
+        svGrades = grades;
+    }
 
-        if (StudentNames is null)
-            StudentNames = await gradesService.GetAllStudentNames();
+    if (StudentNames is null)
+        StudentNames = await gradesService.GetAllStudentNames();
 
-        if (ClassCodes is null)
-            ClassCodes = await classesService.GetAllClassCodes();
+    if (ClassCodes is null)
+        ClassCodes = await classesService.GetAllClassCodes();
 
-        loading = false;
-    }
+    loading = false;
+}
 }

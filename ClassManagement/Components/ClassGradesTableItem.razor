@@ -57,8 +57,8 @@
 
     protected override async Task OnInitializedAsync()
     {
-        var res = await classesService.GetClassIncludeGradesFromId(ClassId);
-        MyGrades = res.Grades;
+        var res = await classesService.GetGradesFromClassAsync(ClassId);
+        MyGrades = res.ToHashSet();
     }
 
     private bool FilterFunc(Grade grade)
@@ -79,6 +79,7 @@
             MyGrades.Remove(s);
         }
         selectedGrades = new();
+        Snackbar.Add("Successfully deleted grades", Severity.Success);
     }
 
     private async Task DeleteGradeAsync(Grade grade)

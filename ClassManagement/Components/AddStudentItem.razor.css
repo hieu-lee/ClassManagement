@@ -1,0 +1,9 @@
+﻿.description {
+    width: 40ch;
+}
+
+@media (max-width: 950px) {
+    .description {
+        width: 30ch;
+    }
+}

@@ -2,6 +2,7 @@
 @inject ClassesService classesService
 @inject ISnackbar Snackbar
 @inject NavigationManager navigationManager
+@inject SessionService session
 
 <MudContainer MaxWidth="MaxWidth.Large">
     <MudText Typo="Typo.h3" Style="text-align:center;">My Classes</MudText>
@@ -144,6 +145,11 @@
 
     protected override async Task OnInitializedAsync()
     {
+        if (!session.LoggedState)
+        {
+            navigationManager.NavigateTo("/");
+            return;
+        }
         var task = Task.Factory.StartNew(async () =>
         {
             ClassesToDisplay = classesService.GetAllClasses();
@@ -170,14 +176,14 @@
             TodayClassesToDisplay = new();
             foreach (var cls in MyClasses)
             {
-                if (cls.Code == SearchClass)
+                if (cls.Code.Contains(SearchClass))
                 {
                     ClassesToDisplay.Add(cls);
                 }
             }
             foreach (var cls in TodayClasses)
             {
-                if (cls.Code == SearchClass)
+                if (cls.Code.Contains(SearchClass))
                 {
                     TodayClassesToDisplay.Add(cls);
                 }

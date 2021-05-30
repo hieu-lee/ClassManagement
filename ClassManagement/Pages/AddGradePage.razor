@@ -3,52 +3,58 @@
 @inject NavigationManager navigationManager
 @inject GradesService gradesService
 @inject ISnackbar Snackbar
+@inject SessionService session
 
+@if (session.LoggedState)
+{
+    <div style="max-width: 550px; margin: 3ch auto; padding-bottom: 3ch;">
+        <h3 style="text-align: center;">Create new grade</h3>
+        <EditForm Model="@NewGrade">
+            <DataAnnotationsValidator />
+            <MudCard Style="border-top: 10px solid #594AE2">
+                <MudCardContent>
+                    <MudNumericField Label="Grade in number" Required="true" HelperText="Must be non-empty"
+                                     @bind-Value="NewGrade.GradeinNum" For="@(() => NewGrade.GradeinNum)" />
+                    <MudNumericField Label="Weight" Required="true" HelperText="Must be non-empty. Default is 1"
+                                     @bind-Value="NewGrade.RelativeValue" For="@(() => NewGrade.RelativeValue)" />
+                    <MudTextField Label="Exam Name" Required="true" HelperText="Must be non-empty"
+                                  @bind-Value="NewGrade.ExamName" For="@(() => NewGrade.ExamName)" />
 
-<div style="max-width: 550px; margin: 3ch auto; padding-bottom: 3ch;">
-    <h3 style="text-align: center;">Create new grade</h3>
-    <EditForm Model="@NewGrade">
-        <DataAnnotationsValidator />
-        <MudCard Style="border-top: 10px solid #594AE2">
-            <MudCardContent>
-                <MudTextField Label="Grade in number" Required="true" HelperText="Must be non-empty"
-                              @bind-Value="NewGrade.GradeinNum" For="@(() => NewGrade.GradeinNum)" />
-                <MudTextField Label="He so diem" Required="true" HelperText="Must be non-empty. Default= 1"
-                              @bind-Value="NewGrade.RelativeValue" For="@(() => NewGrade.RelativeValue)" />
-                <MudTextField Label="Exam Name" Required="true" HelperText="Must be non-empty"
-                              @bind-Value="NewGrade.ExamName" For="@(() => NewGrade.ExamName)" />
+                    <MudTextField Label="Description" Class="mt-3"
+                                  @bind-Value="NewGrade.Description" For="@(() => NewGrade.Description)" Lines="5" />
+                    <MudDatePicker @bind-Date="@NewGrade.ExamTime" Label="Exam Date"></MudDatePicker>
+                    <div>
+                        <h5 style="margin-top: 20px; text-align: center;">Select Class</h5>
+                        <MudSelect Label="Class" Required="true" @bind-Value="@ClassCode" T="string">
+                            @foreach (var Code in ClassCodes)
+                            {
+                                <MudSelectItem T="string" Value="@Code">@Code</MudSelectItem>
+                            }
+                        </MudSelect>
+                    </div>
+                    <div>
+                        <h5 style="margin-top: 20px; text-align: center;">Select Student</h5>
+                        <MudSelect Label="Student" Required="true" @bind-Value="@gradeStudent" T="Student">
+                            @foreach (var s in Students)
+                            {
+                                <MudSelectItem T="Student" Value="@s">@s.ToString()</MudSelectItem>
+                            }
+                        </MudSelect>
+                    </div>
+                </MudCardContent>
+                <MudCardActions>
+                    <MudButton @onclick="AddNewGrade" Variant="Variant.Outlined" Color="Color.Primary" Style="margin: 0 auto;">Add Grade</MudButton>
+                </MudCardActions>
 
-                <MudTextField Label="Description" Class="mt-3"
-                              @bind-Value="NewGrade.Description" For="@(() => NewGrade.Description)" Lines="5" />
-                <MudDatePicker @bind-Date="@NewGrade.ExamTime" Label="Exam Date"></MudDatePicker>
-                <div>
-                    <h5 style="margin-top: 20px; text-align: center;">Select Class</h5>
-                    <MudSelect Label="Class" Required="true" @bind-Value="@ClassCode" T="string">
-                        @foreach (var Code in ClassCodes)
-                        {
-                            <MudSelectItem T="string" Value="@Code">@Code</MudSelectItem>
-                        }
-                    </MudSelect>
-                </div>
-                <div>
-                    <h5 style="margin-top: 20px; text-align: center;">Select Student</h5>
-                    <MudSelect Label="Student" Required="true" @bind-Value="@gradeStudent" T="Student">
-                        @foreach (var s in Students)
-                        {
-                            <MudSelectItem T="Student" Value="@s">@s.ToString()</MudSelectItem>
-                        }
-                    </MudSelect>
-                </div>
-             
-            </MudCardContent>
+            </MudCard>
+        </EditForm>
+    </div>
+}
+else
+{
+    <MudProgressLinear Color="Color.Primary" Indeterminate="true" Class="my-7" />
+}
 
-            <MudCardActions>
-                <MudButton @onclick="AddNewGrade" Variant="Variant.Outlined" Color="Color.Primary" Style="margin: 0 auto;">Add Grade</MudButton>
-            </MudCardActions>
-            
-        </MudCard>
-    </EditForm>
-</div>
 
 @code {
     private HashSet<string> NewStudentCodes = new();
@@ -62,6 +68,11 @@
 
     protected override async Task OnInitializedAsync()
     {
+        if (!session.LoggedState)
+        {
+            navigationManager.NavigateTo("/");
+            return;
+        }
         ClassCodes = await classesService.GetAllClassCodes();
         AllStudents = gradesService.GetAllStudents();
         Students = AllStudents.ToHashSet();
@@ -77,7 +88,7 @@
 
     private async Task GetStudentsFromClass()
     {
-        var res = await classesService.GetClass(ClassCode);
+        var res = await classesService.GetClassAsync(ClassCode);
         Students = res.Students;
     }
 
@@ -108,7 +119,7 @@
             Snackbar.Add("Grade in Num must be between 1 and 10", Severity.Error);
             return;
         }
-        
+
 
         ServiceResult task= await gradesService.CreateNewGradeAsyncBetter(NewGrade, ClassCode, gradeStudent);
         if (!task.success)
