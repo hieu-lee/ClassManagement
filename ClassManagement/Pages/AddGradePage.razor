@@ -110,9 +110,13 @@
         }
         
 
+        ServiceResult task= await gradesService.CreateNewGradeAsyncBetter(NewGrade, ClassCode, gradeStudent);
+        if (!task.success)
+        {
+            Snackbar.Add(task.err, Severity.Error);
+        }
 
-        await gradesService.CreateNewGradeAsyncBetter(NewGrade, ClassCode, gradeStudent);
-        Snackbar.Add("Successfully added new grade", Severity.Success);
+        else Snackbar.Add("Successfully added new grade", Severity.Success);
 
         ClassCode = string.Empty;
         NewGrade.GradeinNum = 5;

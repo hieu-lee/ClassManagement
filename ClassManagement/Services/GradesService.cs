@@ -173,6 +173,9 @@ namespace ClassManagement.Services
         public async Task<ServiceResult> CreateNewGradeAsyncBetter(Grade NewGrade, string ClassCode, Student GStudent)
         {
             Class GClass = GetClassFromCode(ClassCode);
+            if (!GClass.Students.Contains(GStudent)){
+                return new() { success = false, err = "Error: Class does not contain student." };
+            }
             Grade myGrade;
             myGrade = new()
             {
