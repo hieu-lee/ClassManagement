@@ -79,6 +79,7 @@
             MyGrades.Remove(s);
         }
         selectedGrades = new();
+        Snackbar.Add("Successfully deleted grades", Severity.Success);
     }
 
     private async Task DeleteGradeAsync(Grade grade)

@@ -176,14 +176,14 @@
             TodayClassesToDisplay = new();
             foreach (var cls in MyClasses)
             {
-                if (cls.Code == SearchClass)
+                if (cls.Code.Contains(SearchClass))
                 {
                     ClassesToDisplay.Add(cls);
                 }
             }
             foreach (var cls in TodayClasses)
             {
-                if (cls.Code == SearchClass)
+                if (cls.Code.Contains(SearchClass))
                 {
                     TodayClassesToDisplay.Add(cls);
                 }

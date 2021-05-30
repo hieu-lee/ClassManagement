@@ -93,7 +93,7 @@
             SearchClass = SearchClass.Trim().ToUpper();
             foreach (var student in MyStudents)
             {
-                if (student.Name.ToUpper() == SearchName && student.Classes.Contains(new() { Code = SearchClass }))
+                if (student.Name.ToUpper() == SearchName && student.Classes.Contains(new() { Code = SearchClass, OwnerUsername = session.UsernameState }))
                 {
                     StudentsToDisplay.Add(student);
                 }
@@ -105,7 +105,7 @@
             SearchClass = SearchClass.Trim().ToUpper();
             foreach (var student in MyStudents)
             {
-                if (student.Classes.Contains(new() { Code = SearchClass }))
+                if (student.Classes.Contains(new() { Code = SearchClass, OwnerUsername = session.UsernameState }))
                 {
                     StudentsToDisplay.Add(student);
                 }

@@ -4,49 +4,57 @@
 @inject NavigationManager navigationManager
 @inject SessionService session
 
-<div style="max-width: 550px; margin: 3ch auto; padding-bottom: 3ch;">
-    <h3 style="text-align: center;">Create new student record</h3>
-    <EditForm Model="@NewStudent" OnValidSubmit="SubmitForm">
-        <DataAnnotationsValidator />
-        <MudCard Style="border-top: 10px solid #594AE2">
-            <MudCardContent>
-                <MudTextField Label="Name" Required="true" HelperText="Must be non-empty"
-                              @bind-Value="NewStudent.Name" For="@(() => NewStudent.Name)" />
-                <MudDatePicker Label="Date of Birth" Required="true" @bind-Date="NewStudent.DateOfBirth" For="@(() => NewStudent.DateOfBirth)" />
-                <MudSelect Label="Gender" Required="true" @bind-Value="NewStudent.Gender" For="@(() => NewStudent.Gender)" T="string">
-                    <MudSelectItem Value="@("Male")" />
-                    <MudSelectItem Value="@("Female")" />
-                    <MudSelectItem Value="@("Other")" />
-                </MudSelect>
-                <MudTextField Label="Description" Class="mt-3"
-                              @bind-Value="NewStudent.Description" For="@(() => NewStudent.Description)" Lines="5" />
-                <ul style="margin-top: 10px;">
-                    @foreach (var Code in NewStudentCodes)
-                    {
-                        <li class="class-code" @onclick="@(() => { NewStudentCodes.Remove(Code); })">
-                            <span>@Code</span>
-                        </li>
-                    }
-                </ul>
-                <div>
-                    <h5 style="margin-top: 20px; text-align: center;">Add Class</h5>
-                    <MudSelect Label="Class" Required="true" @bind-Value="@NewCode" T="string">
-                        @foreach (var Code in ClassCodes)
-                        {
-                            <MudSelectItem T="string" Value="@Code">@Code</MudSelectItem>
-                        }
+@if (session.LoggedState)
+{
+    <div style="max-width: 550px; margin: 3ch auto; padding-bottom: 3ch;">
+        <h3 style="text-align: center;">Create new student record</h3>
+        <EditForm Model="@NewStudent" OnValidSubmit="SubmitForm">
+            <DataAnnotationsValidator />
+            <MudCard Style="border-top: 10px solid #594AE2">
+                <MudCardContent>
+                    <MudTextField Label="Name" Required="true" HelperText="Must be non-empty"
+                                  @bind-Value="NewStudent.Name" For="@(() => NewStudent.Name)" />
+                    <MudDatePicker Label="Date of Birth" Required="true" @bind-Date="NewStudent.DateOfBirth" For="@(() => NewStudent.DateOfBirth)" />
+                    <MudSelect Label="Gender" Required="true" @bind-Value="NewStudent.Gender" For="@(() => NewStudent.Gender)" T="string">
+                        <MudSelectItem Value="@("Male")" />
+                        <MudSelectItem Value="@("Female")" />
+                        <MudSelectItem Value="@("Other")" />
                     </MudSelect>
-                    <MudCardActions>
-                        <MudButton @onclick="AddNewClassCode" Variant="Variant.Outlined" Color="Color.Primary" Style="margin: 0 auto;">Add Class</MudButton>
-                    </MudCardActions>
-                </div>
-            </MudCardContent>
-            <MudCardActions>
-                <MudButton ButtonType="ButtonType.Submit" Variant="Variant.Filled" Color="Color.Primary" Style="margin: 0 auto;">Add Student Record</MudButton>
-            </MudCardActions>
-        </MudCard>
-    </EditForm>
-</div>
+                    <MudTextField Label="Description" Class="mt-3"
+                                  @bind-Value="NewStudent.Description" For="@(() => NewStudent.Description)" Lines="5" />
+                    <ul style="margin-top: 10px;">
+                        @foreach (var Code in NewStudentCodes)
+                        {
+                            <li class="class-code" @onclick="@(() => { NewStudentCodes.Remove(Code); })">
+                                <span>@Code</span>
+                            </li>
+                        }
+                    </ul>
+                    <div>
+                        <h5 style="margin-top: 20px; text-align: center;">Add Class</h5>
+                        <MudSelect Label="Class" Required="true" @bind-Value="@NewCode" T="string">
+                            @foreach (var Code in ClassCodes)
+                            {
+                                <MudSelectItem T="string" Value="@Code">@Code</MudSelectItem>
+                            }
+                        </MudSelect>
+                        <MudCardActions>
+                            <MudButton @onclick="AddNewClassCode" Variant="Variant.Outlined" Color="Color.Primary" Style="margin: 0 auto;">Add Class</MudButton>
+                        </MudCardActions>
+                    </div>
+                </MudCardContent>
+                <MudCardActions>
+                    <MudButton ButtonType="ButtonType.Submit" Variant="Variant.Filled" Color="Color.Primary" Style="margin: 0 auto;">Add Student Record</MudButton>
+                </MudCardActions>
+            </MudCard>
+        </EditForm>
+    </div>
+}
+else
+{
+    <MudProgressLinear Color="Color.Primary" Indeterminate="true" Class="my-7" />
+}
+
 
 @code {
     private HashSet<string> NewStudentCodes = new();

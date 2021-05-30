@@ -142,7 +142,7 @@ namespace ClassManagement.Services
         public async Task<ServiceResult> AddNewScheduleToClass(ClassSchedule schedule, string ClassId)
         {
             schedule.OwnerUsername = UsernameState;
-            var Class = dbContext.Classes.Find(ClassId);
+            var Class = dbContext.Classes.Where(s => s.Id == ClassId && s.OwnerUsername == UsernameState).FirstOrDefault();
             if (Class is null)
             {
                 return new() { success = false, err = "Class does not exist" };

@@ -5,52 +5,60 @@
 @inject ISnackbar Snackbar
 @inject NavigationManager navigationManager
 
-<div style="max-width: 550px; margin: 3ch auto; padding-bottom: 3ch;">
-    <h3 style="text-align: center;">Create new class</h3>
-    <EditForm Model="@NewClass" OnValidSubmit="SubmitForm">
-        <DataAnnotationsValidator />
-        <MudCard Style="border-top: 10px solid #594AE2">
-            <MudCardContent>
-                <MudTextField Label="Code" Required="true" HelperText="Must be unique, have at least 6 characters and less than 11 characters"
-                              @bind-Value="NewClass.Code" For="@(() => NewClass.Code)" />
-                <MudTextField Label="Name" Required="true" Class="mt-3"
-                              @bind-Value="NewClass.Name" For="@(() => NewClass.Name)" />
-                <MudTextField Label="Address" Class="mt-3"
-                              @bind-Value="NewClass.Address" For="@(() => NewClass.Address)" />
-                <MudTextField Label="Description" Class="mt-3"
-                              @bind-Value="NewClass.Description" For="@(() => NewClass.Description)" Lines="5" />
-                <ul style="margin-top: 10px;">
-                    @foreach (var schedule in DummyClass.Schedules)
-                    {
-                        <li class="schedule-item" @onclick="@(() => { DummyClass.Schedules.Remove(schedule); })">
-                            <span>@schedule.Day.ToString() from @schedule.StartTime.ToString() to @schedule.EndTime.ToString()</span>
-                        </li>
-                    }
-                </ul>
-                <EditForm Model="@NewSchedule" Context="FormInForm" OnValidSubmit="AddNewSchedule">
-                    <h5 style="margin-top: 20px; text-align: center;">Add schedule</h5>
-                    <MudSelect Label="Day of week" Required="true" @bind-Value="NewSchedule.Day" For="@(() => NewSchedule.Day)" T="DayOfWeek">
-                        <MudSelectItem Value="@DayOfWeek.Monday" />
-                        <MudSelectItem Value="@DayOfWeek.Tuesday" />
-                        <MudSelectItem Value="@DayOfWeek.Wednesday" />
-                        <MudSelectItem Value="@DayOfWeek.Thursday" />
-                        <MudSelectItem Value="@DayOfWeek.Friday" />
-                        <MudSelectItem Value="@DayOfWeek.Saturday" />
-                        <MudSelectItem Value="@DayOfWeek.Sunday" />
-                    </MudSelect>
-                    <MudTimePicker Required="true" @bind-Time="@NewSchedule.StartTime" For="@(() => NewSchedule.StartTime)" Label="Start Time" />
-                    <MudTimePicker Required="true" @bind-Time="@NewSchedule.EndTime" For="@(() => NewSchedule.EndTime)" Label="End Time" />
-                    <MudCardActions Style="margin-bottom: 5px; padding: 10px 0;">
-                        <MudButton ButtonType="ButtonType.Submit" Variant="Variant.Outlined" Color="Color.Primary" Style="margin: 0 auto;">Add New Schedule</MudButton>
-                    </MudCardActions>
-                </EditForm>
-            </MudCardContent>
-            <MudCardActions>
-                <MudButton ButtonType="ButtonType.Submit" Variant="Variant.Filled" Color="Color.Primary" Style="margin: 0 auto;">Add New Class</MudButton>
-            </MudCardActions>
-        </MudCard>
-    </EditForm>
-</div>
+@if (session.LoggedState)
+{
+    <div style="max-width: 550px; margin: 3ch auto; padding-bottom: 3ch;">
+        <h3 style="text-align: center;">Create new class</h3>
+        <EditForm Model="@NewClass" OnValidSubmit="SubmitForm">
+            <DataAnnotationsValidator />
+            <MudCard Style="border-top: 10px solid #594AE2">
+                <MudCardContent>
+                    <MudTextField Label="Code" Required="true" HelperText="Must be unique, have at least 6 characters and less than 11 characters"
+                                  @bind-Value="NewClass.Code" For="@(() => NewClass.Code)" />
+                    <MudTextField Label="Name" Required="true" Class="mt-3"
+                                  @bind-Value="NewClass.Name" For="@(() => NewClass.Name)" />
+                    <MudTextField Label="Address" Class="mt-3"
+                                  @bind-Value="NewClass.Address" For="@(() => NewClass.Address)" />
+                    <MudTextField Label="Description" Class="mt-3"
+                                  @bind-Value="NewClass.Description" For="@(() => NewClass.Description)" Lines="5" />
+                    <ul style="margin-top: 10px;">
+                        @foreach (var schedule in DummyClass.Schedules)
+                        {
+                            <li class="schedule-item" @onclick="@(() => { DummyClass.Schedules.Remove(schedule); })">
+                                <span>@schedule.Day.ToString() from @schedule.StartTime.ToString() to @schedule.EndTime.ToString()</span>
+                            </li>
+                        }
+                    </ul>
+                    <EditForm Model="@NewSchedule" Context="FormInForm" OnValidSubmit="AddNewSchedule">
+                        <h5 style="margin-top: 20px; text-align: center;">Add schedule</h5>
+                        <MudSelect Label="Day of week" Required="true" @bind-Value="NewSchedule.Day" For="@(() => NewSchedule.Day)" T="DayOfWeek">
+                            <MudSelectItem Value="@DayOfWeek.Monday" />
+                            <MudSelectItem Value="@DayOfWeek.Tuesday" />
+                            <MudSelectItem Value="@DayOfWeek.Wednesday" />
+                            <MudSelectItem Value="@DayOfWeek.Thursday" />
+                            <MudSelectItem Value="@DayOfWeek.Friday" />
+                            <MudSelectItem Value="@DayOfWeek.Saturday" />
+                            <MudSelectItem Value="@DayOfWeek.Sunday" />
+                        </MudSelect>
+                        <MudTimePicker Required="true" @bind-Time="@NewSchedule.StartTime" For="@(() => NewSchedule.StartTime)" Label="Start Time" />
+                        <MudTimePicker Required="true" @bind-Time="@NewSchedule.EndTime" For="@(() => NewSchedule.EndTime)" Label="End Time" />
+                        <MudCardActions Style="margin-bottom: 5px; padding: 10px 0;">
+                            <MudButton ButtonType="ButtonType.Submit" Variant="Variant.Outlined" Color="Color.Primary" Style="margin: 0 auto;">Add New Schedule</MudButton>
+                        </MudCardActions>
+                    </EditForm>
+                </MudCardContent>
+                <MudCardActions>
+                    <MudButton ButtonType="ButtonType.Submit" Variant="Variant.Filled" Color="Color.Primary" Style="margin: 0 auto;">Add New Class</MudButton>
+                </MudCardActions>
+            </MudCard>
+        </EditForm>
+    </div>
+}
+else
+{
+    <MudProgressLinear Color="Color.Primary" Indeterminate="true" Class="my-7" />
+}
+
 
 @code {
     private Class NewClass = new();

@@ -29,7 +29,7 @@
             <MudTd DataLabel="Grade in number">@context.GradeinNum</MudTd>
             <MudTd DataLabel="Relevance">@context.RelativeValue</MudTd>
             <MudTd DataLabel="Exam Name">@context.ExamName</MudTd>
-            <MudTh DataLabel="Exam Date">@context.ExamTime.Value.ToShortDateString()</MudTh>
+            <MudTd DataLabel="Exam Date">@context.ExamTime.Value.ToShortDateString()</MudTd>
             <MudIconButton OnClick="@(async () => { await DeleteGradeAsync(context); })"
                            Icon="@Icons.Material.Filled.Delete">Delete grade</MudIconButton>
         </RowTemplate>
@@ -79,6 +79,7 @@
             MyGrades.Remove(s);
         }
         selectedGrades = new();
+        Snackbar.Add("Successfully deleted grades", Severity.Success);
     }
 
     private async Task DeleteGradeAsync(Grade grade)
