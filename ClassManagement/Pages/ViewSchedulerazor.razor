@@ -1,0 +1,19 @@
+﻿@page "/Schedules"
+@inject ClassesService classesService
+@inject ISnackbar Snackbar
+
+<MudContainer MaxWidth="MaxWidth.Large">
+    <MudText Style="text-align: center;" Typo="Typo.h3">Student Records</MudText>
+    @if (loading)
+    {
+        <MudProgressLinear Color="Color.Primary" Indeterminate="true" Class="my-7" />
+        <MudText Typo="Typo.h3" Style="text-align: center;">Getting student records</MudText>
+    }
+    else
+    {
+    }
+</MudContainer>
+
+@code {
+    private bool loading = true;
+}
