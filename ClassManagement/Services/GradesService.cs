@@ -46,7 +46,14 @@ namespace ClassManagement.Services
             var clss2 = dbContext.Classes.Where(s => s.Code == classCode && s.OwnerUsername == UsernameState).FirstOrDefault();
             return clss2;
         }
-        
+
+        public Class GetClassWithStudentsFromCode(string classCode)
+        {
+            var clss2 = dbContext.Classes.Where(s => s.Code == classCode && s.OwnerUsername == UsernameState).Include(s => s.Students).FirstOrDefault();
+            return clss2;
+        }
+
+
         public ServiceResult GetGradesFromStudent(Student std)
         {
             var grades = new SortedSet<Grade>(dbContext.Grades.Where(s => s.StudentId == std.Id && s.OwnerUsername == UsernameState).ToArray());
@@ -172,7 +179,7 @@ namespace ClassManagement.Services
 
         public async Task<ServiceResult> CreateNewGradeAsyncBetter(Grade NewGrade, string ClassCode, Student GStudent)
         {
-            Class GClass = GetClassFromCode(ClassCode);
+            Class GClass = GetClassWithStudentsFromCode(ClassCode);
             if (!GClass.Students.Contains(GStudent)){
                 return new() { success = false, err = "Error: Class does not contain student." };
             }
