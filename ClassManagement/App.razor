@@ -16,7 +16,7 @@
     <NotFound>
         <LayoutView Layout="@typeof(MainLayout)">
             <MudContainer MaxWidth="MaxWidth.Large">
-                <MudText Style="margin-top:1ch;" Align="Align.Center" Typo="Typo.h5">Exploring new things is good, but new urls isn't, please go back &#128529;</MudText>
+                <MudText Style="margin-top:1ch;" Align="Align.Center" Typo="Typo.h5">@WarningMessage &#128529;</MudText>
             </MudContainer>
         </LayoutView>
     </NotFound>
@@ -29,6 +29,15 @@
     HashSet<ClassSchedule> NotifiedSchedules = new();
     Timer notificationTimer = new(30000);
     IJSObjectReference module;
+    string WarningMessage => GetWarningMessage();
+    static readonly string[] NotFoundMessages =
+    {
+        "Exploring new things is good, but new urls isn't, please go back",
+        "You are trespassing User no baka",
+        "Are you trying to find something mysterious? Well, there isn't, so please go back",
+        "Wow, you found me User! Let me introduce myself, I am a warning message to tell you to go back",
+        "Excuse me! I am trying to have some privacy here! Please go back, I don't wanna see you again"
+    };
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
@@ -57,6 +66,12 @@
                 await PushNotification();
             };
         }
+    }
+
+    private string GetWarningMessage()
+    {
+        var rnd = new Random();
+        return NotFoundMessages[rnd.Next(0, 5)];
     }
 
     public async Task<ClassSchedule> GetOneNextScheduleAsync(DateTime Date, HashSet<ClassSchedule> NotifiedSchedule)
