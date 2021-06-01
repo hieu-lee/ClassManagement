@@ -75,9 +75,10 @@ namespace ClassManagement.Services
             return new() { svStudent = res };
         }
 
-        public ServiceResult GetAllNotes()
+        public async Task<ServiceResult> GetAllNotesFromClass(string ClassId)
         {
-            var notes = new SortedSet<ClassNote>(dbContext.ClassNotes.Where(s => s.OwnerUsername == UsernameState).ToArray());
+            var res = await dbContext.ClassNotes.Where(s => s.ClassroomCode == ClassId && s.OwnerUsername == UsernameState).ToArrayAsync();
+            var notes = new SortedSet<ClassNote>(res);
             return new() { success = true, Notes = notes };
         }
 
@@ -244,16 +245,16 @@ namespace ClassManagement.Services
             return new() { success = false, err = "The student doesn't exist" };
         }
 
-        public async Task<ServiceResult> DeleteNote(string NoteId)
+        public async Task<ServiceResult> DeleteNoteAsync(string NoteId)
         {
-            var Note = dbContext.ClassNotes.Find(NoteId);
+            var Note = await dbContext.ClassNotes.Where(s => s.Id == NoteId && s.OwnerUsername == UsernameState).FirstOrDefaultAsync();
             if (Note is not null)
             {
                 dbContext.ClassNotes.Remove(Note);
                 await dbContext.SaveChangesAsync();
                 return new() { success = true };
             }
-            return new() { success = false, err = "Note doesn't exist" };
+            return new() { success = false, err = "Note doesn not exist" };
         }
 
         public async Task<ServiceResult> DeleteSchedule(string ScheduleId)

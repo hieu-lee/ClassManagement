@@ -1,0 +1,105 @@
+﻿@inject ClassesService classesService
+@inject ISnackbar Snackbar
+
+@if (loading)
+{
+    <MudProgressLinear Color="Color.Primary" Indeterminate="true" Class="my-7" />
+    <MudText Typo="Typo.h3" Style="text-align: center;">Getting your notes</MudText>
+}
+else
+{
+    <div class="search" style="margin-top: 5ch; display: flex; justify-content: space-between;">
+        <div>
+            <MudDatePicker Style="max-width: 45ch;" @bind-Date="@SearchDate" Label="Date" />
+        </div>
+        <div style="display: flex; align-items: center;">
+            <div>
+                <MudTooltip Text="Search">
+                    <MudIconButton @onclick="DisplaySearchNotes">
+                        <MudIcon Style="width: 2.5ch; height: 2.5ch; color: #594AE2" Icon="@Icons.Material.Filled.Search" />
+                    </MudIconButton>
+                </MudTooltip>
+                <MudTooltip Text="Clear Filter">
+                    <MudIconButton @onclick="@(() => { SearchDate = null; DisplaySearchNotes(); })">
+                        <MudIcon Style="width: 2.5ch; height: 2.5ch;" Icon="@Icons.Material.Filled.SearchOff" />
+                    </MudIconButton>
+                </MudTooltip>
+            </div>
+        </div>
+    </div>
+    <hr />
+    <div>
+        @if (DisplayNotes.Any())
+        {
+            <ul>
+                <Virtualize Items="DisplayNotes" Context="note">
+                    <li>
+                        <NoteItem OnDeleteClick="() => { DeleteNoteAsync(note); }" MyNote="note" />
+                        <hr />
+                    </li>
+                </Virtualize>
+            </ul>
+        }
+        else
+        {
+            <MudText Align="Align.Center" Typo="Typo.h3">There is no note to display</MudText>
+        }
+    </div>
+}
+
+
+@code {
+    [Parameter]
+    public string ClassId { get; set; }
+
+    private DateTime? SearchDate;
+    private bool loading = true;
+    private SortedSet<ClassNote> MyNotes;
+    private SortedSet<ClassNote> DisplayNotes = new();
+
+    protected override async Task OnInitializedAsync()
+    {
+        var res = await classesService.GetAllNotesFromClass(ClassId);
+        MyNotes = res.Notes;
+        DisplayNotes = MyNotes;
+        loading = false;
+    }
+
+    private async Task DeleteNoteAsync(ClassNote Note)
+    {
+        var task = classesService.DeleteNoteAsync(Note.Id);
+        DisplayNotes.Remove(Note);
+        MyNotes.Remove(Note);
+        var res = await task;
+        if (res.success)
+        {
+            Snackbar.Add("Successfully deleted note", Severity.Success);
+            return;
+        }
+        else
+        {
+            Snackbar.Add(res.err, Severity.Error);
+            return;
+        }
+    }
+
+    private void DisplaySearchNotes()
+    {
+        if (SearchDate is not null)
+        {
+            DisplayNotes = new();
+            foreach (var note in MyNotes)
+            {
+                if (note.Day.Value == SearchDate.Value)
+                {
+                    DisplayNotes.Add(note);
+                }
+            }
+        }
+        else
+        {
+            DisplayNotes = MyNotes;
+        }
+    }
+}
+

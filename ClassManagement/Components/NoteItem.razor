@@ -1,0 +1,26 @@
+﻿<div style="display:flex; justify-content: space-between;">
+    <div style="display:flex;">
+        <div style="display: flex; align-items: center">
+            <MudIcon Icon="@Icons.Material.Filled.EventNote" Size="Size.Medium"/>
+        </div>
+        <div style="max-width: 50ch; overflow-y: scroll; margin-left: 1ch;">
+            <MudText Typo="Typo.body1">@(MyNote.Day?.ToShortDateString())<br />@MyNote.Content</MudText>
+        </div>
+    </div>
+    <div>
+        <div>
+            <MudTooltip Text="Delete">
+                <MudIconButton @onclick="@(() => OnDeleteClick.InvokeAsync())">
+                    <MudIcon Icon="@Icons.Material.Filled.Delete" Style="color: red" />
+                </MudIconButton>
+            </MudTooltip>
+        </div>
+    </div>
+</div>
+
+@code {
+    [Parameter]
+    public ClassNote MyNote { get; set; }
+    [Parameter]
+    public EventCallback OnDeleteClick { get; set; }
+}

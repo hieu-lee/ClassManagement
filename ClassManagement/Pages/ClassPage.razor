@@ -81,14 +81,20 @@
             <MudTabPanel Text="Students">
                 <StudentsFromClassItem @bind-Students="@MyClass.Students" ClassId="@Id" />
             </MudTabPanel>
+            <MudTabPanel Text="Add Student">
+                <AddStudentToClassItem @bind-Students="@MyClass.Students" ClassCode="@Code" ClassId="@Id" />
+            </MudTabPanel>
             <MudTabPanel Text="Grades Table">
                 <ClassGradesTableItem ClassId="@Id" OnGradesChange="async () => { AverageGrade = await gradesService.CalculateAverageGradeOfClass(Id); }" ClassCode="@Code" />
             </MudTabPanel>
             <MudTabPanel Text="Grades Chart">
                 <ClassGradesChartItem ClassId="@Id" ClassCode="@Code" />
             </MudTabPanel>
-            <MudTabPanel Text="Add Student">
-                <AddStudentToClassItem @bind-Students="@MyClass.Students" ClassCode="@Code" ClassId="@Id"/>
+            <MudTabPanel Text="Notes">
+                <ClassNotesItem ClassId="@Id"/>
+            </MudTabPanel>
+            <MudTabPanel Text="Add Note">
+                <AddNoteItem ClassId="@Id" ClassCode="@Code"/>
             </MudTabPanel>
         </MudTabs>
     }
@@ -104,6 +110,7 @@
     private Class MyClass;
     private ClassSchedule NewSchedule;
     private bool loading = true;
+    private ClassNote note = new() { Day = DateTime.Now.Date, Content="This is a note"};
 
     protected override async Task OnInitializedAsync()
     {

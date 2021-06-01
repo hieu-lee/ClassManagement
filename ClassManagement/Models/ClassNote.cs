@@ -9,7 +9,7 @@ namespace ClassManagement.Models
         [Key]
         public string Id { get; init; } = Guid.NewGuid().ToString();
         [Required]
-        public DateTime Day { get; init; }
+        public DateTime? Day { get; set; }
         public string Content { get; set; }
         [ForeignKey("Classroom")]
         public string ClassroomCode { get; set; }
@@ -22,7 +22,7 @@ namespace ClassManagement.Models
 
         public int CompareTo(ClassNote other)
         {
-            return -Day.CompareTo(other.Day);
+            return -Day.Value.CompareTo(other.Day.Value);
         }
 
         public override bool Equals(object obj)
