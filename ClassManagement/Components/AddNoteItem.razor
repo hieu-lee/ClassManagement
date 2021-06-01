@@ -25,14 +25,14 @@
 
     protected override void OnInitialized()
     {
-        NewNote = new() { ClassroomCode = ClassId };
+        NewNote = new() { ClassroomId = ClassId };
     }
 
     private async Task SubmitForm()
     {
         NewNote.Content = NewNote.Content[0].ToString().ToUpper() + NewNote.Content.Substring(1);
         await classesService.AddNewNote(NewNote);
-        NewNote = new() { ClassroomCode = ClassId };
+        NewNote = new() { ClassroomId = ClassId };
         Snackbar.Add($"Successfully added new note to {ClassCode}", Severity.Success);
     }
 }

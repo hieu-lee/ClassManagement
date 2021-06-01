@@ -77,15 +77,9 @@ namespace ClassManagement.Services
 
         public async Task<ServiceResult> GetAllNotesFromClass(string ClassId)
         {
-            var res = await dbContext.ClassNotes.Where(s => s.ClassroomCode == ClassId && s.OwnerUsername == UsernameState).ToArrayAsync();
+            var res = await dbContext.ClassNotes.Where(s => s.ClassroomId == ClassId && s.OwnerUsername == UsernameState).ToArrayAsync();
             var notes = new SortedSet<ClassNote>(res);
             return new() { success = true, Notes = notes };
-        }
-
-        public ServiceResult GetNotesFromDay(DateTime Day)
-        {
-            var notes = dbContext.ClassNotes.Where(s => s.Day == Day && s.OwnerUsername == UsernameState).ToHashSet();
-            return new() { success = true, DayNotes = notes };
         }
 
         public async Task<Grade[]> GetGradesFromClassAsync(string ClassId)

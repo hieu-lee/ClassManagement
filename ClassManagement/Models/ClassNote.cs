@@ -12,7 +12,7 @@ namespace ClassManagement.Models
         public DateTime? Day { get; set; }
         public string Content { get; set; }
         [ForeignKey("Classroom")]
-        public string ClassroomCode { get; set; }
+        public string ClassroomId { get; set; }
         [Required]
         public Class Classroom { get; init; }
 
