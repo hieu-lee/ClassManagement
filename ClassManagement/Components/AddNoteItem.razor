@@ -3,7 +3,7 @@
 
 <div style="max-width: 550px; margin: 3ch auto; padding-bottom: 3ch;">
     <h3 style="text-align: center;">Create new class</h3>
-    <EditForm Model="@NewNote" OnSubmit="SubmitForm">
+    <EditForm Model="@NewNote" OnValidSubmit="SubmitForm">
         <MudCard Style="border-top: 10px solid #594AE2; padding: 0 3ch;">
             <MudCardContent>
                 <MudDatePicker Required="true" Label="Date" @bind-Date="NewNote.Day" For="@(() => NewNote.Day)" />
