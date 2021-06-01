@@ -15,7 +15,9 @@
     </Found>
     <NotFound>
         <LayoutView Layout="@typeof(MainLayout)">
-            <p>Sorry, there's nothing at this address.</p>
+            <MudContainer MaxWidth="MaxWidth.Large">
+                <MudText Style="margin-top:1ch;" Align="Align.Center" Typo="Typo.h5">Exploring new things is good, but new urls isn't, please go back &#128529;</MudText>
+            </MudContainer>
         </LayoutView>
     </NotFound>
 </Router>

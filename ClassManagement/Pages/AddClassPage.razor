@@ -48,7 +48,14 @@
                     </EditForm>
                 </MudCardContent>
                 <MudCardActions>
-                    <MudButton ButtonType="ButtonType.Submit" Variant="Variant.Filled" Color="Color.Primary" Style="margin: 0 auto;">Add New Class</MudButton>
+                    @if (ButtonLoading)
+                    {
+                        <MudProgressCircular Style="margin: 0 auto;" Color="Color.Primary" Indeterminate="true" />
+                    }
+                    else
+                    {
+                        <MudButton ButtonType="ButtonType.Submit" Variant="Variant.Filled" Color="Color.Primary" Style="margin: 0 auto;">Add New Class</MudButton>
+                    }
                 </MudCardActions>
             </MudCard>
         </EditForm>
@@ -61,6 +68,7 @@ else
 
 
 @code {
+    private bool ButtonLoading = false;
     private Class NewClass = new();
     private Class DummyClass = new() { Code = "BAKA02", Name = "Baka" };
     private ClassSchedule NewSchedule;
@@ -113,6 +121,7 @@ else
             Snackbar.Add("Your class must have at least one schedule", Severity.Error);
             return;
         }
+        ButtonLoading = true;
         NewClass.Code = NewClass.Code.Trim().ToUpper();
         NewClass.Name = NewClass.Name.Trim();
         NewClass.Name = NewClass.Name.First().ToString().ToUpper() + NewClass.Name.Substring(1);
@@ -122,6 +131,7 @@ else
             NewClass.Schedules.Add(schedule);
         });
         var res = await classesService.CreateNewClass(NewClass);
+        ButtonLoading = false;
         if (res.success)
         {
             NewClass = new();

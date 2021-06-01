@@ -10,7 +10,14 @@
                 <MudTextField Required="true" Label="Content" HelperText="Must be non-empty" @bind-Value="NewNote.Content" For="@(() => NewNote.Content)" />
             </MudCardContent>
             <MudCardActions Style="margin-bottom: 1ch;">
-                <MudButton ButtonType="ButtonType.Submit" Variant="Variant.Filled" Color="Color.Primary" Style="margin: 0 auto;">Add Note</MudButton>
+                @if (ButtonLoading)
+                {
+                    <MudProgressCircular Style="margin: 0 auto;" Color="Color.Primary" Indeterminate="true" />
+                }
+                else
+                {
+                    <MudButton ButtonType="ButtonType.Submit" Variant="Variant.Filled" Color="Color.Primary" Style="margin: 0 auto;">Add Note</MudButton>
+                }
             </MudCardActions>
         </MudCard>
     </EditForm>
@@ -22,6 +29,7 @@
     [Parameter]
     public string ClassCode { get; set; }
     private ClassNote NewNote;
+    private bool ButtonLoading = false;
 
     protected override void OnInitialized()
     {
@@ -30,9 +38,11 @@
 
     private async Task SubmitForm()
     {
+        ButtonLoading = true;
         NewNote.Content = NewNote.Content[0].ToString().ToUpper() + NewNote.Content.Substring(1);
         await classesService.AddNewNote(NewNote);
         NewNote = new() { ClassroomId = ClassId };
+        ButtonLoading = false;
         Snackbar.Add($"Successfully added new note to {ClassCode}", Severity.Success);
     }
 }

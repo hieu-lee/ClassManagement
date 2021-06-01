@@ -43,7 +43,14 @@
                     </div>
                 </MudCardContent>
                 <MudCardActions>
-                    <MudButton @onclick="AddNewGrade" Variant="Variant.Outlined" Color="Color.Primary" Style="margin: 0 auto;">Add Grade</MudButton>
+                    @if (ButtonLoading)
+                    {
+                        <MudProgressCircular Style="margin: 0 auto;" Color="Color.Primary" Indeterminate="true" />
+                    }
+                    else
+                    {
+                        <MudButton @onclick="AddNewGrade" Variant="Variant.Outlined" Color="Color.Primary" Style="margin: 0 auto;">Add Grade</MudButton>
+                    }
                 </MudCardActions>
 
             </MudCard>
@@ -63,6 +70,7 @@ else
     private Grade NewGrade = new();
     private List<string> ClassCodes;
     private List<MudSelectItem<string>> smts = new();
+    private bool ButtonLoading = false;
     public SortedSet<Student> AllStudents;
     public HashSet<Student> Students;
 
@@ -119,8 +127,9 @@ else
             Snackbar.Add("Grade in Num must be between 1 and 10", Severity.Error);
             return;
         }
-
+        ButtonLoading = true;
         var res = await gradesService.CreateNewGradeAsyncBetter(NewGrade, ClassCode, gradeStudent);
+        ButtonLoading = false;
         if (!res.success)
         {
             Snackbar.Add(res.err, Severity.Error);

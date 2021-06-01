@@ -44,7 +44,14 @@
                     </div>
                 </MudCardContent>
                 <MudCardActions>
-                    <MudButton ButtonType="ButtonType.Submit" Variant="Variant.Filled" Color="Color.Primary" Style="margin: 0 auto;">Add Student Record</MudButton>
+                    @if (ButtonLoading)
+                    {
+                        <MudProgressCircular Style="margin: 0 auto;" Color="Color.Primary" Indeterminate="true" />
+                    }
+                    else
+                    {
+                        <MudButton ButtonType="ButtonType.Submit" Variant="Variant.Filled" Color="Color.Primary" Style="margin: 0 auto;">Add Student Record</MudButton>
+                    }
                 </MudCardActions>
             </MudCard>
         </EditForm>
@@ -62,6 +69,7 @@ else
     private Student NewStudent = new();
     private List<string> ClassCodes;
     private List<MudSelectItem<string>> smts = new();
+    private bool ButtonLoading = false;
 
     protected override async Task OnInitializedAsync()
     {
@@ -75,6 +83,7 @@ else
 
     private async Task SubmitForm()
     {
+        ButtonLoading = true;
         var names = NewStudent.Name.Trim().ToLower().Split(' ');
         var name = "";
         for (int i = 0; i < names.Length; i++)
@@ -92,6 +101,7 @@ else
         NewStudent = new();
         NewStudentCodes = new();
         await task;
+        ButtonLoading = false;
         Snackbar.Add("Successfully added new student record", Severity.Success);
         return;
     }
