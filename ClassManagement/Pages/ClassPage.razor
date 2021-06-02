@@ -21,12 +21,33 @@
                         @Code - @MyClass.Name
                     </MudText>
                     <hr />
-                    <MudText Typo="Typo.h4">
-                        General Description
-                    </MudText>
-                    <MudText Typo="Typo.body1" Style="margin-top: 1ch;">
-                        @((string.IsNullOrWhiteSpace(MyClass.Description)) ? "This class has no description": MyClass.Description)
-                    </MudText>
+                    <div style="display: flex; justify-content: space-between; ">
+                        <div>
+                            <MudText Typo="Typo.h4">
+                                General Description
+                            </MudText>
+                            @if (DescriptionEditMode)
+                            {
+                                <MudTextField Style="margin-top: 1ch" Placeholder="Description" @bind-Value="MyClass.Description" Lines="3"/>
+                            }
+                            else
+                            {
+                                <MudText Style="margin-top: 1ch; max-width: 50ch;" Typo="Typo.body1">
+                                    @((string.IsNullOrWhiteSpace(MyClass.Description)) ? "This class has no description": MyClass.Description)
+                                </MudText>
+                            }
+                        </div>
+                        <div style="display: flex; align-items: center;">
+                            <div style="display:flex;">
+                                <MudIconButton OnClick="SaveDescriptionAsync" Style="@($"display: {SaveButtonDisplay}")">
+                                    <MudIcon Icon="@Icons.Material.Filled.Save" />
+                                </MudIconButton>
+                                <MudIconButton Style="margin-left:0.5ch;" OnClick="@(() => { DescriptionEditMode = !DescriptionEditMode; })">
+                                    <MudIcon Icon="@EditIcon" />
+                                </MudIconButton>
+                            </div>
+                        </div>
+                    </div>
                     <hr />
                     <MudText Typo="Typo.h4">
                         Address and Schedules
@@ -106,6 +127,9 @@
     public string Code { get; set; }
     [Parameter]
     public string Id { get; set; }
+    private bool DescriptionEditMode = false;
+    private string EditIcon => DescriptionEditMode ? @Icons.Material.Filled.EditOff : @Icons.Material.Filled.Edit;
+    private string SaveButtonDisplay => DescriptionEditMode ? "block" : "none";
     private double AverageGrade { get; set; }
     private Class MyClass;
     private ClassSchedule NewSchedule;
@@ -139,6 +163,12 @@
             return;
         }
         Snackbar.Add(res.err, Severity.Error);
+    }
+
+    private async Task SaveDescriptionAsync()
+    {
+        await classesService.SaveClassDescriptionAsync(MyClass.Description, Id);
+        Snackbar.Add("Saved new description", Severity.Success);
     }
 
     private async Task AddNewScheduleToClass()

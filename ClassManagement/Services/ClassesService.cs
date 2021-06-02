@@ -173,6 +173,22 @@ namespace ClassManagement.Services
             return new() { success = true };
         }
 
+        public async Task SaveClassDescriptionAsync(string description, string ClassId)
+        {
+            var cls = await dbContext.Classes.Where(s => s.Id == ClassId && s.OwnerUsername == UsernameState).FirstOrDefaultAsync();
+            cls.Description = description;
+            dbContext.Classes.Update(cls);
+            await dbContext.SaveChangesAsync();
+        }
+
+        public async Task SaveStudentDescriptionAsync(string description, string StudentId)
+        {
+            var std = await dbContext.Students.Where(s => s.Id == StudentId && s.OwnerUsername == UsernameState).FirstOrDefaultAsync();
+            std.Description = description;
+            dbContext.Students.Update(std);
+            await dbContext.SaveChangesAsync();
+        }
+
         public async Task<ServiceResult> DeleteStudentFromClass(string studentId, string ClassId)
         {
             var Class = dbContext.Classes.Where(s => s.Id == ClassId).Include(s => s.Students).FirstOrDefault();

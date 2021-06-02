@@ -3,6 +3,7 @@
 @inject GradesService gradesService
 @inject NavigationManager navigationManager
 @inject SessionService session
+@inject ISnackbar Snackbar
 
 <MudContainer MaxWidth="MaxWidth.Large">
     <MudCard Style="padding: 5ch 3ch 10ch 3ch; margin: 3ch 0; background: #7467EF;">
@@ -39,9 +40,28 @@
                         </div>
                     </div>
                     <div>
-                        <div class="description" style="height: 20ch; overflow-y: scroll">
-                            <MudText Typo="Typo.h4">Description</MudText>
-                            <MudText Typo="Typo.body1">@Description</MudText>
+                        <div class="description" style="display: flex; justify-content: space-between; height: 20ch; overflow-y: scroll">
+                            <div>
+                                <MudText Typo="Typo.h4">Description</MudText>
+                                @if (DescriptionEditMode)
+                                {
+                                    <MudTextField Style="width: 25.4ch; margin-top: 0.5ch;" Placeholder="Description" Lines="3" @bind-Value="MyStudent.Description"/>
+                                }
+                                else
+                                {
+                                    <MudText Typo="Typo.body1">@Description</MudText>
+                                }
+                            </div>
+                            <div style="display: flex; margin-left: 3ch;">
+                                <div>
+                                    <MudIconButton Style="margin-bottom:0.5ch;" OnClick="@(() => { DescriptionEditMode = !DescriptionEditMode; })">
+                                        <MudIcon Icon="@EditIcon" />
+                                    </MudIconButton>
+                                    <MudIconButton OnClick="SaveDescriptionAsync" Style="@($"display: {SaveButtonDisplay}")">
+                                        <MudIcon Icon="@Icons.Material.Filled.Save" />
+                                    </MudIconButton>
+                                </div>
+                            </div>
                         </div>
                         <div class="Grades">
                             <MudText Typo="Typo.h4">Grades Overview</MudText>
@@ -67,6 +87,9 @@
 @code {
     [Parameter]
     public string Id { get; set; }
+    private bool DescriptionEditMode = false;
+    private string EditIcon => DescriptionEditMode ? @Icons.Material.Filled.EditOff : @Icons.Material.Filled.Edit;
+    private string SaveButtonDisplay => DescriptionEditMode ? "block" : "none";
     private Student MyStudent { get; set; } = new();
     private string Description => (string.IsNullOrWhiteSpace(MyStudent.Description)) ? "This student has no description" : MyStudent.Description;
     private Dictionary<string, double> AverageGrades = new();
@@ -88,5 +111,11 @@
     {
         var avgGradeRes = await gradesService.GetAverageGradesFromStudentAndClasses(MyStudent.Classes, Id); ;
         AverageGrades = avgGradeRes.AverageGrades;
+    }
+
+    private async Task SaveDescriptionAsync()
+    {
+        await classesService.SaveStudentDescriptionAsync(MyStudent.Description, Id);
+        Snackbar.Add("Saved new description", Severity.Success);
     }
 }
