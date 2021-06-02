@@ -6,21 +6,29 @@
 @inject SessionService session
 @using ClassManagement.Components
 
+<MudContainer MaxWidth="MaxWidth.Large">
+    <MudCard Elevation="5" Style="margin-top: 5ch; padding: 1ch 0 10ch 0;">
+        <MudText Typo="Typo.h4" Align="Align.Center">My Week</MudText>
+        <div style="display: flex; justify-content: center; margin-top: 1ch;">
+            <div style="display:flex; border: 1.5px solid grey; border-radius: 10px;">
+            @for (int i = 0; i < 7; i++)
+            {
+                <div style="display: block; justify-content: center; margin: 2ch 0; text-align: center; min-height: 80ch; width: 17ch; border-right: @CollumnBorder(i)">
+                    <h4 style="@GetDayStyle(i)">@GetDay(i)</h4>
+                    <DayColumn day=i schedules=data[i] />
+                </div>
+            }
+            </div>
+        </div>      
+    </MudCard>
+</MudContainer>
 
 
-<div style="display:flex; justify-content: center;">
-    @for (int i = 0; i < 7; i++)
-    {
-        <div style="display: block; justify-content: center; margin: 2ch 2ch; max-width: 120px;">
-            <h4>@GetDay(i)</h4>
-            <DayColumn day=i schedules=data[i] />
-        </div>
-    }
-    </div>
 
 @code {
     SortedSet<ClassSchedule>[] data = new SortedSet<ClassSchedule>[7];
     SortedSet<ClassSchedule> AllSchedules;
+    string CollumnBorder(int i) => (i == 6) ? "none;" : "1px dashed #f0f0f0;";
 
     protected override void OnInitialized()
     {
@@ -34,7 +42,6 @@
         {
             if (data[i] is null)
             data[i] = GetSchedulesDayOfWeek(i);
-
         }
 
     }
@@ -60,12 +67,23 @@
 
     public string GetDay(int i)
     {
-        if (i == 0) return "Monday";
-        else if (i == 1) return "Tuesday";
-        else if (i == 2) return "Wednesday";
-        else if (i == 3) return "Thursday";
-        else if (i == 4) return "Friday";
-        else if (i == 5) return "Saturday";
-        else return "Sunday";
+        if (i == 0) return "MON";
+        else if (i == 1) return "TUE";
+        else if (i == 2) return "WED";
+        else if (i == 3) return "THU";
+        else if (i == 4) return "FRI";
+        else if (i == 5) return "SAT";
+        else return "SUN";
+    }
+
+    private string GetDayStyle(int i)
+    {
+        i = (i + 1) % 7;
+        var today = (int)DateTime.Now.DayOfWeek;
+        if (i == today)
+        {
+            return "color: #5D5CD9";
+        }
+        return "";
     }
 }
