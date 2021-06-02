@@ -30,10 +30,13 @@
     SortedSet<ClassSchedule> AllSchedules;
     string CollumnBorder(int i) => (i == 6) ? "none;" : "1px dashed #f0f0f0;";
 
-    protected override void OnInitialized()
+    protected override async Task OnInitializedAsync()
     {
-        base.OnInitialized();
-
+        if (!session.LoggedState)
+        {
+            NavManager.NavigateTo("/");
+            return;
+        }
         if (AllSchedules is null)
         {
             AllSchedules = gradesService.GetAllSchedules();
@@ -41,7 +44,7 @@
         for (int i=0; i < 7; i++)
         {
             if (data[i] is null)
-            data[i] = GetSchedulesDayOfWeek(i);
+                data[i] = GetSchedulesDayOfWeek(i);
         }
 
     }
