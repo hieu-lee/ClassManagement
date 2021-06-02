@@ -1,0 +1,28 @@
+﻿
+@inject ClassesService classesService
+@inject ISnackbar Snackbar
+@inject GradesService gradesService
+@inject NavigationManager NavManager
+@inject SessionService session
+    @foreach (var s in schedules)
+    {     
+        <div style="margin: 3ch 3ch;">
+            <span style="font-size: 16px;">@s.ClassCode, from @s.StartTime.Value.ToString(@"hh\:mm") 
+            to @s.EndTime.Value.ToString(@"hh\:mm")</span>
+        </div>
+    }
+
+
+@code {
+    [Parameter]
+    public SortedSet<ClassSchedule> schedules { get; set; }
+
+    [Parameter]
+    public int day { get; set; }
+
+    protected override void OnInitialized()
+    {
+        base.OnInitialized();
+
+    }
+}
