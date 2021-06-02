@@ -27,19 +27,26 @@
                     <DataAnnotationsValidator />
                     <MudCard Style="border-top: 10px solid #594AE2">
                         <MudCardContent>
-                            <MudTextField  Label="Username" Required="true" HelperText="Must be non-empty"
+                            <MudTextField Label="Username" Required="true" HelperText="Must be non-empty"
                                           @bind-Value="NewAccount.Username" For="@(() => NewAccount.Username)" />
                             <MudTextField InputType="InputType.Password" Label="Password" Required="true" HelperText="Must be between 6 and 15 characters"
                                           @bind-Value="NewAccount.Password" For="@(() => NewAccount.Password)" />
                         </MudCardContent>
 
                         <MudCardActions>
-                            <MudButton ButtonType="ButtonType.Submit" Variant="Variant.Outlined" Color="Color.Primary" Style="margin: 0 auto;">Login</MudButton>
+                            @if (ButtonLoading)
+                            {
+                                <MudProgressCircular Style="margin: 0 auto;" Color="Color.Primary" Indeterminate="true" />
+                            }
+                            else
+                            {
+                                <MudButton ButtonType="ButtonType.Submit" Variant="Variant.Outlined" Color="Color.Primary" Style="margin: 0 auto;">Login</MudButton>
+                            }
                         </MudCardActions>
                         <div style="display: flex; justify-content: center;">
                             <div style="margin-bottom: 1.5ch;">
                                 Don't have account yet?
-                                <span @onclick="() => { RegisterMode = true; }" class="register">Register</span>
+                                <span @onclick="() => { RegisterMode = true; ResetFields(); }" class="register">Register</span>
                             </div>
                         </div>
                     </MudCard>
@@ -59,14 +66,23 @@
                                           @bind-Value="NewAccount.Username" For="@(() => NewAccount.Username)" />
                             <MudTextField InputType="InputType.Password" Label="Password" Required="true" HelperText="Must be between 6 and 15 characters"
                                           @bind-Value="NewAccount.Password" For="@(() => NewAccount.Password)" />
+                            <MudTextField InputType="InputType.Password" Label="Cofirm Password" Required="true" HelperText="Confirm your password"
+                                          @bind-Value="ConfirmPassword" />
                         </MudCardContent>
                         <MudCardActions>
-                            <MudButton ButtonType="ButtonType.Submit" Variant="Variant.Outlined" Color="Color.Secondary" Style="margin: 0 auto;">Register</MudButton>
+                            @if (ButtonLoading)
+                            {
+                                <MudProgressCircular Style="margin: 0 auto;" Color="Color.Secondary" Indeterminate="true" />
+                            }
+                            else
+                            {
+                                <MudButton ButtonType="ButtonType.Submit" Variant="Variant.Outlined" Color="Color.Secondary" Style="margin: 0 auto;">Register</MudButton>
+                            }
                         </MudCardActions>
                         <div style="display: flex; justify-content: center;">
                             <div style="margin-bottom: 1.5ch;">
                                 Already have an account?
-                                <span @onclick="() => { RegisterMode = false; }" class="login">Login</span>
+                                <span @onclick="() => { RegisterMode = false; ResetFields(); }" class="login">Login</span>
                             </div>
                         </div>
                     </MudCard>
@@ -77,14 +93,24 @@
 </MudContainer>
 
 @code {
-
+    private string ConfirmPassword;
     private bool RegisterMode = false;
     private Account NewAccount = new();
     private Student AccountStudent = new();
+    private bool ButtonLoading = false;
+
+    private void ResetFields()
+    {
+        NewAccount = new();
+        ConfirmPassword = string.Empty;
+    }
+
     private async Task CheckLogin()
     {
+        ButtonLoading = true;
         string dbpass = EncryptionService.Encrypt(NewAccount.Password);
         var res = await accountsService.SignInAsync(NewAccount.Username, dbpass);
+        ButtonLoading = false;
         if (res.success)
         {
             Snackbar.Add("Login Successful", Severity.Success);
@@ -99,19 +125,21 @@
 
     private async Task RegisterNew()
     {
-        if (accountsService.CheckLength(NewAccount.Password) == false)
+        if (ConfirmPassword != NewAccount.Password)
         {
-            Snackbar.Add("Password should be between 6 and 15 characters", Severity.Error);
-            NewAccount.Password = string.Empty;
+            Snackbar.Add("Incorrect password confirmation", Severity.Error);
             return;
         }
+        ButtonLoading = true;
         string dbpass = EncryptionService.Encrypt(NewAccount.Password);
         var res = await accountsService.SignUpAsync(NewAccount.Username, dbpass);
+        ButtonLoading = false;
         if (res.success)
         {
             Snackbar.Add("Successfully created new account", Severity.Success);
             await sessionService.SignUpAsync(res.svAccount);
             RegisterMode = false;
+            navigationManager.NavigateTo("/");
         }
         else
         {
@@ -125,9 +153,5 @@
     private async Task LogOut()
     {
         await accountsService.SignOutAsync();
-    }
-    protected override async Task OnInitializedAsync()
-    {
-        await LogOut();
     }
 }

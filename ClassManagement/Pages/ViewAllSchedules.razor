@@ -4,26 +4,26 @@
 @inject GradesService gradesService
 @inject NavigationManager NavManager
 @inject SessionService session
-@using ClassManagement.Components
 
-<MudContainer MaxWidth="MaxWidth.Large">
-    <MudCard Elevation="5" Style="margin-top: 5ch; padding: 1ch 0 10ch 0;">
-        <MudText Typo="Typo.h4" Align="Align.Center">My Week</MudText>
-        <div style="display: flex; justify-content: center; margin-top: 1ch;">
-            <div style="display:flex; border: 1.5px solid grey; border-radius: 10px;">
-            @for (int i = 0; i < 7; i++)
-            {
-                <div style="display: block; justify-content: center; margin: 2ch 0; text-align: center; min-height: 80ch; width: 17ch; border-right: @CollumnBorder(i)">
-                    <h4 style="@GetDayStyle(i)">@GetDay(i)</h4>
-                    <DayColumn day=i schedules=data[i] />
+@if (session.LoggedState)
+{
+    <MudContainer MaxWidth="MaxWidth.Large">
+        <MudCard Elevation="5" Style="margin-top: 5ch; padding: 1ch 0 10ch 0;">
+            <MudText Typo="Typo.h4" Align="Align.Center">My Week</MudText>
+            <div style="display: flex; justify-content: center; margin-top: 1ch;">
+                <div style="display:flex; border: 1.5px solid grey; border-radius: 10px;">
+                    @for (int i = 0; i < 7; i++)
+                    {
+                        <div style="display: block; justify-content: center; margin: 2ch 0; text-align: center; min-height: 80ch; width: 17ch; border-right: @CollumnBorder(i)">
+                            <h4 style="@GetDayStyle(i)">@GetDay(i)</h4>
+                            <DayColumn day=i schedules=data[i] />
+                        </div>
+                    }
                 </div>
-            }
             </div>
-        </div>      
-    </MudCard>
-</MudContainer>
-
-
+        </MudCard>
+    </MudContainer>
+}
 
 @code {
     SortedSet<ClassSchedule>[] data = new SortedSet<ClassSchedule>[7];
@@ -41,7 +41,7 @@
         {
             AllSchedules = gradesService.GetAllSchedules();
         }
-        for (int i=0; i < 7; i++)
+        for (int i = 0; i < 7; i++)
         {
             if (data[i] is null)
                 data[i] = GetSchedulesDayOfWeek(i);
