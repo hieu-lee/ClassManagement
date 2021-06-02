@@ -28,10 +28,14 @@
                         </div>
                         <div class="classes-details">
                             <MudText Typo="Typo.h4">Classes details</MudText>
-                            @foreach (var cls in MyStudent.Classes)
-                            {
-                                <MudLink Href="@($"/Class/{cls.Code}/{cls.Id}")">@cls.Code</MudLink>
-                            }
+                            <ul style="list-style: none;">
+                                @foreach (var cls in MyStudent.Classes)
+                                {
+                                    <li>
+                                        <MudLink Href="@($"/Class/{cls.Code}/{cls.Id}")">@cls.Code</MudLink>
+                                    </li>
+                                }
+                            </ul>
                         </div>
                     </div>
                     <div>
