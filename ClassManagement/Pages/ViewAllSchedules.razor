@@ -11,7 +11,7 @@
         <MudCard Elevation="5" Style="margin-top: 5ch; padding: 1ch 0 10ch 0;">
             <MudText Typo="Typo.h4" Align="Align.Center">My Week</MudText>
             <div style="display: flex; justify-content: center; margin-top: 1ch;">
-                <div style="display:flex; border: 1.5px solid grey; border-radius: 10px;">
+                <div style="display: flex; border: 1px solid #594AE2; border-radius: 10px;">
                     @for (int i = 0; i < 7; i++)
                     {
                         <div style="display: block; justify-content: center; margin: 2ch 0; text-align: center; min-height: 80ch; width: 17ch; border-right: @CollumnBorder(i)">
@@ -28,7 +28,7 @@
 @code {
     SortedSet<ClassSchedule>[] data = new SortedSet<ClassSchedule>[7];
     SortedSet<ClassSchedule> AllSchedules;
-    string CollumnBorder(int i) => (i == 6) ? "none;" : "1px dashed #f0f0f0;";
+    string CollumnBorder(int i) => (i == 6) ? "none;" : "1px dashed #c8c8c8;";
 
     protected override async Task OnInitializedAsync()
     {
