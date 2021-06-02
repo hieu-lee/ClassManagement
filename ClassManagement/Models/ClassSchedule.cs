@@ -4,7 +4,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace ClassManagement.Models
 {
-	public class ClassSchedule
+	public class ClassSchedule : IComparable<ClassSchedule>
     {
         [Key]
         public string Id { get; init; } = Guid.NewGuid().ToString();
@@ -30,6 +30,18 @@ namespace ClassManagement.Models
         {
             var tuple = new Tuple<string, string, DayOfWeek, TimeSpan, TimeSpan>(ClassCode, OwnerUsername, Day, StartTime.Value, EndTime.Value);
             return tuple.GetHashCode();
+        }
+
+        public int CompareTo(ClassSchedule other)
+        {
+            var r = Day.CompareTo(other.Day);
+            if (r != 0) return r;
+            r = StartTime.Value.CompareTo(other.StartTime.Value);
+            if (r != 0) return r;
+            r = EndTime.Value.CompareTo(other.EndTime.Value);
+            if (r != 0) return r;
+            r = Id.CompareTo(other.Id);
+            return r;
         }
     }
 }

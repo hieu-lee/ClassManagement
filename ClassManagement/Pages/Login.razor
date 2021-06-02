@@ -126,8 +126,8 @@
     {
         await accountsService.SignOutAsync();
     }
-    @*protected override async Task OnInitializedAsync()
-        {
-
-        }*@
+    protected override async Task OnInitializedAsync()
+    {
+        await LogOut();
+    }
 }
