@@ -44,7 +44,7 @@
 
         try
         {
-            var res = await localStorage.GetAsync<string>("MEDUUsernameState");
+            var res = await localStorage.GetAsync<string>("MEDU10UsernameState");
             if (res.Success)
             {
                 session.UsernameState = res.Value;
