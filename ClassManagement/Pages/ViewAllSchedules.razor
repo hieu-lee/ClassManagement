@@ -8,10 +8,10 @@
 @if (session.LoggedState)
 {
     <MudContainer MaxWidth="MaxWidth.Large">
-        <MudCard Elevation="5" Style="margin-top: 5ch; padding: 1ch 0 10ch 0;">
-            <MudText Typo="Typo.h4" Align="Align.Center">My Week</MudText>
+        <MudCard Elevation="5" Style="margin-top: 5ch; padding: 1ch 0 10ch 0; background: #6A5CE5;">
+            <MudText Style="color: #ffffff" Typo="Typo.h4" Align="Align.Center">My Week</MudText>
             <div style="display: flex; justify-content: center; margin-top: 1ch;">
-                <div style="display: flex; border: 1px solid #594AE2; border-radius: 10px;">
+                <div style="display: flex; background: #ffffff; border-radius: 10px; box-shadow: 0 0 10px #c8c8c8">
                     @for (int i = 0; i < 7; i++)
                     {
                         <div style="display: block; justify-content: center; margin: 2ch 0; text-align: center; min-height: 80ch; width: 17ch; border-right: @CollumnBorder(i)">
@@ -85,7 +85,7 @@
         var today = (int)DateTime.Now.DayOfWeek;
         if (i == today)
         {
-            return "color: #594AE2";
+            return "color: #FF4081";
         }
         return "";
     }
