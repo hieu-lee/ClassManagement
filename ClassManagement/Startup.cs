@@ -44,7 +44,6 @@ namespace ClassManagement
 
             services.AddTransient<ClassesService>();
             services.AddTransient<GradesService>();
-            services.AddTransient<SchedulesService>();
             services.AddTransient<AccountsService>();
             services.AddScoped<SessionService>();
             

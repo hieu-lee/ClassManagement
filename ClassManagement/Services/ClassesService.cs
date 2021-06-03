@@ -208,6 +208,7 @@ namespace ClassManagement.Services
             await dbContext.SaveChangesAsync();
             return new() { success = true };
         }
+
         public async Task<ServiceResult> DeleteManyStudentsFromClass(HashSet<Student> students, string ClassId)
         {
             var Class = dbContext.Classes.Where(s => s.Id == ClassId).Include(s => s.Students).FirstOrDefault();
