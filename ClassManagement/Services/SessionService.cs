@@ -20,21 +20,21 @@ namespace ClassManagement.Services
 
         public async Task SignInAsync(Account account)
         {
-            var task = localStorage.SetAsync("MEDU10UsernameState", account.Username);
+            var task = localStorage.SetAsync("MEDUv1UsernameState", account.Username);
             UsernameState = account.Username;
             await task;
         }
 
         public async Task SignUpAsync(Account account)
         {
-            var task = localStorage.SetAsync("MEDU10UsernameState", account.Username);
+            var task = localStorage.SetAsync("MEDUv1UsernameState", account.Username);
             UsernameState = account.Username;
             await task;
         }
 
         public async Task SignOutAsync()
         {
-            var task = localStorage.DeleteAsync("MEDU10UsernameState");
+            var task = localStorage.DeleteAsync("MEDUv1UsernameState");
             UsernameState = null;
             await task;
         }
