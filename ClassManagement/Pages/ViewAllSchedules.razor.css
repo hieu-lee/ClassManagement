@@ -1,0 +1,30 @@
+﻿.calendar-mobile {
+    display: flex;
+    margin: 5ch 0;
+}
+
+.calendar-board-pc {
+    display: flex;
+    background: #ffffff;
+    border-radius: 10px;
+    box-shadow: 0 0 10px #c8c8c8;
+}
+
+.calendar-board-mobile {
+    display: none;
+    background: #ffffff;
+    border-radius: 10px;
+    box-shadow: 0 0 10px #c8c8c8;
+    width: 90%;
+    padding: 0 3ch;
+}
+
+@media (max-width: 1200px) {
+    .calendar-board-mobile {
+        display: flex;
+    }
+
+    .calendar-board-pc {
+        display: none;
+    }
+}

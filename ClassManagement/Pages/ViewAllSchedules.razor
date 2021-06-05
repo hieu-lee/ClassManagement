@@ -10,15 +10,26 @@
     <MudContainer MaxWidth="MaxWidth.Large">
         <MudCard Elevation="5" Style="margin-top: 5ch; padding: 1ch 0 10ch 0; background: #6A5CE5;">
             <MudText Style="color: #ffffff" Typo="Typo.h4" Align="Align.Center">My Week</MudText>
-            <div style="display: flex; justify-content: center; margin-top: 1ch;">
-                <div style="display: flex; background: #ffffff; border-radius: 10px; box-shadow: 0 0 10px #c8c8c8">
-                    @for (int i = 0; i < 7; i++)
-                    {
-                        <div style="display: block; justify-content: center; margin: 2ch 0; text-align: center; min-height: 80ch; width: 17ch; border-right: @CollumnBorder(i)">
-                            <h4 style="@GetDayStyle(i)">@GetDay(i)</h4>
-                            <DayColumn day=i schedules=data[i] />
-                        </div>
-                    }
+            <div style="display: flex; justify-content: center; margin-top: 1ch; width: 100%; padding: 0 3ch;">
+                <div class="calendar-board-pc">
+                        @for (int i = 0; i < 7; i++)
+                        {
+                            <div style="margin: 2ch 0; text-align: center; min-height: 80ch; width: 17ch; border-right: @CollumnBorder(i)">
+                                <h4 style="@GetDayStyle(i)">@GetDay(i)</h4>
+                                <DayColumn day=i schedules=data[i] />
+                            </div>
+                        }
+                </div>
+                <div class="calendar-board-mobile" style="">
+                    <div style="width: 100%;">
+                        @for (int i = 0; i < 7; i++)
+                        {
+                            <div class="calendar-mobile">
+                                <h4 style="min-width: 5ch; @GetDayStyle(i)">@GetDay(i)</h4>
+                                <DayColumnMobile day=i schedules=data[i] />
+                            </div>
+                        }
+                    </div>
                 </div>
             </div>
         </MudCard>
